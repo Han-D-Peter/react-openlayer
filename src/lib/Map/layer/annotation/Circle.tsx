@@ -39,7 +39,7 @@ const CustomCircle = forwardRef(
     center,
     radius,
     color = "BLUE",
-    properties = { key: "circle" },
+    properties = {},
     onClick,
     onHover,
     children,
