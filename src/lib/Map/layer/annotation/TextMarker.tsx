@@ -9,7 +9,7 @@ import VectorSource from "ol/source/Vector";
 import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
-import useMap from "../../hooks/useMap";
+import useMap from "../../hooks/incontext/useMap";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import Text from "ol/style/Text";

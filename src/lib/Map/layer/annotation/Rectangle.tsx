@@ -12,7 +12,7 @@ import VectorSource from "ol/source/Vector";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import InnerText, { InnerTextProps } from "../../Text";
-import useMap from "../../hooks/useMap";
+import useMap from "../../hooks/incontext/useMap";
 import { makeText } from "../../utils/object";
 import { ANNOTATION_COLOR } from "../../constants/color";
 

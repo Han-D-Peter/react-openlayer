@@ -4,7 +4,7 @@ import { ReactElement, useEffect, useRef } from "react";
 import InnerText, { InnerTextProps } from "../../Text";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
-import useMap from "../../hooks/useMap";
+import useMap from "../../hooks/incontext/useMap";
 import { Coordinate } from "ol/coordinate";
 import Style from "ol/style/Style";
 import { makeText } from "../../utils/object";
