@@ -1,14 +1,7 @@
 import Feature, { FeatureLike } from "ol/Feature";
-import { Draw, Select } from "ol/interaction";
-import { default as ol } from "ol";
-import { ANNOTATION_COLOR } from "../../constants/color";
+import { Select } from "ol/interaction";
 import { ReactElement, useEffect, useRef } from "react";
-import InnerText, { InnerTextProps } from "../../Text";
-import useMap from "../../hooks/useMap";
-import { Vector } from "ol/source";
-import { Vector as LayerVector } from "ol/layer";
 import { Coordinate } from "ol/coordinate";
-import { createBox } from "ol/interaction/Draw";
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
@@ -16,9 +9,12 @@ import { Polygon } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { makeText } from "../../utils/object";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
+import InnerText, { InnerTextProps } from "../../Text";
+import useMap from "../../hooks/useMap";
+import { makeText } from "../../utils/object";
+import { ANNOTATION_COLOR } from "../../constants/color";
 
 interface CustomRectangleProps {
   positions: Coordinate[][];
