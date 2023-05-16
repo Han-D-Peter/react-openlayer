@@ -7,6 +7,7 @@ type makeTextArgs = {
   size?: number;
   color?: string;
   outline?: boolean;
+  isMarker?: boolean;
 };
 
 export const makeText = ({
@@ -14,6 +15,7 @@ export const makeText = ({
   size = 15,
   color = "black",
   outline = true,
+  isMarker = false,
 }: makeTextArgs) => {
   const textInstance = new Text({
     text,
@@ -22,6 +24,8 @@ export const makeText = ({
     fill: new Fill({
       color,
     }),
+    offsetY: isMarker ? -50 : 0,
+    overflow: true,
     stroke: outline
       ? new Stroke({
           color: "white",

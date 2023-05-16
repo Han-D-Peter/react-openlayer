@@ -1,5 +1,5 @@
 import { ReactElement, forwardRef, useEffect, useRef } from "react";
-import { Feature, MapBrowserEvent } from "ol";
+import { Feature } from "ol";
 import Circle from "ol/geom/Circle";
 import VectorLayer from "ol/layer/Vector";
 import Style from "ol/style/Style";
@@ -14,6 +14,9 @@ import { Location } from "../..";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import InnerText, { InnerTextProps } from "../../Text";
 import { makeText } from "../../utils/object";
+import { Select } from "ol/interaction";
+import { click, pointerMove } from "ol/events/condition";
+import { SelectEvent } from "ol/interaction/Select";
 
 interface CustomCircleProps {
   center: Location;
@@ -70,60 +73,58 @@ const CustomCircle = forwardRef(
         }),
       });
 
+      const clickSelect = new Select({
+        condition: click,
+        style: null,
+        layers: [vectorLayer],
+      });
+
+      const hoverSelect = new Select({
+        condition: pointerMove,
+        style: null,
+        layers: [vectorLayer],
+      });
+
+      map.addInteraction(hoverSelect);
+      map.addInteraction(clickSelect);
       map.addLayer(vectorLayer);
 
+      function onHoverHandler(event: SelectEvent) {
+        if (event.selected.length > 0) {
+          if (onHover) {
+            onHover({ annotation: annotationRef.current, properties });
+          }
+        } else {
+          // hover 이벤트에 의해 선택된 Circle이 없는 경우
+          // 선택 해제에 대한 작업 수행
+          // 예: 기본 스타일 복원 등
+        }
+      }
+
+      function onClickHandler(event: SelectEvent) {
+        if (event.selected.length > 0) {
+          // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+          if (onClick) {
+            onClick({
+              annotation: annotationRef.current,
+              properties,
+            });
+          }
+          // 선택된 Feature에 대한 작업 수행
+          // 예: 스타일 변경, 정보 표시 등
+        }
+      }
+      hoverSelect.on("select", onHoverHandler);
+      clickSelect.on("select", onClickHandler);
+
       return () => {
+        hoverSelect.un("select", onHoverHandler);
+        clickSelect.un("select", onClickHandler);
+        map.removeInteraction(hoverSelect);
+        map.removeInteraction(clickSelect);
         map.removeLayer(vectorLayer);
       };
-    }, [color, children, map]);
-
-    useEffect(() => {
-      if (!map) return;
-      let clicker: FeatureLike | null = null;
-      const clickAnnotation = (event: MapBrowserEvent<any>) => {
-        map.forEachFeatureAtPixel(event.pixel, function (f) {
-          clicker = f;
-          return true;
-        });
-        if (clicker && onClick) {
-          onClick({
-            annotation: clicker,
-            properties,
-          });
-        }
-      };
-      map.on("click", clickAnnotation);
-      return () => {
-        map.un("click", clickAnnotation);
-      };
-    }, [map, onClick, properties]);
-
-    useEffect(() => {
-      if (!map) return;
-      let hover: FeatureLike | null = null;
-      const hoverAnnotation = (event: MapBrowserEvent<any>) => {
-        map.getTargetElement().style.cursor = map.hasFeatureAtPixel(event.pixel)
-          ? "pointer"
-          : "";
-        if (hover !== null) {
-          hover = null;
-        }
-        map.forEachFeatureAtPixel(event.pixel, function (f) {
-          hover = f;
-          return true;
-        });
-        if (hover && onHover) {
-          onHover({
-            annotation: hover,
-            properties,
-          });
-        }
-      };
-      map.on("pointermove", hoverAnnotation);
-      return () => {
-        map.un("pointermove", hoverAnnotation);
-      };
-    }, [map, onHover, properties]);
+    }, [color, children, map, onHover, properties, onClick]);
 
     return <></>;
   }
