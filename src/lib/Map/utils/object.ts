@@ -22,6 +22,7 @@ export const makeText = ({
     fill: new Fill({
       color,
     }),
+    overflow: true,
     stroke: outline
       ? new Stroke({
           color: "white",
