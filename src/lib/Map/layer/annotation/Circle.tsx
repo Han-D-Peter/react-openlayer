@@ -9,7 +9,7 @@ import Stroke from "ol/style/Stroke";
 import { fromLonLat } from "ol/proj";
 import { FeatureLike } from "ol/Feature";
 
-import useMap from "../../hooks/useMap";
+import useMap from "../../hooks/incontext/useMap";
 import { Location } from "../..";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import InnerText, { InnerTextProps } from "../../Text";

@@ -3,7 +3,7 @@ import { ANNOTATION_COLOR } from "../../constants/color";
 import Feature, { FeatureLike } from "ol/Feature";
 import { ReactElement, useEffect, useRef } from "react";
 import InnerText, { InnerTextProps } from "../../Text";
-import useMap from "../../hooks/useMap";
+import useMap from "../../hooks/incontext/useMap";
 import { Polygon } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import Style from "ol/style/Style";
