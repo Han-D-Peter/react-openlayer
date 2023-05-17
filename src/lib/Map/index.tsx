@@ -68,7 +68,7 @@ const Map = forwardRef(
     {
       children,
       isZoomAbled = true,
-      isRotateAbled = true,
+      isRotateAbled = false,
       center = [127.9745613, 37.3236563],
       defaultZoomLevel = 15,
       bounds,

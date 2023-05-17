@@ -1,0 +1,157 @@
+import { useEffect, useRef, useState } from "react";
+import useMap from "../hooks/incontext/useMap";
+import { Control } from "ol/control";
+import { useMapRotation } from "../hooks";
+
+type Size = "sm" | "md" | "lg";
+
+interface CompassWheelProps {
+  size?: Size;
+  onWheel?: (degree: number) => void;
+}
+
+const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
+  const [rotationDegree, setRotate, resetRotation] = useMapRotation();
+  const [mouseDown, setMouseDown] = useState(false);
+  const [rotation, setRotation] = useState(0);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const map = useMap();
+
+  const compassSize = (size: Size) => {
+    if (size === "sm") {
+      return 100;
+    }
+    if (size === "md") {
+      return 150;
+    }
+
+    if (size === "lg") {
+      return 200;
+    }
+  };
+
+  const handleMouseDown = () => {
+    setMouseDown(true);
+  };
+
+  const handleMouseUp = () => {
+    setMouseDown(false);
+  };
+
+  const handleMouseMove = (e: { movementY: any }) => {
+    if (mouseDown) {
+      const { movementY } = e;
+      const abjustedMovementY = movementY * 0.7;
+      setRotation((prevRotation) => {
+        let newRotation = (prevRotation + abjustedMovementY) % 360;
+        if (newRotation < 0) {
+          newRotation += 360;
+        }
+        if (onWheel) {
+          onWheel(newRotation);
+        }
+        setRotate(newRotation);
+        return newRotation;
+      });
+    }
+  };
+
+  const resetValue = () => {
+    setRotation(0);
+    resetRotation();
+  };
+
+  useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [mouseDown]);
+
+  useEffect(() => {
+    const customControl = new Control({
+      element: ref.current ? ref.current : undefined,
+    });
+
+    map.addControl(customControl);
+  }, [map]);
+
+  return (
+    <div ref={ref} style={{ position: "absolute", top: "10px", right: "10px" }}>
+      <div
+        onMouseDown={handleMouseDown}
+        style={{
+          zIndex: 1,
+          transform: `rotate(${rotationDegree}deg)`,
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img
+            src="/mapicon/compass.png"
+            alt="compass"
+            draggable={false}
+            height={compassSize(size)}
+            width={compassSize(size)}
+          />
+        </div>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "10px",
+        }}
+      >
+        <button
+          style={{
+            width: "60px",
+            height: "20px",
+            background: "white",
+            border: "1px solid #858484",
+            borderRadius: "3px",
+            paddingBottom: "3px",
+          }}
+          onClick={resetValue}
+        >
+          reset
+        </button>
+      </div>
+      <div
+        style={{
+          marginTop: "px",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setRotate(rotation);
+          }}
+        >
+          <input
+            value={rotation.toFixed(0)}
+            onChange={(e) => {
+              setRotation(Number(e.target.value));
+            }}
+            type="number"
+            name="degree"
+            style={{ width: "53px" }}
+          />
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default CompassWheel;
