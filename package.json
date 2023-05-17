@@ -11,8 +11,10 @@
   "browser": "dist/index.umd.js",
   "types": "dist/index.d.ts",
   "dependencies": {
+    "@emotion/styled": "^11.11.0",
     "lodash": "^4.17.21",
     "ol": "^7.3.0",
+    "react-icons": "^4.8.0",
     "react-scripts": "5.0.1"
   },
   "peerDependencies": {
