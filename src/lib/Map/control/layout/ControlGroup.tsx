@@ -1,4 +1,4 @@
-import { Children, ReactElement } from "react";
+import { Children, ReactElement, cloneElement, useRef } from "react";
 import Button from "../element/Button";
 
 interface ControlGroupProps {
@@ -8,20 +8,17 @@ const ControlGroup = ({ children }: ControlGroupProps) => {
   return (
     <div style={{ margin: "10px 0 10px 0 " }}>
       {Children.map(children, (child, index) => {
-        console.log("child", child.props);
+        if (Children.count(children) === 1) {
+          const props = { ...child.props, side: "solo" };
+          return cloneElement(child, props);
+        }
         if (index === 0) {
-          return (
-            <Button side="top" {...child.props}>
-              {}
-            </Button>
-          );
+          const props = { ...child.props, side: "top" };
+          return cloneElement(child, props);
         }
         if (index === Children.toArray(children).length - 1) {
-          return (
-            <Button side="bottom" {...child.props}>
-              {}
-            </Button>
-          );
+          const props = { ...child.props, side: "bottom" };
+          return cloneElement(child, props);
         }
         return child;
       })}
