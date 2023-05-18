@@ -8,7 +8,12 @@ import {
 import MapContext from "./MapContext";
 import "ol/ol.css";
 import { Map as OlMap, View } from "ol";
-import { defaults as defaultControls } from "ol/control";
+import {
+  Control,
+  FullScreen,
+  Zoom,
+  defaults as defaultControls,
+} from "ol/control";
 import { fromLonLat } from "ol/proj";
 import { Tile as TileLayer } from "ol/layer";
 import { OSM } from "ol/source";
@@ -99,13 +104,23 @@ const Map = forwardRef(
           zoom: defaultZoomLevel,
           maxZoom: !isZoomAbled ? defaultZoomLevel : maxZoom,
           minZoom: !isZoomAbled ? defaultZoomLevel : minZoom,
+          constrainResolution: true,
         }),
       })
     );
+
     useImperativeHandle(ref, () => mapObj);
 
     useLayoutEffect(() => {
       const mapRef = mapObj.current;
+      const defaultZoomControl = mapRef
+        .getControls()
+        .getArray()
+        .find((control: Control) => control instanceof Zoom);
+
+      if (defaultZoomControl) {
+        mapRef.removeControl(defaultZoomControl);
+      }
       mapRef.setTarget("map");
       return () => {
         mapRef.setTarget(undefined);
