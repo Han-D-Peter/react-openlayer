@@ -28,6 +28,7 @@ interface TextMarkerProps {
     annotation: FeatureLike;
     properties: Record<string, any>;
   }) => void;
+  zIndex?: number;
   children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
@@ -38,11 +39,20 @@ const TextMarker = ({
   onClick,
   onHover,
   children,
+  zIndex = 0,
 }: TextMarkerProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Point>>(
     new Feature({ geometry: new Point(fromLonLat(center)) })
   );
+
+  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+
+  useEffect(() => {
+    if (annotationLayerRef.current && zIndex) {
+      annotationLayerRef.current.setZIndex(zIndex);
+    }
+  }, [zIndex]);
 
   useEffect(() => {
     annotationRef.current.setStyle(
@@ -70,6 +80,9 @@ const TextMarker = ({
         features: [annotationRef.current],
       }),
     });
+    annotationLayerRef.current = vectorLayer;
+
+    vectorLayer.setZIndex(zIndex);
 
     const clickSelect = new Select({
       condition: click,

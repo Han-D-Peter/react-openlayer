@@ -28,6 +28,7 @@ interface CustomPolyLineProps {
     annotation: FeatureLike;
     properties: Record<string, any>;
   }) => void;
+  zIndex?: number;
   children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
@@ -37,6 +38,7 @@ const CustomPolyLine = ({
   properties = {},
   onClick,
   onHover,
+  zIndex = 0,
   children,
 }: CustomPolyLineProps) => {
   const map = useMap();
@@ -45,6 +47,13 @@ const CustomPolyLine = ({
       new LineString(positions.map((position) => fromLonLat(position)))
     )
   );
+  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+
+  useEffect(() => {
+    if (annotationLayerRef.current) {
+      annotationLayerRef.current.setZIndex(zIndex);
+    }
+  }, [zIndex]);
 
   useEffect(() => {
     annotationRef.current.setStyle(
@@ -69,6 +78,10 @@ const CustomPolyLine = ({
         features: [annotationRef.current],
       }),
     });
+
+    annotationLayerRef.current = vectorLayer;
+
+    vectorLayer.setZIndex(zIndex);
 
     const clickSelect = new Select({
       condition: click,

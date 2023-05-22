@@ -27,6 +27,7 @@ interface CustomMarkerProps {
     annotation: FeatureLike;
     properties: Record<string, any>;
   }) => void;
+  zIndex?: number;
   children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
@@ -36,12 +37,20 @@ const CustomMarker = ({
   properties = {},
   onClick,
   onHover,
+  zIndex = 0,
   children,
 }: CustomMarkerProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Point>>(
     new Feature(new Point(fromLonLat(center)))
   );
+  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+
+  useEffect(() => {
+    if (annotationLayerRef.current) {
+      annotationLayerRef.current.setZIndex(zIndex);
+    }
+  }, [zIndex]);
 
   useEffect(() => {
     annotationRef.current.setStyle(
@@ -64,6 +73,10 @@ const CustomMarker = ({
         features: [annotationRef.current],
       }),
     });
+
+    annotationLayerRef.current = vectorLayer;
+
+    vectorLayer.setZIndex(zIndex);
 
     const clickSelect = new Select({
       condition: click,

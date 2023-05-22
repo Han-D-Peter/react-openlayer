@@ -28,6 +28,7 @@ interface CustomRectangleProps {
     annotation: FeatureLike;
     properties: Record<string, any>;
   }) => void;
+  zIndex?: number;
   children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
@@ -37,6 +38,7 @@ const CustomRectangle = ({
   properties = {},
   onClick,
   onHover,
+  zIndex = 0,
   children,
 }: CustomRectangleProps) => {
   const map = useMap();
@@ -45,6 +47,14 @@ const CustomRectangle = ({
       new Polygon([positions[0].map((position) => fromLonLat(position))])
     )
   );
+
+  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+
+  useEffect(() => {
+    if (annotationLayerRef.current && zIndex) {
+      annotationLayerRef.current.setZIndex(zIndex);
+    }
+  }, [zIndex]);
 
   useEffect(() => {
     if (!map) return;
@@ -70,6 +80,10 @@ const CustomRectangle = ({
         features: [annotationRef.current],
       }),
     });
+
+    annotationLayerRef.current = vectorLayer;
+
+    vectorLayer.setZIndex(zIndex);
 
     const clickSelect = new Select({
       condition: click,
