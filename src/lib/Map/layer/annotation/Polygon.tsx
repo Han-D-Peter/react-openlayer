@@ -28,6 +28,7 @@ interface CustomPolygonProps {
     annotation: FeatureLike;
     properties: Record<string, any>;
   }) => void;
+  zIndex?: number;
   children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
@@ -37,6 +38,7 @@ const CustomPolygon = ({
   properties = {},
   onClick,
   onHover,
+  zIndex = 0,
   children,
 }: CustomPolygonProps) => {
   const map = useMap();
@@ -45,6 +47,13 @@ const CustomPolygon = ({
       new Polygon([positions[0].map((position) => fromLonLat(position))])
     )
   );
+  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+
+  useEffect(() => {
+    if (annotationLayerRef.current) {
+      annotationLayerRef.current.setZIndex(zIndex);
+    }
+  }, [zIndex]);
 
   useEffect(() => {
     annotationRef.current.setStyle(
@@ -69,6 +78,10 @@ const CustomPolygon = ({
         features: [annotationRef.current],
       }),
     });
+
+    annotationLayerRef.current = vectorLayer;
+
+    vectorLayer.setZIndex(zIndex);
 
     const clickSelect = new Select({
       condition: click,

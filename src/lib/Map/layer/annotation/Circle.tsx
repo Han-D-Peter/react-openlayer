@@ -31,6 +31,7 @@ interface CustomCircleProps {
     annotation: FeatureLike;
     properties: Record<string, any>;
   }) => void;
+  zIndex?: number;
   children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
@@ -42,12 +43,21 @@ const CustomCircle = forwardRef(
     properties = {},
     onClick,
     onHover,
+    zIndex = 0,
     children,
   }: CustomCircleProps) => {
     const map = useMap();
     const annotationRef = useRef<Feature<Circle>>(
       new Feature(new Circle(fromLonLat(center), radius))
     );
+
+    const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+
+    useEffect(() => {
+      if (annotationLayerRef.current) {
+        annotationLayerRef.current.setZIndex(zIndex);
+      }
+    }, [zIndex]);
 
     useEffect(() => {
       annotationRef.current.setStyle(
@@ -72,6 +82,10 @@ const CustomCircle = forwardRef(
           features: [annotationRef.current],
         }),
       });
+
+      annotationLayerRef.current = vectorLayer;
+
+      vectorLayer.setZIndex(zIndex);
 
       const clickSelect = new Select({
         condition: click,
