@@ -75,13 +75,19 @@ const CustomRectangle = ({
         }),
       })
     );
+
+    const vectorSource = new VectorSource({
+      features: [annotationRef.current],
+    });
     const vectorLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
+      source: vectorSource,
     });
 
     annotationLayerRef.current = vectorLayer;
+    annotationRef.current.setProperties({
+      source: vectorSource,
+      layer: vectorLayer,
+    });
 
     vectorLayer.setZIndex(zIndex);
 
@@ -136,7 +142,6 @@ const CustomRectangle = ({
       map.removeLayer(vectorLayer);
     };
   }, [children, color, map, onClick, onHover, properties]);
-  return <></>;
 };
 
 export default CustomRectangle;

@@ -78,9 +78,15 @@ const CustomPolyLine = ({
         features: [annotationRef.current],
       }),
     });
+    const vectorSource = new VectorSource({
+      features: [annotationRef.current],
+    });
 
     annotationLayerRef.current = vectorLayer;
-
+    annotationRef.current.setProperties({
+      source: vectorSource,
+      layer: vectorLayer,
+    });
     vectorLayer.setZIndex(zIndex);
 
     const clickSelect = new Select({
@@ -135,7 +141,6 @@ const CustomPolyLine = ({
       map.removeLayer(vectorLayer);
     };
   }, [color, children, map, onHover, properties, onClick]);
-  return <></>;
 };
 
 export default CustomPolyLine;

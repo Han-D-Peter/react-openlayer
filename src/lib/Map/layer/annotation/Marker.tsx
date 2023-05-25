@@ -73,8 +73,15 @@ const CustomMarker = ({
         features: [annotationRef.current],
       }),
     });
+    const vectorSource = new VectorSource({
+      features: [annotationRef.current],
+    });
 
     annotationLayerRef.current = vectorLayer;
+    annotationRef.current.setProperties({
+      source: vectorSource,
+      layer: vectorLayer,
+    });
 
     vectorLayer.setZIndex(zIndex);
 
@@ -130,8 +137,6 @@ const CustomMarker = ({
       map.removeLayer(vectorLayer);
     };
   }, [color, children, map, onHover, properties, onClick]);
-
-  return <></>;
 };
 
 export default CustomMarker;

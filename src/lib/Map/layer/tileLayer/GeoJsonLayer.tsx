@@ -88,6 +88,4 @@ export default function GeoJsonLayer({
 
     map.addLayer(vectorLayer);
   }, [map, geoJson]);
-
-  return <></>;
 }
