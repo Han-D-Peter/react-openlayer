@@ -32,7 +32,9 @@ const StyledButton = styled.button<{
   isDisabled: boolean;
   active?: boolean;
 }>`
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   ${({ active }) =>
     active &&
     css`
