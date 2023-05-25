@@ -1,11 +1,13 @@
 import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { ReactNode, forwardRef } from "react";
 
-interface ButtonProps {
-  children: ReactNode;
+export interface ButtonProps {
+  children?: ReactNode;
   isDisabled?: boolean;
   onClick?: () => void;
   side?: "top" | "bottom" | "middle" | "solo";
+  isActive?: boolean;
 }
 
 const getborderRadiusBySide = (side: "top" | "bottom" | "middle" | "solo") => {
@@ -28,11 +30,17 @@ const getborderRadiusBySide = (side: "top" | "bottom" | "middle" | "solo") => {
 const StyledButton = styled.button<{
   side: "top" | "bottom" | "middle" | "solo";
   isDisabled: boolean;
+  active?: boolean;
 }>`
   display: block;
+  ${({ active }) =>
+    active &&
+    css`
+      box-shadow: inset 0 0 5px;
+    `}
   width: 30px;
   height: 30px;
-  background: #ffffff;
+  background: white;
   border: 1px solid #d9d9d9;
   border-radius: ${(props) => getborderRadiusBySide(props.side)};
   &:hover {
@@ -42,7 +50,13 @@ const StyledButton = styled.button<{
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { children, onClick, side = "middle", isDisabled = false }: ButtonProps,
+    {
+      children,
+      onClick,
+      side = "middle",
+      isDisabled = false,
+      isActive = false,
+    }: ButtonProps,
     ref
   ) => {
     const onClickBtn = () => {
@@ -57,6 +71,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         onClick={onClickBtn}
         side={side}
         isDisabled={isDisabled}
+        active={isActive}
       >
         {children}
       </StyledButton>
