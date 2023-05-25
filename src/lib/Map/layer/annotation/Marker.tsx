@@ -137,6 +137,7 @@ const CustomMarker = ({
       map.removeLayer(vectorLayer);
     };
   }, [color, children, map, onHover, properties, onClick]);
+  return <></>;
 };
 
 export default CustomMarker;

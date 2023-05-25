@@ -146,6 +146,7 @@ const CustomCircle = ({
       map.removeLayer(vectorLayer);
     };
   }, [color, children, map, onHover, properties, onClick]);
+  return <></>;
 };
 
 export default CustomCircle;
