@@ -2,7 +2,7 @@ import { Children, ReactElement, cloneElement } from "react";
 
 interface LayerGroupProps {
   zIndex?: number;
-  children: ReactElement;
+  children: ReactElement | ReactElement[];
 }
 
 export default function LayerGroup({ zIndex, children }: LayerGroupProps) {
@@ -10,9 +10,13 @@ export default function LayerGroup({ zIndex, children }: LayerGroupProps) {
     return cloneElement(children, { ...children.props, zIndex });
   }
   if (Array.isArray(children) && zIndex) {
-    return Children.map(children, (child) => {
-      return cloneElement(child, { ...child.props, zIndex });
-    });
+    return (
+      <>
+        {Children.map(children, (child) => {
+          return cloneElement(child, { ...child.props, zIndex });
+        })}
+      </>
+    );
   }
   return <>{children}</>;
 }
