@@ -68,13 +68,11 @@ const CustomMarker = ({
         }),
       })
     );
-    const vectorLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
-    });
     const vectorSource = new VectorSource({
       features: [annotationRef.current],
+    });
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
     });
 
     annotationLayerRef.current = vectorLayer;
@@ -137,6 +135,7 @@ const CustomMarker = ({
       map.removeLayer(vectorLayer);
     };
   }, [color, children, map, onHover, properties, onClick]);
+  return <></>;
 };
 
 export default CustomMarker;

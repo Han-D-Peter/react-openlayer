@@ -40,6 +40,7 @@ const TileLayer = ({
 
     map.addLayer(customTmsLayer);
   }, [map]);
+  return <></>;
 };
 
 export default TileLayer;

@@ -1,25 +1,23 @@
+import { ReactElement, useEffect, useRef } from "react";
+import { Coordinate } from "ol/coordinate";
 import Feature, { FeatureLike } from "ol/Feature";
 import { ANNOTATION_COLOR } from "../../constants/color";
-import { Coordinate } from "ol/coordinate";
-import { ReactElement, useEffect, useRef } from "react";
 import InnerText, { InnerTextProps } from "../../Text";
-import useMap from "../../hooks/incontext/useMap";
-import { LineString } from "ol/geom";
+import { useMap } from "../../hooks";
+import { MultiPoint, Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
-import Style from "ol/style/Style";
-import Stroke from "ol/style/Stroke";
-import Fill from "ol/style/Fill";
-import { makeText } from "../../utils/object";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
+import { Circle, Fill, Icon, Stroke, Style, Text } from "ol/style";
+import { makeText } from "../../utils/object";
 import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 
-interface CustomPolyLineProps {
+interface CustomMultiPointProps {
   positions: Coordinate[];
   color?: keyof typeof ANNOTATION_COLOR;
-  properties?: Record<string, any>;
+  properties?: { [key: string]: string | number };
   onClick?: (event: {
     annotation: FeatureLike;
     properties: Record<string, any>;
@@ -32,7 +30,7 @@ interface CustomPolyLineProps {
   children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
-const CustomPolyLine = ({
+export default function CustomMultiPoint({
   positions,
   color = "BLUE",
   properties = {},
@@ -40,11 +38,11 @@ const CustomPolyLine = ({
   onHover,
   zIndex = 0,
   children,
-}: CustomPolyLineProps) => {
+}: CustomMultiPointProps) {
   const map = useMap();
-  const annotationRef = useRef<Feature<LineString>>(
+  const annotationRef = useRef<Feature<MultiPoint>>(
     new Feature(
-      new LineString(positions.map((position) => fromLonLat(position)))
+      new MultiPoint(positions.map((position) => fromLonLat(position)))
     )
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
@@ -56,36 +54,47 @@ const CustomPolyLine = ({
   }, [zIndex]);
 
   useEffect(() => {
-    annotationRef.current.setStyle(
-      new Style({
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke,
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill,
-        }),
-        text: makeText({
-          text: children ? children.props.children : "",
-          size: children?.props.size || 15,
-          color: children?.props.color ? children.props.color : "black",
-          outline: children?.props.outline,
-        }),
-      })
-    );
-
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current],
-    });
+    const vectorSource = new VectorSource();
     const vectorLayer = new VectorLayer({
       source: vectorSource,
     });
+    const geometry = annotationRef.current.getGeometry() as MultiPoint;
+    const features = geometry
+      .getPoints()
+      .map((point, index): Feature<Point> => {
+        const text = index + 1; // 순번 설정
+        const style = new Style({
+          image: new Circle({
+            radius: 10,
+            fill: new Fill({
+              color: ANNOTATION_COLOR[color].fill, // 원의 색상
+            }),
+            stroke: new Stroke({
+              color: ANNOTATION_COLOR[color].stroke, // 테두리 선의 색상
+              width: 2,
+            }),
+          }),
+          text: makeText({
+            text: String(text),
+            size: children?.props.size || 15,
+            color: children?.props.color ? children.props.color : "black",
+            outline: children?.props.outline,
+            isMarker: false,
+          }),
+        });
+        style.getText().setText(text.toString());
+        const pointFeature = new Feature(point);
+        pointFeature.setStyle(style);
+        pointFeature.setProperties({
+          source: vectorSource,
+          layer: vectorLayer,
+        });
+        return pointFeature;
+      });
+    vectorSource.addFeatures(features);
 
     annotationLayerRef.current = vectorLayer;
-    annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer,
-    });
+
     vectorLayer.setZIndex(zIndex);
 
     const clickSelect = new Select({
@@ -141,6 +150,4 @@ const CustomPolyLine = ({
     };
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;
-};
-
-export default CustomPolyLine;
+}

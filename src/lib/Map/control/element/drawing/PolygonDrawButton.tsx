@@ -12,9 +12,11 @@ import Fill from "ol/style/Fill";
 import { MdPolyline } from "react-icons/md";
 import Icon from "ol/style/Icon";
 import { TbPolygon } from "react-icons/tb";
+import { Feature } from "ol";
+import { Geometry } from "ol/geom";
 
 interface PolygonDrawButtonProps extends ButtonProps {
-  onEnd: (feature: DrawEvent) => void;
+  onEnd: (feature: Feature<Geometry>) => void;
   onCanvas?: boolean;
 }
 
@@ -78,7 +80,7 @@ export default function PolygonDrawButton({
       layer: vectorLayerRef.current,
     });
     map.removeInteraction(drawRef.current);
-    onEnd(event);
+    onEnd(feature);
   };
 
   useEffect(() => {

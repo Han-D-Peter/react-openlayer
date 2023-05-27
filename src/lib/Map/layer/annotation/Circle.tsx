@@ -76,14 +76,14 @@ const CustomCircle = ({
         }),
       })
     );
-    const vectorLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
-    });
+
     const vectorSource = new VectorSource({
       features: [annotationRef.current],
     });
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
+    });
+
     annotationLayerRef.current = vectorLayer;
     annotationLayerRef.current = vectorLayer;
     annotationRef.current.setProperties({
@@ -146,6 +146,7 @@ const CustomCircle = ({
       map.removeLayer(vectorLayer);
     };
   }, [color, children, map, onHover, properties, onClick]);
+  return <></>;
 };
 
 export default CustomCircle;

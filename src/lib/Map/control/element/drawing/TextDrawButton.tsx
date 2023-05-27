@@ -12,9 +12,12 @@ import Fill from "ol/style/Fill";
 import Text from "ol/style/Text";
 import Stroke from "ol/style/Stroke";
 import { TbLetterT } from "react-icons/tb";
+import { Geometry } from "ol/geom";
+import { Feature } from "ol";
+import { features } from "process";
 
 interface TextDrawButtonProps extends ButtonProps {
-  onEnd: (feature: DrawEvent) => void;
+  onEnd: (feature: Feature<Geometry>) => void;
   onCanvas?: boolean;
 }
 
@@ -81,7 +84,7 @@ export default function TextDrawButton({
       layer: vectorLayerRef.current,
     });
     map.removeInteraction(drawRef.current);
-    onEnd(event);
+    onEnd(feature);
   };
 
   useEffect(() => {

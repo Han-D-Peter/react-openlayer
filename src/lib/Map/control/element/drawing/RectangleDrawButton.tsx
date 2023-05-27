@@ -21,7 +21,7 @@ import { Feature } from "ol";
 import { Coordinate } from "ol/coordinate";
 
 interface RectangleDrawButtonProps extends ButtonProps {
-  onEnd: (feature: DrawEvent) => void;
+  onEnd: (feature: Feature<Geometry>) => void;
   onCanvas?: boolean;
 }
 
@@ -85,7 +85,7 @@ export default function RectangleDrawButton({
       layer: vectorLayerRef.current,
     });
     map.removeInteraction(drawRef.current);
-    onEnd(event);
+    onEnd(event.feature);
   };
 
   useEffect(() => {

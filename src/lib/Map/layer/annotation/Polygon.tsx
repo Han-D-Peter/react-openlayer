@@ -73,14 +73,12 @@ const CustomPolygon = ({
         }),
       })
     );
-    const vectorLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
-    });
 
     const vectorSource = new VectorSource({
       features: [annotationRef.current],
+    });
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
     });
 
     annotationLayerRef.current = vectorLayer;
@@ -142,6 +140,7 @@ const CustomPolygon = ({
       map.removeLayer(vectorLayer);
     };
   }, [color, children, map, onHover, properties, onClick]);
+  return <></>;
 };
 
 export default CustomPolygon;

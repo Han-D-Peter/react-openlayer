@@ -11,9 +11,11 @@ import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import { MdPolyline } from "react-icons/md";
 import Icon from "ol/style/Icon";
+import { Geometry } from "ol/geom";
+import { Feature } from "ol";
 
 interface PolylineDrawButtonProps extends ButtonProps {
-  onEnd: (feature: DrawEvent) => void;
+  onEnd: (feature: Feature<Geometry>) => void;
   onCanvas?: boolean;
 }
 
@@ -77,7 +79,7 @@ export default function PolylineDrawButton({
       layer: vectorLayerRef.current,
     });
     map.removeInteraction(drawRef.current);
-    onEnd(event);
+    onEnd(feature);
   };
 
   useEffect(() => {

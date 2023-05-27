@@ -142,6 +142,7 @@ const CustomRectangle = ({
       map.removeLayer(vectorLayer);
     };
   }, [children, color, map, onClick, onHover, properties]);
+  return <></>;
 };
 
 export default CustomRectangle;

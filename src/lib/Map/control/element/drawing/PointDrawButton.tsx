@@ -9,9 +9,11 @@ import Style from "ol/style/Style";
 import { makeText } from "../../../utils/object";
 import Icon from "ol/style/Icon";
 import { DrawEvent } from "ol/interaction/Draw";
+import { Geometry } from "ol/geom";
+import { Feature } from "ol";
 
 interface PointDrawButtonProps extends ButtonProps {
-  onEnd: (feature: DrawEvent) => void;
+  onEnd: (feature: Feature<Geometry>) => void;
   onCanvas?: boolean;
 }
 
@@ -72,7 +74,7 @@ export default function PointDrawButton({
       layer: vectorLayerRef.current,
     });
     map.removeInteraction(drawRef.current);
-    onEnd(event);
+    onEnd(feature);
   };
 
   useEffect(() => {
