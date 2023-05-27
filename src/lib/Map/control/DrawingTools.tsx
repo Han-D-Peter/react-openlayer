@@ -16,6 +16,9 @@ import TextDrawButton from "./element/drawing/TextDrawButton";
 import ModifyAnnotation from "./element/function/ModifyAnnotation";
 import MoveAnnotation from "./element/function/MoveAnnotation";
 import DeleteAnnotation from "./element/function/DeleteAnnotation";
+import MultiPointDrawButton from "./element/drawing/MultiPointDrawButton";
+import { Geometry } from "ol/geom";
+import { Feature } from "ol";
 
 interface DrawingToolsProps {
   marker?: boolean;
@@ -27,7 +30,7 @@ interface DrawingToolsProps {
   edit?: boolean;
   movement?: boolean;
   remove?: boolean;
-  onDrawEnd?: (event: DrawEvent) => void;
+  onDrawEnd?: (event: Feature<Geometry> | Feature<Geometry>[]) => void;
   onCanvas?: boolean;
 }
 
@@ -54,7 +57,7 @@ export default function DrawingTools({
     }
   };
 
-  const endDrawing = (event: DrawEvent) => {
+  const endDrawing = (event: Feature<Geometry> | Feature<Geometry>[]) => {
     if (onDrawEnd) {
       onDrawEnd(event);
     }
@@ -63,6 +66,14 @@ export default function DrawingTools({
   return (
     <>
       <ControlGroup>
+        <MultiPointDrawButton
+          isActive={isSelected === 0}
+          onEnd={endDrawing}
+          onClick={() => {
+            switchControl(0);
+          }}
+          onCanvas={onCanvas}
+        />
         <PointDrawButton
           isActive={isSelected === 1}
           onEnd={endDrawing}
