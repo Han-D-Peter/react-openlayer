@@ -54,6 +54,10 @@ export default function CustomMultiPoint({
   }, [zIndex]);
 
   useEffect(() => {
+    const vectorSource = new VectorSource();
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
+    });
     const geometry = annotationRef.current.getGeometry() as MultiPoint;
     const features = geometry
       .getPoints()
@@ -81,42 +85,15 @@ export default function CustomMultiPoint({
         style.getText().setText(text.toString());
         const pointFeature = new Feature(point);
         pointFeature.setStyle(style);
+        pointFeature.setProperties({
+          source: vectorSource,
+          layer: vectorLayer,
+        });
         return pointFeature;
       });
-
-    annotationRef.current.setStyle(
-      new Style({
-        image: new Circle({
-          radius: 10,
-          fill: new Fill({
-            color: ANNOTATION_COLOR[color].fill, // 원의 색상
-          }),
-          stroke: new Stroke({
-            color: ANNOTATION_COLOR[color].stroke, // 테두리 선의 색상
-            width: 2,
-          }),
-        }),
-        // text: makeText({
-        //   text: children ? children.props.children : "",
-        //   size: children?.props.size || 15,
-        //   color: children?.props.color ? children.props.color : "black",
-        //   outline: children?.props.outline,
-        //   isMarker: false,
-        // }),
-      })
-    );
-    const vectorSource = new VectorSource({
-      features,
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource,
-    });
+    vectorSource.addFeatures(features);
 
     annotationLayerRef.current = vectorLayer;
-    annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer,
-    });
 
     vectorLayer.setZIndex(zIndex);
 

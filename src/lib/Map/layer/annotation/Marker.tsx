@@ -68,13 +68,11 @@ const CustomMarker = ({
         }),
       })
     );
-    const vectorLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
-    });
     const vectorSource = new VectorSource({
       features: [annotationRef.current],
+    });
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
     });
 
     annotationLayerRef.current = vectorLayer;

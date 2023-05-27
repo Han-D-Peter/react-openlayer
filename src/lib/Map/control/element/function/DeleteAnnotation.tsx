@@ -19,15 +19,18 @@ export default function DeleteAnnotation(props: DeleteAnnotationProps) {
 
   const removeSelectedFeatures = (event: SelectEvent) => {
     const selectedFeatures = event.selected;
-    console.log("remove");
+
     selectedFeatures.forEach((selectedFeature) => {
       if (selectedFeature.getGeometry()) {
         const vectorSource = selectedFeature.getProperties()
           .source as VectorSource;
+
         vectorSource.clear();
-        const vectorLayer = selectedFeature.getProperties()
-          .layer as VectorLayer<VectorSource>;
-        map.removeLayer(vectorLayer);
+        // 삭제와 동시에 vectorLayer를 빼서 안보이게 하는 로직
+        // draw tool 마다 각각의 레이어를 가지는데 빼버리면 새로 그렸을때 화면에 보이지 않음
+        // const vectorLayer = selectedFeature.getProperties()
+        //   .layer as VectorLayer<VectorSource>;
+        // map.removeLayer(vectorLayer);
       }
     });
   };
