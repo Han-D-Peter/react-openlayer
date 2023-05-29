@@ -45,6 +45,11 @@ type Coordinate =
 
 interface GeoJsonLayerProps {
   geoJson: Record<string, any>;
+
+  /**
+   * @default "EPSG:5186"
+   * @description You can set coordinate option of geJson.
+   */
   projectionCode?: Coordinate;
   zIndex?: number;
 }
@@ -69,7 +74,7 @@ export default function GeoJsonLayer({
     const geoJsonFormat = new GeoJSON();
     const features = geoJsonFormat.readFeatures(geoJson);
 
-    features.forEach((feature) => {
+    features.forEach(feature => {
       const geoMetry = feature.getGeometry();
       if (geoMetry) {
         geoMetry.transform(fromProjection, toProjection);

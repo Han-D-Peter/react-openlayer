@@ -1,6 +1,6 @@
-import Feature, { FeatureLike } from "ol/Feature";
+import Feature from "ol/Feature";
 import { Select } from "ol/interaction";
-import { ReactElement, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Coordinate } from "ol/coordinate";
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
@@ -11,25 +11,13 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
-import InnerText, { InnerTextProps } from "../../Text";
 import useMap from "../../hooks/incontext/useMap";
 import { makeText } from "../../utils/object";
 import { ANNOTATION_COLOR } from "../../constants/color";
+import { Annotation } from ".";
 
-interface CustomRectangleProps {
+interface CustomRectangleProps extends Annotation {
   positions: Coordinate[][];
-  color?: keyof typeof ANNOTATION_COLOR;
-  properties?: Record<string, any>;
-  onClick?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  onHover?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  zIndex?: number;
-  children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
 const CustomRectangle = ({
@@ -44,7 +32,7 @@ const CustomRectangle = ({
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
     new Feature(
-      new Polygon([positions[0].map((position) => fromLonLat(position))])
+      new Polygon([positions[0].map(position => fromLonLat(position))])
     )
   );
 

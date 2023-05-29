@@ -6536,7 +6536,7 @@ var Point$2 = Point$1;
  * @param {import("../../extent.js").Extent} extent Extent.
  * @return {boolean} Contains extent.
  */
-function contains.linearRingContainsExtent(
+function linearRingContainsExtent(
   flatCoordinates,
   offset,
   end,
@@ -6550,7 +6550,7 @@ function contains.linearRingContainsExtent(
      * @return {boolean} Contains (x, y).
      */
     function (coordinate) {
-      return !contains.linearRingContainsXY(
+      return !linearRingContainsXY(
         flatCoordinates,
         offset,
         end,
@@ -6572,7 +6572,7 @@ function contains.linearRingContainsExtent(
  * @param {number} y Y.
  * @return {boolean} Contains (x, y).
  */
-function contains.linearRingContainsXY(
+function linearRingContainsXY(
   flatCoordinates,
   offset,
   end,
@@ -6626,12 +6626,12 @@ function linearRingsContainsXY(
   if (ends.length === 0) {
     return false;
   }
-  if (!contains.linearRingContainsXY(flatCoordinates, offset, ends[0], stride, x, y)) {
+  if (!linearRingContainsXY(flatCoordinates, offset, ends[0], stride, x, y)) {
     return false;
   }
   for (let i = 1, ii = ends.length; i < ii; ++i) {
     if (
-      contains.linearRingContainsXY(flatCoordinates, ends[i - 1], ends[i], stride, x, y)
+      linearRingContainsXY(flatCoordinates, ends[i - 1], ends[i], stride, x, y)
     ) {
       return false;
     }
@@ -6821,7 +6821,7 @@ function intersectsLinearRing(
     return true;
   }
   if (
-    contains.linearRingContainsXY(
+    linearRingContainsXY(
       flatCoordinates,
       offset,
       end,
@@ -6833,7 +6833,7 @@ function intersectsLinearRing(
     return true;
   }
   if (
-    contains.linearRingContainsXY(
+    linearRingContainsXY(
       flatCoordinates,
       offset,
       end,
@@ -6845,7 +6845,7 @@ function intersectsLinearRing(
     return true;
   }
   if (
-    contains.linearRingContainsXY(
+    linearRingContainsXY(
       flatCoordinates,
       offset,
       end,
@@ -6857,7 +6857,7 @@ function intersectsLinearRing(
     return true;
   }
   if (
-    contains.linearRingContainsXY(
+    linearRingContainsXY(
       flatCoordinates,
       offset,
       end,
@@ -6894,7 +6894,7 @@ function intersectsLinearRingArray(
   }
   for (let i = 1, ii = ends.length; i < ii; ++i) {
     if (
-      contains.linearRingContainsExtent(
+      linearRingContainsExtent(
         flatCoordinates,
         ends[i - 1],
         ends[i],
@@ -14401,7 +14401,7 @@ function zoomByDelta(view, delta, anchor, duration) {
   });
 }
 
-var Interaction$1 = Interaction;
+var Interaction["default"] = Interaction;
 
 /**
  * @module ol/interaction/DoubleClickZoom
@@ -14418,7 +14418,7 @@ var Interaction$1 = Interaction;
  * Allows the user to zoom by double-clicking on the map.
  * @api
  */
-class DoubleClickZoom extends Interaction$1 {
+class DoubleClickZoom extends Interaction["default"] {
   /**
    * @param {Options} [options] Options.
    */
@@ -14508,7 +14508,7 @@ var DoubleClickZoom$1 = DoubleClickZoom;
  * user function is called and returns `false`.
  * @api
  */
-class PointerInteraction extends Interaction$1 {
+class PointerInteraction extends Interaction["default"] {
   /**
    * @param {Options} [options] Options.
    */
@@ -14669,7 +14669,7 @@ function centroid(pointerEvents) {
   return {clientX: clientX / length, clientY: clientY / length};
 }
 
-var Pointer["default"] = PointerInteraction;
+var PointerInteraction$1 = PointerInteraction;
 
 /**
  * @module ol/events/condition
@@ -14768,7 +14768,7 @@ const always = functions.TRUE;
  * @param {import("../MapBrowserEvent.js").default} mapBrowserEvent Map browser event.
  * @return {boolean} The result.
  */
-const condition.mouseActionButton = function (mapBrowserEvent) {
+const mouseActionButton = function (mapBrowserEvent) {
   const originalEvent = /** @type {MouseEvent} */ (
     mapBrowserEvent.originalEvent
   );
@@ -14890,7 +14890,7 @@ const primaryAction = function (mapBrowserEvent) {
  * Allows the user to pan the map by dragging the map.
  * @api
  */
-class DragPan extends Pointer["default"] {
+class DragPan extends PointerInteraction$1 {
   /**
    * @param {Options} [options] Options.
    */
@@ -15067,7 +15067,7 @@ var DragPan$1 = DragPan;
  * This interaction is only supported for mouse devices.
  * @api
  */
-class DragRotate extends Pointer["default"] {
+class DragRotate extends PointerInteraction$1 {
   /**
    * @param {Options} [options] Options.
    */
@@ -15148,7 +15148,7 @@ class DragRotate extends Pointer["default"] {
     }
 
     if (
-      condition.mouseActionButton(mapBrowserEvent) &&
+      mouseActionButton(mapBrowserEvent) &&
       this.condition_(mapBrowserEvent)
     ) {
       const map = mapBrowserEvent.map;
@@ -15404,7 +15404,7 @@ class DragBoxEvent extends Event {
  * @fires DragBoxEvent
  * @api
  */
-class DragBox extends Pointer["default"] {
+class DragBox extends PointerInteraction$1 {
   /**
    * @param {Options} [options] Options.
    */
@@ -15454,7 +15454,7 @@ class DragBox extends Pointer["default"] {
      * @private
      * @type {import("../events/condition.js").Condition}
      */
-    this.condition_ = options.condition ? options.condition : condition.mouseActionButton;
+    this.condition_ = options.condition ? options.condition : mouseActionButton;
 
     /**
      * @private
@@ -15688,7 +15688,7 @@ var KeyCode = {
  * See also {@link module:ol/interaction/KeyboardZoom~KeyboardZoom}.
  * @api
  */
-class KeyboardPan extends Interaction$1 {
+class KeyboardPan extends Interaction["default"] {
   /**
    * @param {Options} [options] Options.
    */
@@ -15806,7 +15806,7 @@ var KeyboardPan$1 = KeyboardPan;
  * See also {@link module:ol/interaction/KeyboardPan~KeyboardPan}.
  * @api
  */
-class KeyboardZoom extends Interaction$1 {
+class KeyboardZoom extends Interaction["default"] {
   /**
    * @param {Options} [options] Options.
    */
@@ -15898,7 +15898,7 @@ var KeyboardZoom$1 = KeyboardZoom;
  * Allows the user to zoom the map by scrolling the mouse wheel.
  * @api
  */
-class MouseWheelZoom extends Interaction$1 {
+class MouseWheelZoom extends Interaction["default"] {
   /**
    * @param {Options} [options] Options.
    */
@@ -16175,7 +16175,7 @@ var MouseWheelZoom$1 = MouseWheelZoom;
  * on a touch screen.
  * @api
  */
-class PinchRotate extends Pointer["default"] {
+class PinchRotate extends PointerInteraction$1 {
   /**
    * @param {Options} [options] Options.
    */
@@ -16328,7 +16328,7 @@ var PinchRotate$1 = PinchRotate;
  * on a touch screen.
  * @api
  */
-class PinchZoom extends Pointer["default"] {
+class PinchZoom extends PointerInteraction$1 {
   /**
    * @param {Options} [options] Options.
    */

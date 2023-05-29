@@ -13,7 +13,15 @@ import { useMap } from "../../../hooks";
 import Button, { ButtonProps } from "../Button";
 
 interface MultiPointDrawButtonProps extends ButtonProps {
-  onEnd: (features: Feature<Geometry>[]) => void;
+  /**
+   * @description You can get Multipoint feature what was made by callback function.
+   */
+  onEnd?: (features: Feature<Geometry>[]) => void;
+
+  /**
+   * @default false
+   * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
+   */
   onCanvas?: boolean;
 }
 
@@ -57,11 +65,13 @@ export default function MultiPointDrawButton({
       layer: vectorLayerRef.current,
     });
     setFeatures([...features, feature]);
-    setPointCount((prev) => prev + 1);
+    setPointCount(prev => prev + 1);
   };
 
   const completeDrawing = () => {
-    onEnd(features);
+    if (onEnd) {
+      onEnd(features);
+    }
     setFeatures([]);
     map.removeInteraction(drawRef.current);
     setIsDrawing(false);

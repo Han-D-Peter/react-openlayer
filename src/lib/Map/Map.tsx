@@ -23,42 +23,49 @@ export interface MapProps {
   scrollWheelZoom?: boolean;
 
   /**
-   * default is 24
+   * @default 24
    */
   maxZoom?: number;
 
   /**
-   * default is 3
+   * @default 3
    */
   minZoom?: number;
   fullscreenControl?: boolean;
 
   /**
-   * default is true.
+   * @default true.
    */
   isZoomAbled?: boolean;
 
   /**
-   * default is true.
+   * @default true.
    */
   isRotateAbled?: boolean;
 
   /**
-   * default is [127.9745613, 37.3236563]
+   * @default [127.9745613, 37.3236563]
    */
   center?: Location;
 
   /**
-   * default is 15
+   * @default 15
    */
   defaultZoomLevel?: number;
 
   /**
-   * default is null
+   * @default null
    */
   bounds?: [Location, Location];
 
+  /**
+   * @default "1000px"
+   */
   height?: string;
+
+  /**
+   * @default "1000px"
+   */
   width?: string;
   children?: ReactNode;
 }

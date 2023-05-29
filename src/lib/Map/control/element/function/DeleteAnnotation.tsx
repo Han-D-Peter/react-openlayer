@@ -5,7 +5,6 @@ import { Select } from "ol/interaction";
 import useSelectAnnotation from "src/lib/Map/hooks/incontext/useSelectAnnotation";
 import { SelectEvent } from "ol/interaction/Select";
 import { FaEraser } from "react-icons/fa";
-import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 
 interface DeleteAnnotationProps extends ButtonProps {
@@ -20,7 +19,7 @@ export default function DeleteAnnotation(props: DeleteAnnotationProps) {
   const removeSelectedFeatures = (event: SelectEvent) => {
     const selectedFeatures = event.selected;
 
-    selectedFeatures.forEach((selectedFeature) => {
+    selectedFeatures.forEach(selectedFeature => {
       if (selectedFeature.getGeometry()) {
         const vectorSource = selectedFeature.getProperties()
           .source as VectorSource;

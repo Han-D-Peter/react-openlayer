@@ -1,13 +1,19 @@
-import { Children, ReactElement, cloneElement, useRef } from "react";
+import { Children, ReactElement, cloneElement } from "react";
 import Button from "../element/Button";
 
 interface ControlGroupProps {
-  children: ReactElement<typeof Button> | ReactElement<typeof Button>[];
+  children:
+    | ReactElement<typeof Button>
+    | (boolean | ReactElement<typeof Button>)[];
 }
 const ControlGroup = ({ children }: ControlGroupProps) => {
+  console.log("children", children);
   return (
     <div style={{ margin: "10px 0 10px 0 " }}>
       {Children.map(children, (child, index) => {
+        if (typeof child === "boolean" || child === null) {
+          return null;
+        }
         if (Children.count(children) === 1) {
           const props = { ...child.props, side: "solo" };
           return cloneElement(child, props);

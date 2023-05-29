@@ -5,8 +5,6 @@ import { useMap } from "../../../hooks";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
-import { makeText } from "../../../utils/object";
-import Icon from "ol/style/Icon";
 import { DrawEvent } from "ol/interaction/Draw";
 import Fill from "ol/style/Fill";
 import Text from "ol/style/Text";
@@ -14,10 +12,17 @@ import Stroke from "ol/style/Stroke";
 import { TbLetterT } from "react-icons/tb";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { features } from "process";
 
 interface TextDrawButtonProps extends ButtonProps {
-  onEnd: (feature: Feature<Geometry>) => void;
+  /**
+   * @description You can get Multipoint feature what was made by callback function.
+   */
+  onEnd?: (features: Feature<Geometry>) => void;
+
+  /**
+   * @default false
+   * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
+   */
   onCanvas?: boolean;
 }
 
@@ -84,7 +89,9 @@ export default function TextDrawButton({
       layer: vectorLayerRef.current,
     });
     map.removeInteraction(drawRef.current);
-    onEnd(feature);
+    if (onEnd) {
+      onEnd(feature);
+    }
   };
 
   useEffect(() => {

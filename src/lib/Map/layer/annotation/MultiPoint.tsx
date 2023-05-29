@@ -1,33 +1,21 @@
-import { ReactElement, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Coordinate } from "ol/coordinate";
-import Feature, { FeatureLike } from "ol/Feature";
+import Feature from "ol/Feature";
 import { ANNOTATION_COLOR } from "../../constants/color";
-import InnerText, { InnerTextProps } from "../../Text";
 import { useMap } from "../../hooks";
 import { MultiPoint, Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Circle, Fill, Icon, Stroke, Style, Text } from "ol/style";
+import { Circle, Fill, Stroke, Style } from "ol/style";
 import { makeText } from "../../utils/object";
 import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
+import { Annotation } from ".";
 
-interface CustomMultiPointProps {
+interface CustomMultiPointProps extends Annotation {
   positions: Coordinate[];
-  color?: keyof typeof ANNOTATION_COLOR;
-  properties?: { [key: string]: string | number };
-  onClick?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  onHover?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  zIndex?: number;
-  children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
 export default function CustomMultiPoint({
@@ -41,9 +29,7 @@ export default function CustomMultiPoint({
 }: CustomMultiPointProps) {
   const map = useMap();
   const annotationRef = useRef<Feature<MultiPoint>>(
-    new Feature(
-      new MultiPoint(positions.map((position) => fromLonLat(position)))
-    )
+    new Feature(new MultiPoint(positions.map(position => fromLonLat(position))))
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
 

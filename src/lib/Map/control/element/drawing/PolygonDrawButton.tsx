@@ -9,14 +9,21 @@ import { makeText } from "../../../utils/object";
 import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
-import { MdPolyline } from "react-icons/md";
 import Icon from "ol/style/Icon";
 import { TbPolygon } from "react-icons/tb";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 
 interface PolygonDrawButtonProps extends ButtonProps {
-  onEnd: (feature: Feature<Geometry>) => void;
+  /**
+   * @description You can get Multipoint feature what was made by callback function.
+   */
+  onEnd?: (features: Feature<Geometry>) => void;
+
+  /**
+   * @default false
+   * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
+   */
   onCanvas?: boolean;
 }
 
@@ -80,7 +87,9 @@ export default function PolygonDrawButton({
       layer: vectorLayerRef.current,
     });
     map.removeInteraction(drawRef.current);
-    onEnd(feature);
+    if (onEnd) {
+      onEnd(feature);
+    }
   };
 
   useEffect(() => {

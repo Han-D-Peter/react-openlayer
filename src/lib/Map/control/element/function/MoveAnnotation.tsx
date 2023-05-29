@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { useMap } from "src/lib/Map/hooks";
 import { Collection } from "ol";
 import { BiMove } from "react-icons/bi";
-import { ModifyEvent } from "ol/interaction/Modify";
 import { TranslateEvent } from "ol/interaction/Translate";
 
 interface MoveAnnotationProps extends ButtonProps {

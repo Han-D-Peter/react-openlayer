@@ -1,7 +1,5 @@
-import Feature, { FeatureLike } from "ol/Feature";
-import { ANNOTATION_COLOR } from "../../constants/color";
-import { ReactElement, useEffect, useRef } from "react";
-import InnerText, { InnerTextProps } from "../../Text";
+import Feature from "ol/Feature";
+import { useEffect, useRef } from "react";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import useMap from "../../hooks/incontext/useMap";
@@ -14,21 +12,10 @@ import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import Icon from "ol/style/Icon";
+import { Annotation } from ".";
 
-interface CustomMarkerProps {
+interface CustomMarkerProps extends Annotation {
   center: Coordinate;
-  color?: keyof typeof ANNOTATION_COLOR;
-  properties?: { [key: string]: string | number };
-  onClick?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  onHover?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  zIndex?: number;
-  children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
 const CustomMarker = ({

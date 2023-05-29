@@ -6,22 +6,24 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
 import { makeText } from "../../../utils/object";
-import {
-  DrawEvent,
-  createBox,
-  createRegularPolygon,
-} from "ol/interaction/Draw";
+import { DrawEvent, createBox } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
-import { MdPolyline } from "react-icons/md";
 import Icon from "ol/style/Icon";
 import { TbRectangle } from "react-icons/tb";
-import { Circle, Geometry, LineString, Polygon } from "ol/geom";
+import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { Coordinate } from "ol/coordinate";
 
 interface RectangleDrawButtonProps extends ButtonProps {
-  onEnd: (feature: Feature<Geometry>) => void;
+  /**
+   * @description You can get Multipoint feature what was made by callback function.
+   */
+  onEnd?: (features: Feature<Geometry>) => void;
+
+  /**
+   * @default false
+   * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
+   */
   onCanvas?: boolean;
 }
 
@@ -85,7 +87,9 @@ export default function RectangleDrawButton({
       layer: vectorLayerRef.current,
     });
     map.removeInteraction(drawRef.current);
-    onEnd(event.feature);
+    if (onEnd) {
+      onEnd(event.feature);
+    }
   };
 
   useEffect(() => {

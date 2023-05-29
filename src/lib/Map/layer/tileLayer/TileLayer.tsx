@@ -6,8 +6,20 @@ import { TileUrl } from "../../utils/utils";
 
 interface TileLayerProps {
   url: string;
+
+  /**
+   * @default 0
+   */
   zIndex?: number;
+
+  /**
+   * @default 42
+   */
   maxZoom?: number;
+
+  /**
+   * @default 0
+   */
   minZoom?: number;
   errorTileUrl?: string;
 }
@@ -24,7 +36,7 @@ const TileLayer = ({
     const customTmsSource = new XYZ({
       maxZoom,
       minZoom,
-      tileUrlFunction: (tileCoord) => {
+      tileUrlFunction: tileCoord => {
         const tileUrl = new TileUrl(url);
         const z = tileCoord[0];
         const x = tileCoord[1];

@@ -6,6 +6,11 @@ export interface ButtonProps {
   children?: ReactNode;
   isDisabled?: boolean;
   onClick?: () => void;
+
+  /**
+   * @default "middle"
+   * @description You can set this property for using buttons multiful. This property change css of button(border-radius)
+   */
   side?: "top" | "bottom" | "middle" | "solo";
   isActive?: boolean;
 }
@@ -44,9 +49,9 @@ const StyledButton = styled.button<{
   height: 30px;
   background: white;
   border: 1px solid #d9d9d9;
-  border-radius: ${(props) => getborderRadiusBySide(props.side)};
+  border-radius: ${props => getborderRadiusBySide(props.side)};
   &:hover {
-    border: 1px solid ${(props) => (props.isDisabled ? "#d9d9d9" : "#000000")};
+    border: 1px solid ${props => (props.isDisabled ? "#d9d9d9" : "#000000")};
   }
 `;
 

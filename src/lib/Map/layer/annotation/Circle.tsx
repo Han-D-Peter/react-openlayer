@@ -1,4 +1,4 @@
-import { ReactElement, forwardRef, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Feature } from "ol";
 import Circle from "ol/geom/Circle";
 import VectorLayer from "ol/layer/Vector";
@@ -7,32 +7,19 @@ import VectorSource from "ol/source/Vector";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import { fromLonLat } from "ol/proj";
-import { FeatureLike } from "ol/Feature";
 
 import useMap from "../../hooks/incontext/useMap";
 import { Location } from "../../Map";
 import { ANNOTATION_COLOR } from "../../constants/color";
-import InnerText, { InnerTextProps } from "../../Text";
 import { makeText } from "../../utils/object";
 import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
+import { Annotation } from ".";
 
-interface CustomCircleProps {
+interface CustomCircleProps extends Annotation {
   center: Location;
   radius: number;
-  color?: keyof typeof ANNOTATION_COLOR;
-  properties?: { [key: string]: string | number };
-  onClick?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  onHover?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  zIndex?: number;
-  children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
 const CustomCircle = ({

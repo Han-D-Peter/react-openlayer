@@ -1,8 +1,7 @@
 import { Coordinate } from "ol/coordinate";
 import { ANNOTATION_COLOR } from "../../constants/color";
-import Feature, { FeatureLike } from "ol/Feature";
-import { ReactElement, useEffect, useRef } from "react";
-import InnerText, { InnerTextProps } from "../../Text";
+import Feature from "ol/Feature";
+import { useEffect, useRef } from "react";
 import useMap from "../../hooks/incontext/useMap";
 import { Polygon } from "ol/geom";
 import { fromLonLat } from "ol/proj";
@@ -15,21 +14,10 @@ import VectorSource from "ol/source/Vector";
 import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
+import { Annotation } from ".";
 
-interface CustomPolygonProps {
+interface CustomPolygonProps extends Annotation {
   positions: Coordinate[][];
-  color?: keyof typeof ANNOTATION_COLOR;
-  properties?: Record<string, any>;
-  onClick?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  onHover?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  zIndex?: number;
-  children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
 const CustomPolygon = ({
@@ -44,7 +32,7 @@ const CustomPolygon = ({
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
     new Feature(
-      new Polygon([positions[0].map((position) => fromLonLat(position))])
+      new Polygon([positions[0].map(position => fromLonLat(position))])
     )
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);

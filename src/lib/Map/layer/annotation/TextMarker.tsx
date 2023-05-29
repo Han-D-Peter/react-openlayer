@@ -1,8 +1,6 @@
 import { Coordinate } from "ol/coordinate";
-import { ANNOTATION_COLOR } from "../../constants/color";
-import Feature, { FeatureLike } from "ol/Feature";
-import { ReactElement, useEffect, useRef } from "react";
-import InnerText, { InnerTextProps } from "../../Text";
+import Feature from "ol/Feature";
+import { useEffect, useRef } from "react";
 import Style from "ol/style/Style";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -15,21 +13,10 @@ import { fromLonLat } from "ol/proj";
 import Text from "ol/style/Text";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
+import { Annotation } from ".";
 
-interface TextMarkerProps {
+interface TextMarkerProps extends Annotation {
   center: Coordinate;
-  color?: keyof typeof ANNOTATION_COLOR;
-  properties?: Record<string, any>;
-  onClick?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  onHover?: (event: {
-    annotation: FeatureLike;
-    properties: Record<string, any>;
-  }) => void;
-  zIndex?: number;
-  children?: ReactElement<InnerTextProps, typeof InnerText>;
 }
 
 const TextMarker = ({
