@@ -36,21 +36,21 @@ export const getProfileFromFeature = (feature: FeatureLike) => {
   return null;
 };
 
-const getProfileFromMultiPoint = (feature: FeatureLike) => {
+export const getProfileFromMultiPoint = (feature: FeatureLike) => {
   const geometry = feature.getGeometry() as MultiPoint;
   return {
     positions: geometry.getCoordinates(),
     properties: geometry.getProperties(),
   };
 };
-const getProfileFromPoint = (feature: FeatureLike) => {
+export const getProfileFromPoint = (feature: FeatureLike) => {
   const geometry = feature.getGeometry() as Point;
   return {
     positions: geometry.getCoordinates(),
     properties: geometry.getProperties(),
   };
 };
-const getProfileFromPolyline = (feature: FeatureLike) => {
+export const getProfileFromPolyline = (feature: FeatureLike) => {
   const geometry = feature.getGeometry() as LineString;
   return {
     positions: geometry.getCoordinates(),
@@ -58,7 +58,7 @@ const getProfileFromPolyline = (feature: FeatureLike) => {
   };
 };
 
-const getProfileFromPolygon = (feature: FeatureLike) => {
+export const getProfileFromPolygon = (feature: FeatureLike) => {
   const geometry = feature.getGeometry() as Polygon;
   return {
     positions: geometry.getCoordinates(),

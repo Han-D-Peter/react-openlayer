@@ -1,13 +1,11 @@
-// interface FullScreenProps {}
-
+import styled from "@emotion/styled";
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks";
 import { FullScreen } from "ol/control";
 import { BsFullscreenExit, BsArrowsFullscreen } from "react-icons/bs";
 import ControlGroup from "./layout/ControlGroup";
 import Button from "./element/Button";
-import { useEffectIfMounted } from "../hooks/useEffectIfMounted";
-import styled from "@emotion/styled";
+import useEffectIfMounted from "../hooks/useEffectIfMounted";
 
 const InnerButton = styled.div`
   width: 100%;
