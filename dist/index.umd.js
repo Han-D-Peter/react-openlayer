@@ -21,33 +21,6 @@
     var GeoJSON__default = /*#__PURE__*/_interopDefaultLegacy(GeoJSON);
     var concat__default = /*#__PURE__*/_interopDefaultLegacy(concat);
 
-    const ANNOTATION_COLOR = {
-      RED: {
-        fill: "rgba(248, 7, 1, 0.3)",
-        stroke: "rgb(248, 7, 1)"
-      },
-      YELLOW: {
-        fill: "rgba(255, 254, 0, 0.3)",
-        stroke: "rgb(255, 254, 0)"
-      },
-      GREEN: {
-        fill: "rgba(30, 128, 0, 0.3)",
-        stroke: "rgb(30, 128, 0)"
-      },
-      SKYBLUE: {
-        fill: "rgba(135, 206, 235, 0.3)",
-        stroke: "rgb(135, 206, 235)"
-      },
-      BLUE: {
-        fill: "rgba(2, 26, 255, 0.3)",
-        stroke: "rgb(2, 26, 255)"
-      },
-      BROWN: {
-        fill: "rgba(165, 42, 42, 0.3)",
-        stroke: "rgb(165, 42, 42)"
-      }
-    };
-
     /******************************************************************************
     Copyright (c) Microsoft Corporation.
 
@@ -156,6 +129,33 @@
     }function TbRectangle (props) {
       return GenIcon({"tag":"svg","attr":{"viewBox":"0 0 24 24","strokeWidth":"2","stroke":"currentColor","fill":"none","strokeLinecap":"round","strokeLinejoin":"round"},"child":[{"tag":"path","attr":{"stroke":"none","d":"M0 0h24v24H0z","fill":"none"}},{"tag":"path","attr":{"d":"M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"}}]})(props);
     }
+
+    const ANNOTATION_COLOR = {
+      RED: {
+        fill: "rgba(248, 7, 1, 0.3)",
+        stroke: "rgb(248, 7, 1)"
+      },
+      YELLOW: {
+        fill: "rgba(255, 254, 0, 0.3)",
+        stroke: "rgb(255, 254, 0)"
+      },
+      GREEN: {
+        fill: "rgba(30, 128, 0, 0.3)",
+        stroke: "rgb(30, 128, 0)"
+      },
+      SKYBLUE: {
+        fill: "rgba(135, 206, 235, 0.3)",
+        stroke: "rgb(135, 206, 235)"
+      },
+      BLUE: {
+        fill: "rgba(2, 26, 255, 0.3)",
+        stroke: "rgb(2, 26, 255)"
+      },
+      BROWN: {
+        fill: "rgba(165, 42, 42, 0.3)",
+        stroke: "rgb(165, 42, 42)"
+      }
+    };
 
     const MapContext = React.createContext(null);
 
@@ -391,7 +391,9 @@
         setPointCount(prev => prev + 1);
       };
       const completeDrawing = () => {
-        onEnd(features);
+        if (onEnd) {
+          onEnd(features);
+        }
         setFeatures([]);
         map.removeInteraction(drawRef.current);
         setIsDrawing(false);
@@ -545,7 +547,9 @@
           layer: vectorLayerRef.current
         });
         map.removeInteraction(drawRef.current);
-        onEnd(feature);
+        if (onEnd) {
+          onEnd(feature);
+        }
       };
       React.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -631,7 +635,9 @@
           layer: vectorLayerRef.current
         });
         map.removeInteraction(drawRef.current);
-        onEnd(feature);
+        if (onEnd) {
+          onEnd(feature);
+        }
       };
       React.useEffect(() => {
         const vectorLayer = new VectorLayer__default["default"]({
@@ -726,7 +732,9 @@
           layer: vectorLayerRef.current
         });
         map.removeInteraction(drawRef.current);
-        onEnd(feature);
+        if (onEnd) {
+          onEnd(feature);
+        }
       };
       React.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -812,7 +820,9 @@
           layer: vectorLayerRef.current
         });
         map.removeInteraction(drawRef.current);
-        onEnd(event.feature);
+        if (onEnd) {
+          onEnd(event.feature);
+        }
       };
       React.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -900,7 +910,9 @@
           layer: vectorLayerRef.current
         });
         map.removeInteraction(drawRef.current);
-        onEnd(feature);
+        if (onEnd) {
+          onEnd(feature);
+        }
       };
       React.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -5556,7 +5568,7 @@
       return /** @type {number} */ (stride);
     }
 
-    var SimpleGeometry$1 = SimpleGeometry;
+    var SimpleGeometry["default"] = SimpleGeometry;
 
     /**
      * @module ol/geom/flat/closest
@@ -6233,7 +6245,7 @@
      *
      * @api
      */
-    class LinearRing extends SimpleGeometry$1 {
+    class LinearRing extends SimpleGeometry["default"] {
       /**
        * @param {Array<import("../coordinate.js").Coordinate>|Array<number>} coordinates Coordinates.
        *     For internal use, flat coordinates in combination with `layout` are also accepted.
@@ -6414,7 +6426,7 @@
      *
      * @api
      */
-    class Point$1 extends SimpleGeometry$1 {
+    class Point$1 extends SimpleGeometry["default"] {
       /**
        * @param {import("../coordinate.js").Coordinate} coordinates Coordinates.
        * @param {import("./Geometry.js").GeometryLayout} [layout] Layout.
@@ -6611,7 +6623,7 @@
      * @param {number} y Y.
      * @return {boolean} Contains (x, y).
      */
-    function linearRingsContainsXY(
+    function contains.linearRingsContainsXY(
       flatCoordinates,
       offset,
       ends,
@@ -6692,7 +6704,7 @@
         const segmentLength = Math.abs(x2 - x1);
         if (segmentLength > maxSegmentLength) {
           x = (x1 + x2) / 2;
-          if (linearRingsContainsXY(flatCoordinates, offset, ends, stride, x, y)) {
+          if (contains.linearRingsContainsXY(flatCoordinates, offset, ends, stride, x, y)) {
             pointX = x;
             maxSegmentLength = segmentLength;
           }
@@ -7060,7 +7072,7 @@
      *
      * @api
      */
-    class Polygon["default"] extends SimpleGeometry$1 {
+    class Polygon["default"] extends SimpleGeometry["default"] {
       /**
        * @param {!Array<Array<import("../coordinate.js").Coordinate>>|!Array<number>} coordinates
        *     Array of linear rings that define the polygon. The first linear ring of the
@@ -7206,7 +7218,7 @@
        * @return {boolean} Contains (x, y).
        */
       containsXY(x, y) {
-        return linearRingsContainsXY(
+        return contains.linearRingsContainsXY(
           this.getOrientedFlatCoordinates(),
           0,
           this.ends_,
@@ -14665,7 +14677,7 @@
       return {clientX: clientX / length, clientY: clientY / length};
     }
 
-    var PointerInteraction$1 = PointerInteraction;
+    var Pointer["default"] = PointerInteraction;
 
     /**
      * @module ol/events/condition
@@ -14764,7 +14776,7 @@
      * @param {import("../MapBrowserEvent.js").default} mapBrowserEvent Map browser event.
      * @return {boolean} The result.
      */
-    const mouseActionButton = function (mapBrowserEvent) {
+    const condition.mouseActionButton = function (mapBrowserEvent) {
       const originalEvent = /** @type {MouseEvent} */ (
         mapBrowserEvent.originalEvent
       );
@@ -14886,7 +14898,7 @@
      * Allows the user to pan the map by dragging the map.
      * @api
      */
-    class DragPan extends PointerInteraction$1 {
+    class DragPan extends Pointer["default"] {
       /**
        * @param {Options} [options] Options.
        */
@@ -15063,7 +15075,7 @@
      * This interaction is only supported for mouse devices.
      * @api
      */
-    class DragRotate extends PointerInteraction$1 {
+    class DragRotate extends Pointer["default"] {
       /**
        * @param {Options} [options] Options.
        */
@@ -15144,7 +15156,7 @@
         }
 
         if (
-          mouseActionButton(mapBrowserEvent) &&
+          condition.mouseActionButton(mapBrowserEvent) &&
           this.condition_(mapBrowserEvent)
         ) {
           const map = mapBrowserEvent.map;
@@ -15400,7 +15412,7 @@
      * @fires DragBoxEvent
      * @api
      */
-    class DragBox extends PointerInteraction$1 {
+    class DragBox extends Pointer["default"] {
       /**
        * @param {Options} [options] Options.
        */
@@ -15450,7 +15462,7 @@
          * @private
          * @type {import("../events/condition.js").Condition}
          */
-        this.condition_ = options.condition ? options.condition : mouseActionButton;
+        this.condition_ = options.condition ? options.condition : condition.mouseActionButton;
 
         /**
          * @private
@@ -16171,7 +16183,7 @@
      * on a touch screen.
      * @api
      */
-    class PinchRotate extends PointerInteraction$1 {
+    class PinchRotate extends Pointer["default"] {
       /**
        * @param {Options} [options] Options.
        */
@@ -16324,7 +16336,7 @@
      * on a touch screen.
      * @api
      */
-    class PinchZoom extends PointerInteraction$1 {
+    class PinchZoom extends Pointer["default"] {
       /**
        * @param {Options} [options] Options.
        */
@@ -18455,12 +18467,16 @@
     const ControlGroup = ({
       children
     }) => {
+      console.log("children", children);
       return jsxRuntime.jsx("div", Object.assign({
         style: {
           margin: "10px 0 10px 0 "
         }
       }, {
         children: React.Children.map(children, (child, index) => {
+          if (typeof child === "boolean" || child === null) {
+            return null;
+          }
           if (React.Children.count(children) === 1) {
             const props = Object.assign(Object.assign({}, child.props), {
               side: "solo"
@@ -18651,14 +18667,15 @@
     };
 
     function DrawingTools({
-      marker,
-      polyline,
-      rectangle,
-      polygon,
-      text,
-      edit,
-      movement,
-      remove,
+      multiMarker = true,
+      marker = true,
+      polyline = true,
+      rectangle = true,
+      polygon = true,
+      text = true,
+      edit = true,
+      movement = true,
+      remove = true,
       onCanvas = false,
       onDrawEnd
     }) {
@@ -18679,42 +18696,42 @@
       };
       return jsxRuntime.jsxs(jsxRuntime.Fragment, {
         children: [jsxRuntime.jsxs(ControlGroup, {
-          children: [jsxRuntime.jsx(MultiPointDrawButton, {
+          children: [multiMarker && jsxRuntime.jsx(MultiPointDrawButton, {
             isActive: isSelected === 0,
             onEnd: endDrawing,
             onClick: () => {
               switchControl(0);
             },
             onCanvas: onCanvas
-          }), jsxRuntime.jsx(PointDrawButton, {
+          }), marker && jsxRuntime.jsx(PointDrawButton, {
             isActive: isSelected === 1,
             onEnd: endDrawing,
             onClick: () => {
               switchControl(1);
             },
             onCanvas: onCanvas
-          }), jsxRuntime.jsx(PolylineDrawButton, {
+          }), polyline && jsxRuntime.jsx(PolylineDrawButton, {
             isActive: isSelected === 2,
             onClick: () => {
               switchControl(2);
             },
             onEnd: endDrawing,
             onCanvas: onCanvas
-          }), jsxRuntime.jsx(RectangleDrawButton, {
+          }), rectangle && jsxRuntime.jsx(RectangleDrawButton, {
             isActive: isSelected === 3,
             onClick: () => {
               switchControl(3);
             },
             onEnd: endDrawing,
             onCanvas: onCanvas
-          }), jsxRuntime.jsx(PolygonDrawButton, {
+          }), polygon && jsxRuntime.jsx(PolygonDrawButton, {
             isActive: isSelected === 4,
             onClick: () => {
               switchControl(4);
             },
             onEnd: endDrawing,
             onCanvas: onCanvas
-          }), jsxRuntime.jsx(TextDrawButton, {
+          }), text && jsxRuntime.jsx(TextDrawButton, {
             isActive: isSelected === 5,
             onClick: () => {
               switchControl(5);
@@ -18723,17 +18740,17 @@
             onCanvas: onCanvas
           })]
         }), jsxRuntime.jsxs(ControlGroup, {
-          children: [jsxRuntime.jsx(ModifyAnnotation, {
+          children: [edit && jsxRuntime.jsx(ModifyAnnotation, {
             isActive: isSelected === 6,
             onClick: () => {
               switchControl(6);
             }
-          }), jsxRuntime.jsx(MoveAnnotation, {
+          }), movement && jsxRuntime.jsx(MoveAnnotation, {
             isActive: isSelected === 7,
             onClick: () => {
               switchControl(7);
             }
-          }), jsxRuntime.jsx(DeleteAnnotation, {
+          }), remove && jsxRuntime.jsx(DeleteAnnotation, {
             isActive: isSelected === 8,
             onClick: () => {
               switchControl(8);
@@ -22987,7 +23004,7 @@
     }
 
     var names$t = ["Fast_Transverse_Mercator", "Fast Transverse Mercator"];
-    var tmerc["default"] = {
+    var tmerc = {
       init: init$t,
       forward: forward$s,
       inverse: inverse$s,
@@ -23099,9 +23116,9 @@
       }
       if (this.approx) {
         // When '+approx' is set, use tmerc instead
-        tmerc["default"].init.apply(this);
-        this.forward = tmerc["default"].forward;
-        this.inverse = tmerc["default"].inverse;
+        tmerc.init.apply(this);
+        this.forward = tmerc.forward;
+        this.inverse = tmerc.inverse;
       }
 
       this.x0 = this.x0 !== undefined ? this.x0 : 0;
@@ -23247,7 +23264,7 @@
     }
 
     var names$s = ["Extended_Transverse_Mercator", "Extended Transverse Mercator", "etmerc", "Transverse_Mercator", "Transverse Mercator", "tmerc"];
-    var etmerc = {
+    var etmerc["default"] = {
       init: init$s,
       forward: forward$r,
       inverse: inverse$r,
@@ -23281,9 +23298,9 @@
       this.y0 = this.utmSouth ? 10000000 : 0;
       this.k0 = 0.9996;
 
-      etmerc.init.apply(this);
-      this.forward = etmerc.forward;
-      this.inverse = etmerc.inverse;
+      etmerc["default"].init.apply(this);
+      this.forward = etmerc["default"].forward;
+      this.inverse = etmerc["default"].inverse;
     }
 
     var names$r = ["Universal Transverse Mercator System", "utm"];
@@ -26933,8 +26950,8 @@
     };
 
     function includedProjections(proj4){
-      proj4.Proj.projections.add(tmerc["default"]);
-      proj4.Proj.projections.add(etmerc);
+      proj4.Proj.projections.add(tmerc);
+      proj4.Proj.projections.add(etmerc["default"]);
       proj4.Proj.projections.add(utm);
       proj4.Proj.projections.add(sterea);
       proj4.Proj.projections.add(stere);
@@ -27106,7 +27123,6 @@
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     }
 
-    exports.ANNOTATION_COLOR = ANNOTATION_COLOR;
     exports.Button = Button;
     exports.CompassWheel = CompassWheel;
     exports.ControlGroup = ControlGroup;

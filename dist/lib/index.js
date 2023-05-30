@@ -2,7 +2,6 @@
 
 Object.defineProperty(exports, '__esModule', { value: true });
 
-var color = require('./Map/constants/color.js');
 var MultiPointDrawButton = require('./Map/control/element/drawing/MultiPointDrawButton.js');
 var PointDrawButton = require('./Map/control/element/drawing/PointDrawButton.js');
 var PolygonDrawButton = require('./Map/control/element/drawing/PolygonDrawButton.js');
@@ -43,7 +42,6 @@ var Text = require('./Map/Text.js');
 
 
 
-exports.ANNOTATION_COLOR = color.ANNOTATION_COLOR;
 exports.MultiPointDrawButton = MultiPointDrawButton;
 exports.PointDrawButton = PointDrawButton;
 exports.PolygonDrawButton = PolygonDrawButton;

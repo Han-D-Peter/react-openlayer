@@ -1,11 +1,11 @@
 {
   "name": "react-openlayer",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "author": {
     "name": "Han-D-Peter",
     "email": "jaesung.sound@gmail.com"
   },
-  "private": true,
+  "private": false,
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "browser": "dist/index.umd.js",
