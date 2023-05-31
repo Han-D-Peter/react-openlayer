@@ -4,8 +4,8 @@ import { Translate } from "ol/interaction";
 import { useCallback, useEffect, useRef } from "react";
 import { useMap } from "src/lib/Map/hooks";
 import { Collection } from "ol";
-import { BiMove } from "react-icons/bi";
 import { TranslateEvent } from "ol/interaction/Translate";
+import { MovementIcon } from "src/lib/Map/constants/icons/MovementIcon";
 
 interface MoveAnnotationProps extends ButtonProps {
   onChange?: (e: TranslateEvent) => void;
@@ -42,7 +42,7 @@ export default function MoveAnnotation(props: MoveAnnotationProps) {
 
   return (
     <Button {...props}>
-      <BiMove />
+      <MovementIcon />
     </Button>
   );
 }

@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks";
 import { FullScreen } from "ol/control";
-import { BsFullscreenExit, BsArrowsFullscreen } from "react-icons/bs";
 import ControlGroup from "./layout/ControlGroup";
 import Button from "./element/Button";
 import useEffectIfMounted from "../hooks/useEffectIfMounted";
@@ -71,7 +70,14 @@ const FullScreenFeature = () => {
     <ControlGroup>
       <Button ref={ref} onClick={toggleFullScreen}>
         <InnerButton>
-          {isFull ? <BsFullscreenExit /> : <BsArrowsFullscreen />}
+          {isFull ? (
+            <img
+              src="/mapicon/fullScreenExit.svg"
+              alt="exit full screen button"
+            />
+          ) : (
+            <img src="/mapicon/fullScreenIcon.svg" alt="full screen button" />
+          )}
         </InnerButton>
       </Button>
     </ControlGroup>

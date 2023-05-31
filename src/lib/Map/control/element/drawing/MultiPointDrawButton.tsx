@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { TbMapPins } from "react-icons/tb";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -11,6 +10,7 @@ import { Text, Fill, Stroke, Circle } from "ol/style";
 import { ANNOTATION_COLOR } from "src/lib/Map/constants/color";
 import { useMap } from "../../../hooks";
 import Button, { ButtonProps } from "../Button";
+import { MultiPointIcon } from "src/lib/Map/constants/icons/MultiPointIcon";
 
 interface MultiPointDrawButtonProps extends ButtonProps {
   /**
@@ -65,7 +65,7 @@ export default function MultiPointDrawButton({
       layer: vectorLayerRef.current,
     });
     setFeatures([...features, feature]);
-    setPointCount(prev => prev + 1);
+    setPointCount((prev) => prev + 1);
   };
 
   const completeDrawing = () => {
@@ -143,7 +143,7 @@ export default function MultiPointDrawButton({
       }}
       {...props}
     >
-      <TbMapPins />
+      <MultiPointIcon />
     </Button>
   );
 }

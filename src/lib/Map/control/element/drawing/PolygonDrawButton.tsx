@@ -10,9 +10,9 @@ import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
-import { TbPolygon } from "react-icons/tb";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
+import { PolygonIcon } from "src/lib/Map/constants/icons/PolygonIcon";
 
 interface PolygonDrawButtonProps extends ButtonProps {
   /**
@@ -121,7 +121,7 @@ export default function PolygonDrawButton({
 
   return (
     <Button onClick={startDrawing} {...props}>
-      <TbPolygon />
+      <PolygonIcon />
     </Button>
   );
 }

@@ -9,10 +9,10 @@ import { makeText } from "../../../utils/object";
 import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
-import { MdPolyline } from "react-icons/md";
 import Icon from "ol/style/Icon";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+import { PolylineIcon } from "src/lib/Map/constants/icons/PolylineIcon";
 
 interface PolylineDrawButtonProps extends ButtonProps {
   /**
@@ -117,7 +117,7 @@ export default function PolylineDrawButton({
 
   return (
     <Button onClick={startDrawing} {...props}>
-      <MdPolyline />
+      <PolylineIcon />
     </Button>
   );
 }

@@ -1,4 +1,3 @@
-import { FaMapMarkerAlt } from "react-icons/fa";
 import Button, { ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
@@ -11,6 +10,7 @@ import Icon from "ol/style/Icon";
 import { DrawEvent } from "ol/interaction/Draw";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+import { PointIcon } from "src/lib/Map/constants/icons/PointIcon";
 
 interface PointDrawButtonProps extends ButtonProps {
   /**
@@ -113,7 +113,7 @@ export default function PointDrawButton({
 
   return (
     <Button onClick={startDrawing} {...props}>
-      <FaMapMarkerAlt />
+      <PointIcon />
     </Button>
   );
 }

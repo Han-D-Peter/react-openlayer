@@ -1,11 +1,17 @@
 {
-  "name": "react-openlayer",
+  "name": "react-openlayers7",
   "version": "0.1.2",
   "author": {
     "name": "Han-D-Peter",
     "email": "jaesung.sound@gmail.com"
   },
-  "private": false,
+  "description": "React Component for using openlayers7",
+  "license": "MIT",
+  "keywords": [
+    "openlayers7",
+    "react-component",
+    "react-openlayer"
+  ],
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "browser": "dist/index.umd.js",
@@ -14,8 +20,8 @@
     "lodash": "^4.17.21",
     "ol": "^7.3.0",
     "proj4": "^2.9.0",
-    "react-icons": "^4.8.0",
-    "react-scripts": "5.0.1"
+    "react-scripts": "5.0.1",
+    "tslib": "^2.5.0"
   },
   "peerDependencies": {
     "@emotion/react": "^11.11.0",
@@ -27,6 +33,7 @@
     "@babel/core": "^7.21.4",
     "@babel/plugin-transform-modules-commonjs": "^7.21.2",
     "@babel/preset-env": "^7.21.4",
+    "@rollup/plugin-alias": "^5.0.0",
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
@@ -42,6 +49,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "react-test-renderer": "^18.2.0",
+    "rollup-plugin-alias": "^2.2.0",
     "rollup-plugin-peer-deps-external": "^2.2.4",
     "rollup-plugin-postcss": "^4.0.2",
     "typescript": "^4.9.5",

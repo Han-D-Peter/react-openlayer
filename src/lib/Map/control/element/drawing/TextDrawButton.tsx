@@ -9,9 +9,9 @@ import { DrawEvent } from "ol/interaction/Draw";
 import Fill from "ol/style/Fill";
 import Text from "ol/style/Text";
 import Stroke from "ol/style/Stroke";
-import { TbLetterT } from "react-icons/tb";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+import { TextIcon } from "src/lib/Map/constants/icons/TextIcon";
 
 interface TextDrawButtonProps extends ButtonProps {
   /**
@@ -120,7 +120,7 @@ export default function TextDrawButton({
 
   return (
     <Button onClick={startDrawing} {...props}>
-      <TbLetterT />
+      <TextIcon />
     </Button>
   );
 }

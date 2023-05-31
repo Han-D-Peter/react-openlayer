@@ -1,9 +1,9 @@
 import Button from "./element/Button";
 import ControlGroup from "./layout/ControlGroup";
-import { IoAddSharp } from "react-icons/io5";
-import { AiOutlineMinus } from "react-icons/ai";
 import { useMap } from "../hooks";
 import { useEffect, useState } from "react";
+import { ZoomIn } from "../constants/icons/ZoomIn";
+import { ZoomOut } from "../constants/icons/ZoomOut";
 
 const ZoomFeature = () => {
   const map = useMap();
@@ -49,13 +49,10 @@ const ZoomFeature = () => {
   return (
     <ControlGroup>
       <Button onClick={zoomIn} isDisabled={!isAbledZoomIn}>
-        <IoAddSharp size={18} color={isAbledZoomIn ? "black" : "#e2e2e2"} />
+        <ZoomIn size={18} color={isAbledZoomIn ? "black" : "#e2e2e2"} />
       </Button>
       <Button onClick={zoomOut} isDisabled={!isAbledZoomOut}>
-        <AiOutlineMinus
-          size={18}
-          color={isAbledZoomOut ? "black" : "#e2e2e2"}
-        />
+        <ZoomOut size={18} color={isAbledZoomOut ? "black" : "#e2e2e2"} />
       </Button>
     </ControlGroup>
   );

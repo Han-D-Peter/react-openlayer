@@ -1,13 +1,12 @@
-import { AiOutlineEdit } from "react-icons/ai";
 import Button, { ButtonProps } from "../Button";
 import useSelectAnnotation from "src/lib/Map/hooks/incontext/useSelectAnnotation";
 import { useCallback, useEffect, useRef } from "react";
 import { Modify } from "ol/interaction";
 import { doubleClick } from "ol/events/condition";
-
 import { Collection } from "ol";
 import { useMap } from "src/lib/Map/hooks";
 import { ModifyEvent } from "ol/interaction/Modify";
+import { ModifyIcon } from "src/lib/Map/constants/icons/ModifyIcon";
 
 interface ModifyAnnotationProps extends ButtonProps {
   onChange?: (e: ModifyEvent) => void;
@@ -55,7 +54,7 @@ export default function ModifyAnnotation(props: ModifyAnnotationProps) {
 
   return (
     <Button {...props}>
-      <AiOutlineEdit />
+      <ModifyIcon />
     </Button>
   );
 }

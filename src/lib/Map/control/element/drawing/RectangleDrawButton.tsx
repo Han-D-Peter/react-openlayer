@@ -10,9 +10,9 @@ import { DrawEvent, createBox } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
-import { TbRectangle } from "react-icons/tb";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+import { RectangleIcon } from "src/lib/Map/constants/icons/RectangleIcon";
 
 interface RectangleDrawButtonProps extends ButtonProps {
   /**
@@ -118,7 +118,7 @@ export default function RectangleDrawButton({
 
   return (
     <Button onClick={startDrawing} {...props}>
-      <TbRectangle />
+      <RectangleIcon />
     </Button>
   );
 }

@@ -7,25 +7,29 @@ import postcss from 'rollup-plugin-postcss';
 
 const extensions = [ 'js', 'jsx', 'ts', 'tsx', 'mjs' ];
 const pkg = require('./package.json')
-const config = [
-    {
+const config = {
         input: './src/lib/index.ts',
         output: [
             {
                 dir: './dist',
                 format: 'cjs',
-                preserveModules: true,
-                preserveModulesRoot: 'src'
+                sourcemap: true,
             },
             {
                 file: pkg.module,
-                format: 'es'
+                format: 'esm',
+                sourcemap: true,
             }
             ,
             {
                 name: pkg.name,
                 file: pkg.browser,
-                format: 'umd'
+                format: 'umd',
+                sourcemap: true,
+                globals: {
+                    react: 'React',
+                    'react-dom': 'ReactDOM',
+                },
             }
         ],
         plugins: [
@@ -33,13 +37,16 @@ const config = [
             babel({
                 exclude: 'node_modules/**',
                 extensions,
-                include: [ 'src/lib/**/*' ]
+                babelHelpers: 'bundled',
             }),
-            commonjs({ include: 'node_modules/**' }),
+            commonjs(),
             peerDepsExternal(),
             typescript({ tsconfig: './tsconfig.json' }),
-            postcss({ extract: true })
-        ]
-    }
-];
+            postcss({ 
+                extract: true,      
+            })
+        ],
+        external: ['react', 'react-dom'],
+    };
+
 export default config;
