@@ -10,6 +10,9 @@ import LayerGroup from "./lib/Map/layer/LayerGroup";
 import DrawingTools from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";
 import CustomMultiPoint from "./lib/Map/layer/annotation/MultiPoint";
+import { icon } from "./lib";
+
+icon.marker = "images/marker-icon.png";
 
 function App() {
   const [isShown, setIsShown] = useState(true);

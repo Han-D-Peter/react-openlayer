@@ -1,9 +1,17 @@
-export function CompassIcon() {
+export function CompassIcon({
+  width,
+  height,
+  draggable = false,
+}: {
+  width: number;
+  height: number;
+  draggable?: boolean;
+}) {
   return (
-    <div>
+    <div draggable={draggable}>
       <svg
-        width="162"
-        height="162"
+        width={width}
+        height={height}
         viewBox="0 0 162 162"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

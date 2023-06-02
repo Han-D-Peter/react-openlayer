@@ -5,7 +5,7 @@ import { fromLonLat } from "ol/proj";
 import useMap from "../../hooks/incontext/useMap";
 import { Coordinate } from "ol/coordinate";
 import Style from "ol/style/Style";
-import { makeText } from "../../utils/object";
+import { icon, makeText } from "../../utils/object";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Select } from "ol/interaction";
@@ -50,7 +50,7 @@ const CustomMarker = ({
           isMarker: true,
         }),
         image: new Icon({
-          src: "mapicon/marker-icon.png", // 마커 이미지 경로
+          src: icon.marker, // 마커 이미지 경로
           anchor: [0.5, 1], // 마커 이미지의 앵커 위치
         }),
       })

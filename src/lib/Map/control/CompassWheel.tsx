@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import useMap from "../hooks/incontext/useMap";
 import { Control } from "ol/control";
 import { useMapRotation } from "../hooks";
+import { CompassIcon } from "../constants/icons/CompassIcon";
 
 type Size = "sm" | "md" | "lg";
 
@@ -28,6 +29,7 @@ const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
     if (size === "lg") {
       return 200;
     }
+    return 100;
   };
 
   const handleMouseDown = () => {
@@ -95,9 +97,7 @@ const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
             alignItems: "center",
           }}
         >
-          <img
-            src="mapicon/compass.png"
-            alt="compass"
+          <CompassIcon
             draggable={false}
             height={compassSize(size)}
             width={compassSize(size)}

@@ -5,7 +5,7 @@ import { useMap } from "../../../hooks";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
-import { makeText } from "../../../utils/object";
+import { icon, makeText } from "../../../utils/object";
 import Icon from "ol/style/Icon";
 import { DrawEvent } from "ol/interaction/Draw";
 import { Geometry } from "ol/geom";
@@ -46,7 +46,7 @@ export default function PointDrawButton({
           isMarker: true,
         }),
         image: new Icon({
-          src: "mapicon/marker-icon.png", // 마커 이미지 경로
+          src: icon.marker, // 마커 이미지 경로
           anchor: [0.5, 1], // 마커 이미지의 앵커 위치
         }),
       }),
@@ -71,7 +71,7 @@ export default function PointDrawButton({
           isMarker: true,
         }),
         image: new Icon({
-          src: "mapicon/marker-icon.png", // 마커 이미지 경로
+          src: icon.marker, // 마커 이미지 경로
           anchor: [0.5, 1], // 마커 이미지의 앵커 위치
         }),
       })

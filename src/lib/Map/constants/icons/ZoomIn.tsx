@@ -15,9 +15,9 @@ export function ZoomIn({ color = "black", size = 18 }: SVGProps) {
       >
         <path
           fill="none"
-          stroke-linecap="square"
-          stroke-linejoin="round"
-          stroke-width="32"
+          strokeLinecap="square"
+          strokeLinejoin="round"
+          strokeWidth="32"
           d="M256 112v288m144-144H112"
         ></path>
       </svg>

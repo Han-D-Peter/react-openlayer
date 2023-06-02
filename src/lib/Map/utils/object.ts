@@ -10,6 +10,10 @@ type makeTextArgs = {
   isMarker?: boolean;
 };
 
+export const icon = {
+  marker: "",
+};
+
 export const makeText = ({
   text = "",
   size = 15,

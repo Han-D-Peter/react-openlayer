@@ -5,6 +5,8 @@ import { FullScreen } from "ol/control";
 import ControlGroup from "./layout/ControlGroup";
 import Button from "./element/Button";
 import useEffectIfMounted from "../hooks/useEffectIfMounted";
+import { FullScreenIcon } from "../constants/icons/FullScreenIcon";
+import { FullScreenExitIcon } from "../constants/icons/FullScreenExitIcon";
 
 const InnerButton = styled.div`
   width: 100%;
@@ -71,12 +73,9 @@ const FullScreenFeature = () => {
       <Button ref={ref} onClick={toggleFullScreen}>
         <InnerButton>
           {isFull ? (
-            <img
-              src="mapicon/fullScreenExit.svg"
-              alt="exit full screen button"
-            />
+            <FullScreenExitIcon size={16} />
           ) : (
-            <img src="mapicon/fullScreenIcon.svg" alt="full screen button" />
+            <FullScreenIcon size={16} />
           )}
         </InnerButton>
       </Button>
