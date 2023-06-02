@@ -284,10 +284,10 @@ function MultiPointIcon({
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "none",
-      "stroke-width": "2",
+      strokeWidth: "2",
       viewBox: "0 0 24 24",
-      "stroke-linecap": "round",
-      "stroke-linejoin": "round",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
       color: `${color}`,
       height: `${size}`,
       width: `${size}`,
@@ -449,7 +449,7 @@ function PointIcon({
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
-      "stroke-width": "0",
+      strokeWidth: "0",
       viewBox: "0 0 384 512",
       color: `${color}`,
       height: `${size}`,
@@ -557,10 +557,10 @@ function PolygonIcon({
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "none",
-      "stroke-width": "2",
+      strokeWidth: "2",
       viewBox: "0 0 24 24",
-      "stroke-linecap": "round",
-      "stroke-linejoin": "round",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
       color: `${color}`,
       height: `${size}`,
       width: `${size}`,
@@ -691,7 +691,7 @@ function PolylineIcon({
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
-      "stroke-width": "0",
+      strokeWidth: "0",
       viewBox: "0 0 24 24",
       color: `${color}`,
       height: `${size}`,
@@ -804,10 +804,10 @@ function RectangleIcon({
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "none",
-      "stroke-width": "2",
+      strokeWidth: "2",
       viewBox: "0 0 24 24",
-      "stroke-linecap": "round",
-      "stroke-linejoin": "round",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
       color: `${color}`,
       height: `${size}`,
       width: `${size}`,
@@ -920,10 +920,10 @@ function TextIcon({
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "none",
-      "stroke-width": "2",
+      strokeWidth: "2",
       viewBox: "0 0 24 24",
-      "stroke-linecap": "round",
-      "stroke-linejoin": "round",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
       color: `${color}`,
       height: `${size}`,
       width: `${size}`,
@@ -1040,7 +1040,7 @@ function EraserIcon({
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
-      "stroke-width": "0",
+      strokeWidth: "0",
       viewBox: "0 0 512 512",
       color: `${color}`,
       height: `${size}`,
@@ -18504,7 +18504,7 @@ function ModifyIcon({
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
-      "stroke-width": "0",
+      strokeWidth: "0",
       viewBox: "0 0 1024 1024",
       color: `${color}`,
       height: `${size}`,
@@ -18565,7 +18565,7 @@ function MovementIcon({
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
-      "stroke-width": "0",
+      strokeWidth: "0",
       viewBox: "0 0 24 24",
       color: `${color}`,
       height: `${size}`,
@@ -18612,7 +18612,6 @@ function MoveAnnotation(props) {
 const ControlGroup = ({
   children
 }) => {
-  console.log("children", children);
   return jsx("div", Object.assign({
     style: {
       margin: "10px 0 10px 0 "
@@ -18656,6 +18655,9 @@ const ControlSection = ({
       element: ref.current ? ref.current : undefined
     });
     map.addControl(controlSection);
+    return () => {
+      map.removeControl(controlSection);
+    };
   }, [map]);
   return jsx("div", Object.assign({
     ref: ref,
@@ -18976,7 +18978,7 @@ function ZoomIn({
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
-      "stroke-width": "0",
+      strokeWidth: "0",
       viewBox: "0 0 512 512",
       color: `${color}`,
       height: `${size}`,
@@ -19002,7 +19004,7 @@ function ZoomOut({
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
-      "stroke-width": "0",
+      strokeWidth: "0",
       viewBox: "0 0 1024 1024",
       color: `${color}`,
       height: `${size}`,

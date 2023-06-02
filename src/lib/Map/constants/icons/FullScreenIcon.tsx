@@ -6,7 +6,7 @@ export function FullScreenIcon({ color = "black", size = 18 }: SVGProps) {
       <svg
         stroke="currentColor"
         fill="currentColor"
-        stroke-width="0"
+        strokeWidth="0"
         viewBox="0 0 16 16"
         color={`${color}`}
         height={`${size}`}

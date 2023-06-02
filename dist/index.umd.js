@@ -279,10 +279,10 @@
         children: jsxRuntime.jsxs("svg", Object.assign({
           stroke: "currentColor",
           fill: "none",
-          "stroke-width": "2",
+          strokeWidth: "2",
           viewBox: "0 0 24 24",
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
           color: `${color}`,
           height: `${size}`,
           width: `${size}`,
@@ -444,7 +444,7 @@
         children: jsxRuntime.jsx("svg", Object.assign({
           stroke: "currentColor",
           fill: "currentColor",
-          "stroke-width": "0",
+          strokeWidth: "0",
           viewBox: "0 0 384 512",
           color: `${color}`,
           height: `${size}`,
@@ -552,10 +552,10 @@
         children: jsxRuntime.jsxs("svg", Object.assign({
           stroke: "currentColor",
           fill: "none",
-          "stroke-width": "2",
+          strokeWidth: "2",
           viewBox: "0 0 24 24",
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
           color: `${color}`,
           height: `${size}`,
           width: `${size}`,
@@ -686,7 +686,7 @@
         children: jsxRuntime.jsxs("svg", Object.assign({
           stroke: "currentColor",
           fill: "currentColor",
-          "stroke-width": "0",
+          strokeWidth: "0",
           viewBox: "0 0 24 24",
           color: `${color}`,
           height: `${size}`,
@@ -799,10 +799,10 @@
         children: jsxRuntime.jsxs("svg", Object.assign({
           stroke: "currentColor",
           fill: "none",
-          "stroke-width": "2",
+          strokeWidth: "2",
           viewBox: "0 0 24 24",
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
           color: `${color}`,
           height: `${size}`,
           width: `${size}`,
@@ -915,10 +915,10 @@
         children: jsxRuntime.jsxs("svg", Object.assign({
           stroke: "currentColor",
           fill: "none",
-          "stroke-width": "2",
+          strokeWidth: "2",
           viewBox: "0 0 24 24",
-          "stroke-linecap": "round",
-          "stroke-linejoin": "round",
+          strokeLinecap: "round",
+          strokeLinejoin: "round",
           color: `${color}`,
           height: `${size}`,
           width: `${size}`,
@@ -1035,7 +1035,7 @@
         children: jsxRuntime.jsx("svg", Object.assign({
           stroke: "currentColor",
           fill: "currentColor",
-          "stroke-width": "0",
+          strokeWidth: "0",
           viewBox: "0 0 512 512",
           color: `${color}`,
           height: `${size}`,
@@ -18499,7 +18499,7 @@
         children: jsxRuntime.jsx("svg", Object.assign({
           stroke: "currentColor",
           fill: "currentColor",
-          "stroke-width": "0",
+          strokeWidth: "0",
           viewBox: "0 0 1024 1024",
           color: `${color}`,
           height: `${size}`,
@@ -18560,7 +18560,7 @@
         children: jsxRuntime.jsx("svg", Object.assign({
           stroke: "currentColor",
           fill: "currentColor",
-          "stroke-width": "0",
+          strokeWidth: "0",
           viewBox: "0 0 24 24",
           color: `${color}`,
           height: `${size}`,
@@ -18607,7 +18607,6 @@
     const ControlGroup = ({
       children
     }) => {
-      console.log("children", children);
       return jsxRuntime.jsx("div", Object.assign({
         style: {
           margin: "10px 0 10px 0 "
@@ -18651,6 +18650,9 @@
           element: ref.current ? ref.current : undefined
         });
         map.addControl(controlSection);
+        return () => {
+          map.removeControl(controlSection);
+        };
       }, [map]);
       return jsxRuntime.jsx("div", Object.assign({
         ref: ref,
@@ -18971,7 +18973,7 @@
         children: jsxRuntime.jsx("svg", Object.assign({
           stroke: "currentColor",
           fill: "currentColor",
-          "stroke-width": "0",
+          strokeWidth: "0",
           viewBox: "0 0 512 512",
           color: `${color}`,
           height: `${size}`,
@@ -18997,7 +18999,7 @@
         children: jsxRuntime.jsx("svg", Object.assign({
           stroke: "currentColor",
           fill: "currentColor",
-          "stroke-width": "0",
+          strokeWidth: "0",
           viewBox: "0 0 1024 1024",
           color: `${color}`,
           height: `${size}`,

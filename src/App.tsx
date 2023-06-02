@@ -1,21 +1,11 @@
-import React, { useEffect, useState } from "react";
-import {
-  CustomCircle,
-  CustomMarker,
-  CustomPolyLine,
-  CustomPolygon,
-  CustomTextMarker,
-} from "./lib/Map/layer/annotation";
-import { CustomRectangle } from "./lib/Map/layer/annotation";
+import React, { useState } from "react";
+import { CustomMarker, CustomPolygon } from "./lib/Map/layer/annotation";
 import InnerText from "./lib/Map/Text";
-import useMapEventHandler from "./lib/Map/hooks/incontext/useMapEventHandler";
 import FullScreenFeature from "./lib/Map/control/FullScreenFeature";
 import ControlSection from "./lib/Map/control/layout/ControlSection";
-import ControlGroup from "./lib/Map/control/layout/ControlGroup";
-import Button from "./lib/Map/control/element/Button";
 import ZoomFeature from "./lib/Map/control/ZoomFeature";
 import CompassWheel from "./lib/Map/control/CompassWheel";
-import { GeoJsonLayer, TileLayer } from "./lib/Map/layer/tileLayer";
+import { TileLayer } from "./lib/Map/layer/tileLayer";
 import LayerGroup from "./lib/Map/layer/LayerGroup";
 import DrawingTools from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";

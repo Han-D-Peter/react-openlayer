@@ -7,7 +7,6 @@ interface ControlGroupProps {
     | (boolean | ReactElement<typeof Button>)[];
 }
 const ControlGroup = ({ children }: ControlGroupProps) => {
-  console.log("children", children);
   return (
     <div style={{ margin: "10px 0 10px 0 " }}>
       {Children.map(children, (child, index) => {

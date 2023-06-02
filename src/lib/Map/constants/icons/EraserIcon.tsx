@@ -6,7 +6,7 @@ export function EraserIcon({ color = "black", size = 18 }: SVGProps) {
       <svg
         stroke="currentColor"
         fill="currentColor"
-        stroke-width="0"
+        strokeWidth="0"
         viewBox="0 0 512 512"
         color={`${color}`}
         height={`${size}`}

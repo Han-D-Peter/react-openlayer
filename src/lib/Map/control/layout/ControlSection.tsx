@@ -16,6 +16,9 @@ const ControlSection = ({ children }: ControlSectionProps) => {
       element: ref.current ? ref.current : undefined,
     });
     map.addControl(controlSection);
+    return () => {
+      map.removeControl(controlSection);
+    };
   }, [map]);
 
   return (
