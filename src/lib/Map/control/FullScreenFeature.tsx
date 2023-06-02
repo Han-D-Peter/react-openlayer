@@ -72,11 +72,11 @@ const FullScreenFeature = () => {
         <InnerButton>
           {isFull ? (
             <img
-              src="/mapicon/fullScreenExit.svg"
+              src="mapicon/fullScreenExit.svg"
               alt="exit full screen button"
             />
           ) : (
-            <img src="/mapicon/fullScreenIcon.svg" alt="full screen button" />
+            <img src="mapicon/fullScreenIcon.svg" alt="full screen button" />
           )}
         </InnerButton>
       </Button>

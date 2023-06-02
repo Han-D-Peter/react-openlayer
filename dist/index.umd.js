@@ -480,7 +480,7 @@
             isMarker: true
           }),
           image: new Icon__default["default"]({
-            src: "/mapicon/marker-icon.png",
+            src: "mapicon/marker-icon.png",
             anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
         })
@@ -503,7 +503,7 @@
             isMarker: true
           }),
           image: new Icon__default["default"]({
-            src: "/mapicon/marker-icon.png",
+            src: "mapicon/marker-icon.png",
             anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
         }));
@@ -608,7 +608,7 @@
             color: "rgba(2, 26, 255, 0.3)"
           }),
           image: new Icon__default["default"]({
-            src: "/mapicon/polygon.svg",
+            src: "mapicon/polygon.svg",
             anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
         })
@@ -725,7 +725,7 @@
             color: "rgba(2, 26, 255, 0.3)"
           }),
           image: new Icon__default["default"]({
-            src: "/mapicon/polyline.svg",
+            src: "mapicon/polyline.svg",
             anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
         })
@@ -842,7 +842,7 @@
             color: "rgba(2, 26, 255, 0.3)"
           }),
           image: new Icon__default["default"]({
-            src: "/mapicon/Rectangle.svg",
+            src: "mapicon/Rectangle.svg",
             anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
         })
@@ -18751,7 +18751,7 @@
             }
           }, {
             children: jsxRuntime.jsx("img", {
-              src: "/mapicon/compass.png",
+              src: "mapicon/compass.png",
               alt: "compass",
               draggable: false,
               height: compassSize(size),
@@ -18954,10 +18954,10 @@
         }, {
           children: jsxRuntime.jsx(InnerButton, {
             children: isFull ? jsxRuntime.jsx("img", {
-              src: "/mapicon/fullScreenExit.svg",
+              src: "mapicon/fullScreenExit.svg",
               alt: "exit full screen button"
             }) : jsxRuntime.jsx("img", {
-              src: "/mapicon/fullScreenIcon.svg",
+              src: "mapicon/fullScreenIcon.svg",
               alt: "full screen button"
             })
           })
@@ -19195,7 +19195,7 @@
             isMarker: true
           }),
           image: new Icon__default["default"]({
-            src: "/mapicon/marker-icon.png",
+            src: "mapicon/marker-icon.png",
             anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
         }));

@@ -96,7 +96,7 @@ const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
           }}
         >
           <img
-            src="/mapicon/compass.png"
+            src="mapicon/compass.png"
             alt="compass"
             draggable={false}
             height={compassSize(size)}

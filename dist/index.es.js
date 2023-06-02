@@ -485,7 +485,7 @@ function PointDrawButton(_a) {
         isMarker: true
       }),
       image: new Icon({
-        src: "/mapicon/marker-icon.png",
+        src: "mapicon/marker-icon.png",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     })
@@ -508,7 +508,7 @@ function PointDrawButton(_a) {
         isMarker: true
       }),
       image: new Icon({
-        src: "/mapicon/marker-icon.png",
+        src: "mapicon/marker-icon.png",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     }));
@@ -613,7 +613,7 @@ function PolygonDrawButton(_a) {
         color: "rgba(2, 26, 255, 0.3)"
       }),
       image: new Icon({
-        src: "/mapicon/polygon.svg",
+        src: "mapicon/polygon.svg",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     })
@@ -730,7 +730,7 @@ function PolylineDrawButton(_a) {
         color: "rgba(2, 26, 255, 0.3)"
       }),
       image: new Icon({
-        src: "/mapicon/polyline.svg",
+        src: "mapicon/polyline.svg",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     })
@@ -847,7 +847,7 @@ function RectangleDrawButton(_a) {
         color: "rgba(2, 26, 255, 0.3)"
       }),
       image: new Icon({
-        src: "/mapicon/Rectangle.svg",
+        src: "mapicon/Rectangle.svg",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     })
@@ -18756,7 +18756,7 @@ const CompassWheel = ({
         }
       }, {
         children: jsx("img", {
-          src: "/mapicon/compass.png",
+          src: "mapicon/compass.png",
           alt: "compass",
           draggable: false,
           height: compassSize(size),
@@ -18959,10 +18959,10 @@ const FullScreenFeature = () => {
     }, {
       children: jsx(InnerButton, {
         children: isFull ? jsx("img", {
-          src: "/mapicon/fullScreenExit.svg",
+          src: "mapicon/fullScreenExit.svg",
           alt: "exit full screen button"
         }) : jsx("img", {
-          src: "/mapicon/fullScreenIcon.svg",
+          src: "mapicon/fullScreenIcon.svg",
           alt: "full screen button"
         })
       })
@@ -19200,7 +19200,7 @@ const CustomMarker = ({
         isMarker: true
       }),
       image: new Icon({
-        src: "/mapicon/marker-icon.png",
+        src: "mapicon/marker-icon.png",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     }));

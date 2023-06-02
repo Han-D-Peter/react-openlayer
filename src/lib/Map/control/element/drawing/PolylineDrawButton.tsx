@@ -49,7 +49,7 @@ export default function PolylineDrawButton({
           color: "rgba(2, 26, 255, 0.3)",
         }),
         image: new Icon({
-          src: "/mapicon/polyline.svg", // 마커 이미지 경로
+          src: "mapicon/polyline.svg", // 마커 이미지 경로
           anchor: [0.5, 1], // 마커 이미지의 앵커 위치
         }),
       }),

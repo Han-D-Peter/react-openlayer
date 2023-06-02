@@ -46,7 +46,7 @@ export default function PointDrawButton({
           isMarker: true,
         }),
         image: new Icon({
-          src: "/mapicon/marker-icon.png", // 마커 이미지 경로
+          src: "mapicon/marker-icon.png", // 마커 이미지 경로
           anchor: [0.5, 1], // 마커 이미지의 앵커 위치
         }),
       }),
@@ -71,7 +71,7 @@ export default function PointDrawButton({
           isMarker: true,
         }),
         image: new Icon({
-          src: "/mapicon/marker-icon.png", // 마커 이미지 경로
+          src: "mapicon/marker-icon.png", // 마커 이미지 경로
           anchor: [0.5, 1], // 마커 이미지의 앵커 위치
         }),
       })
