@@ -23,5 +23,5 @@ export interface Annotation {
     properties: Record<string, any>;
   }) => void;
   zIndex?: number;
-  children?: ReactElement<InnerTextProps, typeof InnerText>;
+  children?: ReactElement<InnerTextProps, typeof InnerText> | null;
 }

@@ -49,6 +49,7 @@ const config = {
             typescript({ tsconfig: './tsconfig.json' }),
             postcss({ 
                 extract: true,      
+                autoModules:true
             }),
             sourcemaps(),
             svgr(),
