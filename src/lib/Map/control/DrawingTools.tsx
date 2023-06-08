@@ -12,7 +12,7 @@ import MultiPointDrawButton from "./element/drawing/MultiPointDrawButton";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
 
-interface DrawingToolsProps {
+export interface DrawingToolsProps {
   multiMarker?: boolean;
   marker?: boolean;
   polyline?: boolean;

@@ -15,7 +15,7 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import { Annotation } from ".";
 
-interface TextMarkerProps extends Annotation {
+export interface TextMarkerProps extends Annotation {
   center: Coordinate;
 }
 

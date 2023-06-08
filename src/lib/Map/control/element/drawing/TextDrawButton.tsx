@@ -13,7 +13,7 @@ import { Geometry } from "ol/geom";
 import { Feature } from "ol";
 import { TextIcon } from "src/lib/Map/constants/icons/TextIcon";
 
-interface TextDrawButtonProps extends ButtonProps {
+export interface TextDrawButtonProps extends ButtonProps {
   /**
    * @description You can get Multipoint feature what was made by callback function.
    */

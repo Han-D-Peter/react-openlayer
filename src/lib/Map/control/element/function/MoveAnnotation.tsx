@@ -7,7 +7,7 @@ import { Collection } from "ol";
 import { TranslateEvent } from "ol/interaction/Translate";
 import { MovementIcon } from "src/lib/Map/constants/icons/MovementIcon";
 
-interface MoveAnnotationProps extends ButtonProps {
+export interface MoveAnnotationProps extends ButtonProps {
   onChange?: (e: TranslateEvent) => void;
 }
 

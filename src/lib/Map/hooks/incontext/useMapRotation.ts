@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import useMap from "./useMap";
 
-type useMapRatationOutput = readonly [
+export type useMapRatationOutput = readonly [
   /**
    * @description Current degree of using map.
    */

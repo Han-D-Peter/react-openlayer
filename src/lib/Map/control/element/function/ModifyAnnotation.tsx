@@ -8,7 +8,7 @@ import { useMap } from "src/lib/Map/hooks";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { ModifyIcon } from "src/lib/Map/constants/icons/ModifyIcon";
 
-interface ModifyAnnotationProps extends ButtonProps {
+export interface ModifyAnnotationProps extends ButtonProps {
   onChange?: (e: ModifyEvent) => void;
 }
 

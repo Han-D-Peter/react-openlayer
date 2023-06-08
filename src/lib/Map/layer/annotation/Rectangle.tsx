@@ -16,7 +16,7 @@ import { makeText } from "../../utils/object";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { Annotation } from ".";
 
-interface CustomRectangleProps extends Annotation {
+export interface CustomRectangleProps extends Annotation {
   positions: Coordinate[][];
 }
 
@@ -32,7 +32,7 @@ const CustomRectangle = ({
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
     new Feature(
-      new Polygon([positions[0].map(position => fromLonLat(position))])
+      new Polygon([positions[0].map((position) => fromLonLat(position))])
     )
   );
 

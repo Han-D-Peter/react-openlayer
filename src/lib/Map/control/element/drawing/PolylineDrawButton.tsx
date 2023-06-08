@@ -14,7 +14,7 @@ import { Geometry } from "ol/geom";
 import { Feature } from "ol";
 import { PolylineIcon } from "src/lib/Map/constants/icons/PolylineIcon";
 
-interface PolylineDrawButtonProps extends ButtonProps {
+export interface PolylineDrawButtonProps extends ButtonProps {
   /**
    * @description You can get Multipoint feature what was made by callback function.
    */

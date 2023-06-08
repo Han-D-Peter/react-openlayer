@@ -7,7 +7,7 @@ import { SelectEvent } from "ol/interaction/Select";
 import VectorSource from "ol/source/Vector";
 import { EraserIcon } from "src/lib/Map/constants/icons/EraserIcon";
 
-interface DeleteAnnotationProps extends ButtonProps {
+export interface DeleteAnnotationProps extends ButtonProps {
   onChange?: (e: SelectEvent) => void;
 }
 

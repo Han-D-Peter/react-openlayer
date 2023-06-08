@@ -14,7 +14,7 @@ import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
 
-interface CustomMultiPointProps extends Annotation {
+export interface CustomMultiPointProps extends Annotation {
   positions: Coordinate[];
 }
 

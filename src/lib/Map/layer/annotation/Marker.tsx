@@ -14,7 +14,7 @@ import { SelectEvent } from "ol/interaction/Select";
 import Icon from "ol/style/Icon";
 import { Annotation } from ".";
 
-interface CustomMarkerProps extends Annotation {
+export interface CustomMarkerProps extends Annotation {
   center: Coordinate;
 }
 

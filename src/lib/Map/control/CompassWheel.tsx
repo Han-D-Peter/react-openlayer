@@ -4,9 +4,9 @@ import { Control } from "ol/control";
 import { useMapRotation } from "../hooks";
 import { CompassIcon } from "../constants/icons/CompassIcon";
 
-type Size = "sm" | "md" | "lg";
+export type Size = "sm" | "md" | "lg";
 
-interface CompassWheelProps {
+export interface CompassWheelProps {
   size?: Size;
   onWheel?: (degree: number) => void;
 }

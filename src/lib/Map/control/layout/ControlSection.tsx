@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useRef } from "react";
 import { useMap } from "../../hooks";
 import { Control } from "ol/control";
 
-interface ControlSectionProps {
+export interface ControlSectionProps {
   children?: ReactNode;
 }
 

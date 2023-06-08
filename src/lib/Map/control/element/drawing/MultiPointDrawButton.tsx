@@ -12,7 +12,7 @@ import { useMap } from "../../../hooks";
 import Button, { ButtonProps } from "../Button";
 import { MultiPointIcon } from "src/lib/Map/constants/icons/MultiPointIcon";
 
-interface MultiPointDrawButtonProps extends ButtonProps {
+export interface MultiPointDrawButtonProps extends ButtonProps {
   /**
    * @description You can get Multipoint feature what was made by callback function.
    */

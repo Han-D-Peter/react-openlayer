@@ -16,7 +16,7 @@ import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
 
-interface CustomPolygonProps extends Annotation {
+export interface CustomPolygonProps extends Annotation {
   positions: Coordinate[][];
 }
 
@@ -32,7 +32,7 @@ const CustomPolygon = ({
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
     new Feature(
-      new Polygon([positions[0].map(position => fromLonLat(position))])
+      new Polygon([positions[0].map((position) => fromLonLat(position))])
     )
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);

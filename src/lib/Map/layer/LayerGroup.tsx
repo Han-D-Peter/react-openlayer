@@ -1,6 +1,6 @@
 import { Children, ReactElement, cloneElement } from "react";
 
-interface LayerGroupProps {
+export interface LayerGroupProps {
   zIndex?: number;
   children: ReactElement | ReactElement[];
 }

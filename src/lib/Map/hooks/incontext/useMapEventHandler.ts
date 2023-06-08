@@ -6,7 +6,7 @@ import { Coordinate } from "ol/coordinate";
 import RenderEvent from "ol/render/Event";
 import BaseEvent from "ol/events/Event";
 
-interface useMapEventHandlerArgs {
+export interface useMapEventHandlerArgs {
   onClick?: ({
     event,
     lonlat,

@@ -16,7 +16,7 @@ import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
 
-interface CustomPolyLineProps extends Annotation {
+export interface CustomPolyLineProps extends Annotation {
   positions: Coordinate[];
 }
 
@@ -31,7 +31,9 @@ const CustomPolyLine = ({
 }: CustomPolyLineProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<LineString>>(
-    new Feature(new LineString(positions.map(position => fromLonLat(position))))
+    new Feature(
+      new LineString(positions.map((position) => fromLonLat(position)))
+    )
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
 

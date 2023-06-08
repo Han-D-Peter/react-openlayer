@@ -1,7 +1,7 @@
 import { Children, ReactElement, cloneElement } from "react";
 import Button from "../element/Button";
 
-interface ControlGroupProps {
+export interface ControlGroupProps {
   children:
     | ReactElement<typeof Button>
     | (boolean | ReactElement<typeof Button>)[];
