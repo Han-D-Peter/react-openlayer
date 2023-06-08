@@ -17,7 +17,7 @@ import concat from "lodash/concat";
 export type Lng = number;
 export type Lat = number;
 
-export type Location = [Lat, Lng];
+export type Location = [Lng, Lat];
 
 export interface MapProps {
   scrollWheelZoom?: boolean;
