@@ -1,12 +1,16 @@
 import React, { useState } from "react";
-import { CustomMarker, CustomPolygon } from "./lib/Map/layer/annotation";
+import {
+  CustomCircle,
+  CustomMarker,
+  CustomPolygon,
+} from "./lib/Map/layer/annotation";
 import InnerText from "./lib/Map/Text";
 import FullScreenFeature from "./lib/Map/control/FullScreenFeature";
 import ControlSection from "./lib/Map/control/layout/ControlSection";
 import ZoomFeature from "./lib/Map/control/ZoomFeature";
 import CompassWheel from "./lib/Map/control/CompassWheel";
 import { TileLayer } from "./lib/Map/layer/tileLayer";
-import LayerGroup from "./lib/Map/layer/LayerGroup";
+import { ImageOveray, LayerGroup } from "./lib/Map";
 import DrawingTools from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";
 import CustomMultiPoint from "./lib/Map/layer/annotation/MultiPoint";
@@ -24,25 +28,31 @@ function App() {
   return (
     <div className="App">
       {/* <GeoJsonLayer geoJson={geoJsonSample} /> */}
-      <TileLayer url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png" />
-      {/* <CustomCircle center={[126.841242, 35.190518]} radius={20}>
+      {/* <TileLayer url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png" /> */}
+      <ImageOveray
+        imageUrl="images/compass.png"
+        bounds={[
+          [126.841384, 35.191316],
+          [126.841584, 35.191516],
+        ]}
+      />
+      {/* <CustomCircle center={[126.841242, 35.190518]} r[adius={20}>
         <InnerText size={27} color="red" outline={false}>
           hello1
         </InnerText>
       </CustomCircle> */}
-
+      <LayerGroup zIndex={1}>
+        <CustomCircle center={[126.841884, 35.191516]} radius={20} color="RED">
+          <InnerText>Circle1</InnerText>
+        </CustomCircle>
+      </LayerGroup>
+      <LayerGroup zIndex={2}>
+        <CustomCircle center={[126.841784, 35.191406]} radius={20} color="BLUE">
+          <InnerText>Circle2</InnerText>
+        </CustomCircle>
+      </LayerGroup>
       {isShown && (
         <>
-          <LayerGroup zIndex={1}>
-            <CustomMarker
-              onClick={(event) =>
-                console.log("event", getProfileFromFeature(event.annotation))
-              }
-              center={[126.840711, 35.190274]}
-            >
-              <InnerText>Marker</InnerText>
-            </CustomMarker>
-          </LayerGroup>
           <LayerGroup zIndex={2}>
             <CustomMultiPoint
               onClick={(event) =>
