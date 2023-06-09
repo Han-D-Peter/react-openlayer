@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import {
   CustomCircle,
   CustomMarker,
+  CustomPolyLine,
   CustomPolygon,
+  CustomRectangle,
 } from "./lib/Map/layer/annotation";
 import InnerText from "./lib/Map/Text";
 import FullScreenFeature from "./lib/Map/control/FullScreenFeature";
@@ -16,7 +18,8 @@ import { getProfileFromFeature } from "./lib/Map/utils/utils";
 import CustomMultiPoint from "./lib/Map/layer/annotation/MultiPoint";
 import { icon } from "./lib";
 
-icon.marker = "images/marker-icon.png";
+icon.marker = "images/marker-basic.png";
+icon.selected = "images/marker-selected.png";
 
 function App() {
   const [isShown, setIsShown] = useState(true);
@@ -42,8 +45,14 @@ function App() {
         </InnerText>
       </CustomCircle> */}
       <LayerGroup zIndex={1}>
+        <CustomMarker selected center={[126.841384, 35.191516]}>
+          <InnerText outline>Marker</InnerText>
+        </CustomMarker>
+        <CustomMarker center={[126.841084, 35.191516]}>
+          <InnerText outline>Marker</InnerText>
+        </CustomMarker>
         <CustomCircle center={[126.841884, 35.191516]} radius={20} color="RED">
-          <InnerText>Circle1</InnerText>
+          <InnerText isPopup>Circle1</InnerText>
         </CustomCircle>
       </LayerGroup>
       <LayerGroup zIndex={2}>
@@ -81,8 +90,30 @@ function App() {
                 ],
               ]}
             >
-              <InnerText>hello2</InnerText>
+              <InnerText isPopup>hello2</InnerText>
             </CustomPolygon>
+            <CustomPolyLine
+              positions={[
+                [126.840684, 35.190816],
+                [126.840476, 35.190419],
+                [126.840604, 35.190333],
+                [126.840868, 35.190581],
+              ]}
+            >
+              <InnerText isPopup>hello2</InnerText>
+            </CustomPolyLine>
+            <CustomRectangle
+              positions={[
+                [
+                  [126.840684, 35.190219],
+                  [126.840476, 35.190219],
+                  [126.840476, 35.190133],
+                  [126.840684, 35.190133],
+                ],
+              ]}
+            >
+              <InnerText isPopup>hello2</InnerText>
+            </CustomRectangle>
           </LayerGroup>
         </>
       )}
@@ -105,17 +136,6 @@ function App() {
       >
         <InnerText>hello2</InnerText>
       </CustomRectangle> */}
-
-      {/* <CustomPolyLine
-        positions={[
-          [126.840884, 35.190816],
-          [126.840676, 35.190419],
-          [126.840804, 35.190333],
-          [126.841068, 35.190581],
-        ]}
-      >
-        <InnerText>hello2</InnerText>
-      </CustomPolyLine> */}
 
       <CompassWheel />
       <ControlSection>

@@ -18,10 +18,11 @@ import { Control as Control$2, FullScreen, defaults as defaults$2, Zoom as Zoom$
 import Circle$1 from 'ol/geom/Circle';
 import Feature$2 from 'ol/Feature';
 import { Point as Point$3, MultiPoint, Polygon as Polygon$1, LineString } from 'ol/geom';
-import { XYZ, OSM } from 'ol/source';
+import { XYZ, ImageStatic, OSM } from 'ol/source';
 import OlTileLayer from 'ol/layer/Tile';
 import GeoJSON from 'ol/format/GeoJSON';
 import { register } from 'ol/proj/proj4';
+import ImageLayer from 'ol/layer/Image';
 import { Tile } from 'ol/layer';
 import concat from 'lodash/concat';
 
@@ -418,7 +419,8 @@ function MultiPointDrawButton(_a) {
 }
 
 const icon = {
-  marker: ""
+  marker: "",
+  selected: ""
 };
 const makeText = ({
   text = "",
@@ -19318,54 +19320,54 @@ const CustomCircle = ({
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$1(new Circle$1(fromLonLat(center), radius)));
-  const annotationLayerRef = useRef(null);
+  const annotationLayerRef = useRef(new VectorLayer({
+    source: new VectorSource({
+      features: [annotationRef.current]
+    })
+  }));
+  const annotationStyleRef = useRef(new Style({
+    stroke: new Stroke$1({
+      color: ANNOTATION_COLOR[color].stroke,
+      width: 2
+    }),
+    fill: new Fill$1({
+      color: ANNOTATION_COLOR[color].fill
+    }),
+    text: children && !children.props.isPopup ? makeText({
+      text: children.props.children || "",
+      size: children.props.size || 15,
+      color: children.props.color ? children.props.color : "black",
+      outline: children.props.outline,
+      isMarker: true
+    }) : undefined
+  }));
   useEffect(() => {
     if (annotationLayerRef.current) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
   }, [zIndex]);
   useEffect(() => {
-    annotationRef.current.setStyle(new Style({
-      stroke: new Stroke$1({
-        color: ANNOTATION_COLOR[color].stroke,
-        width: 2
-      }),
-      fill: new Fill$1({
-        color: ANNOTATION_COLOR[color].fill
-      }),
-      text: makeText({
-        text: children ? children.props.children : "",
-        size: (children === null || children === void 0 ? void 0 : children.props.size) || 15,
-        color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "black",
-        outline: children === null || children === void 0 ? void 0 : children.props.outline
-      })
-    }));
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current]
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource
-    });
-    annotationLayerRef.current = vectorLayer;
-    annotationLayerRef.current = vectorLayer;
+    annotationRef.current.setStyle(annotationStyleRef.current);
+    annotationLayerRef.current = annotationLayerRef.current;
+    annotationLayerRef.current = annotationLayerRef.current;
     annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current
     });
-    vectorLayer.setZIndex(zIndex);
+    annotationLayerRef.current.setZIndex(zIndex);
     const clickSelect = new Select({
       condition: click,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     const hoverSelect = new Select({
       condition: pointerMove,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     map.addInteraction(hoverSelect);
     map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
+    map.addLayer(annotationLayerRef.current);
     function onHoverHandler(event) {
       if (event.selected.length > 0) {
         if (onHover) {
@@ -19374,6 +19376,20 @@ const CustomCircle = ({
             properties
           });
         }
+      }
+      // Pop up text
+      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(makeText({
+          text: children.props.children || "",
+          size: children.props.size || 15,
+          color: children.props.color ? children.props.color : "black",
+          outline: children.props.outline,
+          isMarker: true
+        }));
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
       }
     }
     function onClickHandler(event) {
@@ -19398,8 +19414,8 @@ const CustomCircle = ({
       clickSelect.un("select", onClickHandler);
       map.removeInteraction(hoverSelect);
       map.removeInteraction(clickSelect);
-      (_a = vectorLayer.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
-      map.removeLayer(vectorLayer);
+      (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
   return jsx(Fragment, {});
@@ -19412,56 +19428,73 @@ const CustomMarker = ({
   onClick,
   onHover,
   zIndex = 0,
+  selected = false,
   children
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new Point$3(fromLonLat(center))));
-  const annotationLayerRef = useRef(null);
+  const annotationLayerRef = useRef(new VectorLayer({
+    source: new VectorSource({
+      features: [annotationRef.current]
+    })
+  }));
+  const annotationStyleRef = useRef(new Style({
+    text: children && !children.props.isPopup ? makeText({
+      text: children.props.children || "",
+      size: children.props.size || 15,
+      color: children.props.color ? children.props.color : "black",
+      outline: children.props.outline,
+      isMarker: true
+    }) : undefined,
+    image: new Icon({
+      src: icon.marker,
+      scale: 0.07,
+      anchor: [0.5, 1] // 마커 이미지의 앵커 위치
+    })
+  }));
+
   useEffect(() => {
     if (annotationLayerRef.current) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
   }, [zIndex]);
   useEffect(() => {
-    annotationRef.current.setStyle(new Style({
-      text: makeText({
-        text: children ? children.props.children : "",
-        size: (children === null || children === void 0 ? void 0 : children.props.size) || 15,
-        color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "black",
-        outline: children === null || children === void 0 ? void 0 : children.props.outline,
-        isMarker: true
-      }),
-      image: new Icon({
-        src: icon.marker,
+    if (selected) {
+      annotationStyleRef.current.setImage(new Icon({
+        src: icon.selected,
+        scale: 0.07,
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
-      })
-    }));
+      }));
+    } else {
+      annotationStyleRef.current.setImage(new Icon({
+        src: icon.marker,
+        scale: 0.07,
+        anchor: [0.5, 1] // 마커 이미지의 앵커 위치
+      }));
+    }
 
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current]
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource
-    });
-    annotationLayerRef.current = vectorLayer;
+    annotationRef.current.setStyle(annotationStyleRef.current);
+  }, [selected]);
+  useEffect(() => {
+    annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current
     });
-    vectorLayer.setZIndex(zIndex);
+    annotationLayerRef.current.setZIndex(zIndex);
     const clickSelect = new Select({
       condition: click,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     const hoverSelect = new Select({
       condition: pointerMove,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     map.addInteraction(hoverSelect);
     map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
+    map.addLayer(annotationLayerRef.current);
     function onHoverHandler(event) {
       if (event.selected.length > 0) {
         if (onHover) {
@@ -19470,6 +19503,20 @@ const CustomMarker = ({
             properties
           });
         }
+      }
+      // Pop up text
+      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(makeText({
+          text: children.props.children || "",
+          size: children.props.size || 15,
+          color: children.props.color ? children.props.color : "black",
+          outline: children.props.outline,
+          isMarker: true
+        }));
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
       }
     }
     function onClickHandler(event) {
@@ -19493,7 +19540,8 @@ const CustomMarker = ({
       clickSelect.un("select", onClickHandler);
       map.removeInteraction(hoverSelect);
       map.removeInteraction(clickSelect);
-      map.removeLayer(vectorLayer);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
   return jsx(Fragment, {});
@@ -19617,53 +19665,52 @@ const CustomPolygon = ({
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new Polygon$1([positions[0].map(position => fromLonLat(position))])));
-  const annotationLayerRef = useRef(null);
+  const annotationLayerRef = useRef(new VectorLayer({
+    source: new VectorSource({
+      features: [annotationRef.current]
+    })
+  }));
+  const annotationStyleRef = useRef(new Style({
+    stroke: new Stroke$1({
+      color: ANNOTATION_COLOR[color].stroke,
+      width: 2
+    }),
+    fill: new Fill$1({
+      color: ANNOTATION_COLOR[color].fill
+    }),
+    text: children && !children.props.isPopup ? makeText({
+      text: children.props.children || "",
+      size: children.props.size || 15,
+      color: children.props.color ? children.props.color : "black",
+      outline: children.props.outline,
+      isMarker: true
+    }) : undefined
+  }));
   useEffect(() => {
     if (annotationLayerRef.current) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
   }, [zIndex]);
   useEffect(() => {
-    annotationRef.current.setStyle(new Style({
-      stroke: new Stroke$1({
-        color: ANNOTATION_COLOR[color].stroke,
-        width: 2
-      }),
-      fill: new Fill$1({
-        color: ANNOTATION_COLOR[color].fill
-      }),
-      text: makeText({
-        text: children ? children.props.children : "",
-        size: (children === null || children === void 0 ? void 0 : children.props.size) || 15,
-        color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "black",
-        outline: children === null || children === void 0 ? void 0 : children.props.outline
-      })
-    }));
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current]
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource
-    });
-    annotationLayerRef.current = vectorLayer;
+    annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current
     });
-    vectorLayer.setZIndex(zIndex);
+    annotationLayerRef.current.setZIndex(zIndex);
     const clickSelect = new Select({
       condition: click,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     const hoverSelect = new Select({
       condition: pointerMove,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     map.addInteraction(hoverSelect);
     map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
+    map.addLayer(annotationLayerRef.current);
     function onHoverHandler(event) {
       if (event.selected.length > 0) {
         if (onHover) {
@@ -19672,6 +19719,20 @@ const CustomPolygon = ({
             properties
           });
         }
+      }
+      // Pop up text
+      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(makeText({
+          text: children.props.children || "",
+          size: children.props.size || 15,
+          color: children.props.color ? children.props.color : "black",
+          outline: children.props.outline,
+          isMarker: true
+        }));
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
       }
     }
     function onClickHandler(event) {
@@ -19695,7 +19756,7 @@ const CustomPolygon = ({
       clickSelect.un("select", onClickHandler);
       map.removeInteraction(hoverSelect);
       map.removeInteraction(clickSelect);
-      map.removeLayer(vectorLayer);
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
   return jsx(Fragment, {});
@@ -19712,53 +19773,52 @@ const CustomPolyLine = ({
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new LineString(positions.map(position => fromLonLat(position)))));
-  const annotationLayerRef = useRef(null);
+  const annotationLayerRef = useRef(new VectorLayer({
+    source: new VectorSource({
+      features: [annotationRef.current]
+    })
+  }));
+  const annotationStyleRef = useRef(new Style({
+    stroke: new Stroke$1({
+      color: ANNOTATION_COLOR[color].stroke,
+      width: 2
+    }),
+    fill: new Fill$1({
+      color: ANNOTATION_COLOR[color].fill
+    }),
+    text: children && !children.props.isPopup ? makeText({
+      text: children.props.children || "",
+      size: children.props.size || 15,
+      color: children.props.color ? children.props.color : "black",
+      outline: children.props.outline,
+      isMarker: true
+    }) : undefined
+  }));
   useEffect(() => {
     if (annotationLayerRef.current) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
   }, [zIndex]);
   useEffect(() => {
-    annotationRef.current.setStyle(new Style({
-      stroke: new Stroke$1({
-        color: ANNOTATION_COLOR[color].stroke,
-        width: 2
-      }),
-      fill: new Fill$1({
-        color: ANNOTATION_COLOR[color].fill
-      }),
-      text: makeText({
-        text: children ? children.props.children : "",
-        size: (children === null || children === void 0 ? void 0 : children.props.size) || 15,
-        color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "black",
-        outline: children === null || children === void 0 ? void 0 : children.props.outline
-      })
-    }));
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current]
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource
-    });
-    annotationLayerRef.current = vectorLayer;
+    annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current
     });
-    vectorLayer.setZIndex(zIndex);
+    annotationLayerRef.current.setZIndex(zIndex);
     const clickSelect = new Select({
       condition: click,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     const hoverSelect = new Select({
       condition: pointerMove,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     map.addInteraction(hoverSelect);
     map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
+    map.addLayer(annotationLayerRef.current);
     function onHoverHandler(event) {
       if (event.selected.length > 0) {
         if (onHover) {
@@ -19767,6 +19827,20 @@ const CustomPolyLine = ({
             properties
           });
         }
+      }
+      // Pop up text
+      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(makeText({
+          text: children.props.children || "",
+          size: children.props.size || 15,
+          color: children.props.color ? children.props.color : "black",
+          outline: children.props.outline,
+          isMarker: true
+        }));
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
       }
     }
     function onClickHandler(event) {
@@ -19790,7 +19864,7 @@ const CustomPolyLine = ({
       clickSelect.un("select", onClickHandler);
       map.removeInteraction(hoverSelect);
       map.removeInteraction(clickSelect);
-      map.removeLayer(vectorLayer);
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
   return jsx(Fragment, {});
@@ -19807,7 +19881,27 @@ const CustomRectangle = ({
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new Polygon$1([positions[0].map(position => fromLonLat(position))])));
-  const annotationLayerRef = useRef(null);
+  const annotationLayerRef = useRef(new VectorLayer({
+    source: new VectorSource({
+      features: [annotationRef.current]
+    })
+  }));
+  const annotationStyleRef = useRef(new Style({
+    stroke: new Stroke$1({
+      color: ANNOTATION_COLOR[color].stroke,
+      width: 2
+    }),
+    fill: new Fill$1({
+      color: ANNOTATION_COLOR[color].fill
+    }),
+    text: children && !children.props.isPopup ? makeText({
+      text: children.props.children || "",
+      size: children.props.size || 15,
+      color: children.props.color ? children.props.color : "black",
+      outline: children.props.outline,
+      isMarker: true
+    }) : undefined
+  }));
   useEffect(() => {
     if (annotationLayerRef.current && zIndex) {
       annotationLayerRef.current.setZIndex(zIndex);
@@ -19815,46 +19909,25 @@ const CustomRectangle = ({
   }, [zIndex]);
   useEffect(() => {
     if (!map) return;
-    annotationRef.current.setStyle(new Style({
-      stroke: new Stroke$1({
-        color: ANNOTATION_COLOR[color].stroke,
-        width: 2
-      }),
-      fill: new Fill$1({
-        color: ANNOTATION_COLOR[color].fill
-      }),
-      text: makeText({
-        text: children ? children.props.children : "",
-        size: (children === null || children === void 0 ? void 0 : children.props.size) || 15,
-        color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "black",
-        outline: children === null || children === void 0 ? void 0 : children.props.outline
-      })
-    }));
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current]
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource
-    });
-    annotationLayerRef.current = vectorLayer;
+    annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current
     });
-    vectorLayer.setZIndex(zIndex);
+    annotationLayerRef.current.setZIndex(zIndex);
     const clickSelect = new Select({
       condition: click,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     const hoverSelect = new Select({
       condition: pointerMove,
       style: null,
-      layers: [vectorLayer]
+      layers: [annotationLayerRef.current]
     });
     map.addInteraction(hoverSelect);
     map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
+    map.addLayer(annotationLayerRef.current);
     function onHoverHandler(event) {
       if (event.selected.length > 0) {
         if (onHover) {
@@ -19863,6 +19936,20 @@ const CustomRectangle = ({
             properties
           });
         }
+      }
+      // Pop up text
+      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(makeText({
+          text: children.props.children || "",
+          size: children.props.size || 15,
+          color: children.props.color ? children.props.color : "black",
+          outline: children.props.outline,
+          isMarker: true
+        }));
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
       }
     }
     function onClickHandler(event) {
@@ -19886,7 +19973,7 @@ const CustomRectangle = ({
       clickSelect.un("select", onClickHandler);
       map.removeInteraction(hoverSelect);
       map.removeInteraction(clickSelect);
-      map.removeLayer(vectorLayer);
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [children, color, map, onClick, onHover, properties]);
   return jsx(Fragment, {});
@@ -27479,6 +27566,29 @@ function LayerGroup({
   });
 }
 
+const ImageMarker = ({
+  imageUrl,
+  altText = "unknown",
+  bounds
+}) => {
+  const map = useMap();
+  const imageRef = useRef(new ImageLayer({
+    source: new ImageStatic({
+      url: imageUrl,
+      imageExtent: bounds.flat(),
+      projection: "EPSG:4326"
+    })
+  }));
+  useEffect(() => {
+    const imageLayer = imageRef.current;
+    map.addLayer(imageLayer);
+    return () => {
+      map.removeLayer(imageLayer);
+    };
+  }, []);
+  return jsx(Fragment, {});
+};
+
 const Map = /*#__PURE__*/forwardRef(({
   children,
   isZoomAbled = true,
@@ -27539,10 +27649,11 @@ function InnerText({
   color,
   size,
   outline,
-  children
+  children,
+  isPopup = false
 }) {
   return jsx(Fragment, {});
 }
 
-export { Button, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, TextMarker as CustomTextMarker, DeleteAnnotation, DrawingTools, FullScreenFeature, GeoJsonLayer, LayerGroup, Map, ModifyAnnotation as ModifyAnnotattion, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, InnerText as Text, TextDrawButton, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useIsMount as useIsMounted, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
+export { Button, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, TextMarker as CustomTextMarker, DeleteAnnotation, DrawingTools, FullScreenFeature, GeoJsonLayer, ImageMarker as ImageOveray, LayerGroup, Map, ModifyAnnotation as ModifyAnnotattion, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, InnerText as Text, TextDrawButton, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useIsMount as useIsMounted, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
 //# sourceMappingURL=index.es.js.map
