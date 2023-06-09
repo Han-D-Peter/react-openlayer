@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useRef } from "react";
 import { Coordinate } from "ol/coordinate";
 import Feature from "ol/Feature";
@@ -29,7 +30,9 @@ export default function CustomMultiPoint({
 }: CustomMultiPointProps) {
   const map = useMap();
   const annotationRef = useRef<Feature<MultiPoint>>(
-    new Feature(new MultiPoint(positions.map(position => fromLonLat(position))))
+    new Feature(
+      new MultiPoint(positions.map((position) => fromLonLat(position)))
+    )
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
 
