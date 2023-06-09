@@ -15,6 +15,8 @@ import useMap from "../../hooks/incontext/useMap";
 import { makeText } from "../../utils/object";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { Annotation } from ".";
+import React from "react";
+import { Text } from "ol/style";
 
 export interface CustomRectangleProps extends Annotation {
   positions: Coordinate[][];
@@ -36,7 +38,35 @@ const CustomRectangle = ({
     )
   );
 
-  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+    new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current],
+      }),
+    })
+  );
+
+  const annotationStyleRef = useRef(
+    new Style({
+      stroke: new Stroke({
+        color: ANNOTATION_COLOR[color].stroke,
+        width: 2,
+      }),
+      fill: new Fill({
+        color: ANNOTATION_COLOR[color].fill,
+      }),
+      text:
+        children && !children.props.isPopup
+          ? makeText({
+              text: children.props.children || "",
+              size: children.props.size || 15,
+              color: children.props.color ? children.props.color : "black",
+              outline: children.props.outline,
+              isMarker: true,
+            })
+          : undefined,
+    })
+  );
 
   useEffect(() => {
     if (annotationLayerRef.current && zIndex) {
@@ -46,55 +76,31 @@ const CustomRectangle = ({
 
   useEffect(() => {
     if (!map) return;
-    annotationRef.current.setStyle(
-      new Style({
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke,
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill,
-        }),
-        text: makeText({
-          text: children ? children.props.children : "",
-          size: children?.props.size || 15,
-          color: children?.props.color ? children.props.color : "black",
-          outline: children?.props.outline,
-        }),
-      })
-    );
+    annotationRef.current.setStyle(annotationStyleRef.current);
 
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current],
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource,
-    });
-
-    annotationLayerRef.current = vectorLayer;
     annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer,
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current,
     });
 
-    vectorLayer.setZIndex(zIndex);
+    annotationLayerRef.current.setZIndex(zIndex);
 
     const clickSelect = new Select({
       condition: click,
       style: null,
-      layers: [vectorLayer],
+      layers: [annotationLayerRef.current],
     });
 
     const hoverSelect = new Select({
       condition: pointerMove,
       style: null,
-      layers: [vectorLayer],
+      layers: [annotationLayerRef.current],
     });
 
     map.addInteraction(hoverSelect);
     map.addInteraction(clickSelect);
 
-    map.addLayer(vectorLayer);
+    map.addLayer(annotationLayerRef.current);
     function onHoverHandler(event: SelectEvent) {
       if (event.selected.length > 0) {
         if (onHover) {
@@ -104,6 +110,24 @@ const CustomRectangle = ({
         // hover 이벤트에 의해 선택된 Circle이 없는 경우
         // 선택 해제에 대한 작업 수행
         // 예: 기본 스타일 복원 등
+      }
+
+      // Pop up text
+      if (event.selected.length > 0 && children?.props.isPopup) {
+        annotationStyleRef.current.setText(
+          makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true,
+          })
+        );
+
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && children?.props.isPopup) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
       }
     }
 
@@ -127,7 +151,7 @@ const CustomRectangle = ({
       clickSelect.un("select", onClickHandler);
       map.removeInteraction(hoverSelect);
       map.removeInteraction(clickSelect);
-      map.removeLayer(vectorLayer);
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [children, color, map, onClick, onHover, properties]);
   return <></>;

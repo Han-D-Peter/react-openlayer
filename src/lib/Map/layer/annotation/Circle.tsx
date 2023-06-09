@@ -1,3 +1,5 @@
+/* eslint-disable no-self-assign */
+import React from "react";
 import { useEffect, useRef } from "react";
 import { Feature } from "ol";
 import Circle from "ol/geom/Circle";
@@ -7,14 +9,14 @@ import VectorSource from "ol/source/Vector";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import { fromLonLat } from "ol/proj";
-
+import { Select } from "ol/interaction";
+import { click, pointerMove } from "ol/events/condition";
+import { SelectEvent } from "ol/interaction/Select";
+import { Text } from "ol/style";
 import useMap from "../../hooks/incontext/useMap";
 import { Location } from "../../Map";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { makeText } from "../../utils/object";
-import { Select } from "ol/interaction";
-import { click, pointerMove } from "ol/events/condition";
-import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
 
 interface CustomCircleProps extends Annotation {
@@ -37,7 +39,35 @@ const CustomCircle = ({
     new Feature(new Circle(fromLonLat(center), radius))
   );
 
-  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+    new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current],
+      }),
+    })
+  );
+
+  const annotationStyleRef = useRef(
+    new Style({
+      stroke: new Stroke({
+        color: ANNOTATION_COLOR[color].stroke,
+        width: 2,
+      }),
+      fill: new Fill({
+        color: ANNOTATION_COLOR[color].fill,
+      }),
+      text:
+        children && !children.props.isPopup
+          ? makeText({
+              text: children.props.children || "",
+              size: children.props.size || 15,
+              color: children.props.color ? children.props.color : "black",
+              outline: children.props.outline,
+              isMarker: true,
+            })
+          : undefined,
+    })
+  );
 
   useEffect(() => {
     if (annotationLayerRef.current) {
@@ -46,55 +76,32 @@ const CustomCircle = ({
   }, [zIndex]);
 
   useEffect(() => {
-    annotationRef.current.setStyle(
-      new Style({
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke,
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill,
-        }),
-        text: makeText({
-          text: children ? children.props.children : "",
-          size: children?.props.size || 15,
-          color: children?.props.color ? children.props.color : "black",
-          outline: children?.props.outline,
-        }),
-      })
-    );
+    annotationRef.current.setStyle(annotationStyleRef.current);
 
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current],
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource,
-    });
-
-    annotationLayerRef.current = vectorLayer;
-    annotationLayerRef.current = vectorLayer;
+    annotationLayerRef.current = annotationLayerRef.current;
+    annotationLayerRef.current = annotationLayerRef.current;
     annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer,
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current,
     });
 
-    vectorLayer.setZIndex(zIndex);
+    annotationLayerRef.current.setZIndex(zIndex);
 
     const clickSelect = new Select({
       condition: click,
       style: null,
-      layers: [vectorLayer],
+      layers: [annotationLayerRef.current],
     });
 
     const hoverSelect = new Select({
       condition: pointerMove,
       style: null,
-      layers: [vectorLayer],
+      layers: [annotationLayerRef.current],
     });
 
     map.addInteraction(hoverSelect);
     map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
+    map.addLayer(annotationLayerRef.current);
 
     function onHoverHandler(event: SelectEvent) {
       if (event.selected.length > 0) {
@@ -105,6 +112,24 @@ const CustomCircle = ({
         // hover 이벤트에 의해 선택된 Circle이 없는 경우
         // 선택 해제에 대한 작업 수행
         // 예: 기본 스타일 복원 등
+      }
+
+      // Pop up text
+      if (event.selected.length > 0 && children?.props.isPopup) {
+        annotationStyleRef.current.setText(
+          makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true,
+          })
+        );
+
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && children?.props.isPopup) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
       }
     }
 
@@ -129,8 +154,8 @@ const CustomCircle = ({
       clickSelect.un("select", onClickHandler);
       map.removeInteraction(hoverSelect);
       map.removeInteraction(clickSelect);
-      vectorLayer.getSource()?.clear();
-      map.removeLayer(vectorLayer);
+      annotationLayerRef.current.getSource()?.clear();
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;

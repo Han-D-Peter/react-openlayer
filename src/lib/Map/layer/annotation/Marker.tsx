@@ -1,18 +1,20 @@
-import Feature from "ol/Feature";
+import React from "react";
 import { useEffect, useRef } from "react";
+import Feature from "ol/Feature";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
-import useMap from "../../hooks/incontext/useMap";
+import Icon from "ol/style/Icon";
+import { Text } from "ol/style";
 import { Coordinate } from "ol/coordinate";
 import Style from "ol/style/Style";
-import { icon, makeText } from "../../utils/object";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
-import Icon from "ol/style/Icon";
 import { Annotation } from ".";
+import useMap from "../../hooks/incontext/useMap";
+import { icon, makeText } from "../../utils/object";
 
 export interface CustomMarkerProps extends Annotation {
   center: Coordinate;
@@ -31,7 +33,31 @@ const CustomMarker = ({
   const annotationRef = useRef<Feature<Point>>(
     new Feature(new Point(fromLonLat(center)))
   );
-  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+    new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current],
+      }),
+    })
+  );
+  const annotationStyleRef = useRef(
+    new Style({
+      text:
+        children && !children.props.isPopup
+          ? makeText({
+              text: children.props.children || "",
+              size: children.props.size || 15,
+              color: children.props.color ? children.props.color : "black",
+              outline: children.props.outline,
+              isMarker: true,
+            })
+          : undefined,
+      image: new Icon({
+        src: icon.marker, // 마커 이미지 경로
+        anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+      }),
+    })
+  );
 
   useEffect(() => {
     if (annotationLayerRef.current) {
@@ -40,51 +66,29 @@ const CustomMarker = ({
   }, [zIndex]);
 
   useEffect(() => {
-    annotationRef.current.setStyle(
-      new Style({
-        text: makeText({
-          text: children ? children.props.children : "",
-          size: children?.props.size || 15,
-          color: children?.props.color ? children.props.color : "black",
-          outline: children?.props.outline,
-          isMarker: true,
-        }),
-        image: new Icon({
-          src: icon.marker, // 마커 이미지 경로
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        }),
-      })
-    );
-    const vectorSource = new VectorSource({
-      features: [annotationRef.current],
-    });
-    const vectorLayer = new VectorLayer({
-      source: vectorSource,
-    });
-
-    annotationLayerRef.current = vectorLayer;
+    annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
-      source: vectorSource,
-      layer: vectorLayer,
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current,
     });
 
-    vectorLayer.setZIndex(zIndex);
+    annotationLayerRef.current.setZIndex(zIndex);
 
     const clickSelect = new Select({
       condition: click,
       style: null,
-      layers: [vectorLayer],
+      layers: [annotationLayerRef.current],
     });
 
     const hoverSelect = new Select({
       condition: pointerMove,
       style: null,
-      layers: [vectorLayer],
+      layers: [annotationLayerRef.current],
     });
 
     map.addInteraction(hoverSelect);
     map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
+    map.addLayer(annotationLayerRef.current);
 
     function onHoverHandler(event: SelectEvent) {
       if (event.selected.length > 0) {
@@ -95,6 +99,24 @@ const CustomMarker = ({
         // hover 이벤트에 의해 선택된 Circle이 없는 경우
         // 선택 해제에 대한 작업 수행
         // 예: 기본 스타일 복원 등
+      }
+
+      // Pop up text
+      if (event.selected.length > 0 && children?.props.isPopup) {
+        annotationStyleRef.current.setText(
+          makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true,
+          })
+        );
+
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && children?.props.isPopup) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
       }
     }
 
@@ -111,6 +133,7 @@ const CustomMarker = ({
         // 예: 스타일 변경, 정보 표시 등
       }
     }
+
     hoverSelect.on("select", onHoverHandler);
     clickSelect.on("select", onClickHandler);
 
@@ -119,7 +142,8 @@ const CustomMarker = ({
       clickSelect.un("select", onClickHandler);
       map.removeInteraction(hoverSelect);
       map.removeInteraction(clickSelect);
-      map.removeLayer(vectorLayer);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;
