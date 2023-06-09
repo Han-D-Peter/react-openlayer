@@ -8,6 +8,7 @@ import { Location } from "../Map";
 export interface ImageMarkerProps {
   imageUrl: string;
   altText?: string;
+  zIndex?: number;
   /**
    * @description Set [[minX, minY], [maxX, maxY]]
    */
@@ -17,6 +18,7 @@ export interface ImageMarkerProps {
 const ImageMarker = ({
   imageUrl,
   altText = "unknown",
+  zIndex = 0,
   bounds,
 }: ImageMarkerProps) => {
   const map = useMap();
@@ -29,6 +31,12 @@ const ImageMarker = ({
       }),
     })
   );
+
+  useEffect(() => {
+    if (imageRef.current) {
+      imageRef.current.setZIndex(zIndex);
+    }
+  }, [zIndex]);
 
   useEffect(() => {
     const imageLayer = imageRef.current;
