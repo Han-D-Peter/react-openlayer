@@ -12,6 +12,7 @@ type makeTextArgs = {
 
 export const icon = {
   marker: "",
+  selected: "",
 };
 
 export const makeText = ({
