@@ -6,14 +6,16 @@ import {
   useImperativeHandle,
   useRef,
 } from "react";
-import MapContext from "./MapContext";
-import "ol/ol.css";
 import { Map as OlMap, View } from "ol";
 import { Control, Zoom, defaults as defaultControls } from "ol/control";
 import { fromLonLat } from "ol/proj";
 import { Tile as TileLayer } from "ol/layer";
 import { OSM } from "ol/source";
 import concat from "lodash/concat";
+import MapContext from "./MapContext";
+import useHoverCursor from "./hooks/incontext/useHoverCursor";
+
+import "ol/ol.css";
 
 export type Lng = number;
 export type Lat = number;
@@ -111,6 +113,8 @@ const Map = forwardRef(
         }),
       })
     );
+
+    useHoverCursor(mapObj.current);
 
     useImperativeHandle(ref, () => mapObj);
 
