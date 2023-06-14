@@ -14,7 +14,7 @@ import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Text } from "ol/style";
 import useMap from "../../hooks/incontext/useMap";
-import { Location } from "../../Map";
+import { Location } from "../../MapContainer";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { makeText } from "../../utils/object";
 import { Annotation } from ".";

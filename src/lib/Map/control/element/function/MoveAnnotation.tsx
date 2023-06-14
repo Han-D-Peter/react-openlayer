@@ -1,11 +1,11 @@
-import useSelectAnnotation from "src/lib/Map/hooks/incontext/useSelectAnnotation";
-import Button, { ButtonProps } from "../Button";
-import { Translate } from "ol/interaction";
+import React from "react";
 import { useCallback, useEffect, useRef } from "react";
-import { useMap } from "src/lib/Map/hooks";
 import { Collection } from "ol";
+import { Translate } from "ol/interaction";
 import { TranslateEvent } from "ol/interaction/Translate";
-import { MovementIcon } from "src/lib/Map/constants/icons/MovementIcon";
+import Button, { ButtonProps } from "../Button";
+import { useMap, useSelectAnnotation } from "../../../hooks";
+import { MovementIcon } from "../../../constants/icons/MovementIcon";
 
 export interface MoveAnnotationProps extends ButtonProps {
   onChange?: (e: TranslateEvent) => void;

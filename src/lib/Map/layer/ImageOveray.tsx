@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { useMap } from "../hooks";
 import ImageLayer from "ol/layer/Image";
 import { ImageStatic } from "ol/source";
-import { Location } from "../Map";
+import { Location } from "../MapContainer";
 
 export interface ImageMarkerProps {
   imageUrl: string;

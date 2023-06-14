@@ -6,7 +6,7 @@ import {
   useImperativeHandle,
   useRef,
 } from "react";
-import { Map as OlMap, View } from "ol";
+import { Map, View } from "ol";
 import { Control, Zoom, defaults as defaultControls } from "ol/control";
 import { fromLonLat } from "ol/proj";
 import { Tile as TileLayer } from "ol/layer";
@@ -14,6 +14,7 @@ import { OSM } from "ol/source";
 import concat from "lodash/concat";
 import MapContext from "./MapContext";
 import useHoverCursor from "./hooks/incontext/useHoverCursor";
+import FeatureStore from "./FeatureStore";
 
 import "ol/ol.css";
 
@@ -73,7 +74,7 @@ export interface MapProps {
   children?: ReactNode;
 }
 
-const Map = forwardRef(
+const MapContainer = forwardRef<Map, MapProps>(
   (
     {
       children,
@@ -86,11 +87,11 @@ const Map = forwardRef(
       minZoom = 3,
       height = "1000px",
       width = "1000px",
-    }: MapProps,
+    },
     ref
   ) => {
-    const mapObj = useRef<OlMap>(
-      new OlMap({
+    const mapObj = useRef<Map>(
+      new Map({
         controls: defaultControls({
           zoom: isZoomAbled,
           rotate: isRotateAbled,
@@ -116,7 +117,7 @@ const Map = forwardRef(
 
     useHoverCursor(mapObj.current);
 
-    useImperativeHandle(ref, () => mapObj);
+    useImperativeHandle(ref, () => mapObj.current);
 
     useLayoutEffect(() => {
       const mapRef = mapObj.current;
@@ -137,11 +138,13 @@ const Map = forwardRef(
     // MapContext.Provider 에 객체 저장
     return (
       <MapContext.Provider value={mapObj.current}>
-        <div id="map" style={{ width, height }}></div>
-        {children}
+        <FeatureStore>
+          <div id="map" style={{ width, height }}></div>
+          {children}
+        </FeatureStore>
       </MapContext.Provider>
     );
   }
 );
 
-export default Map;
+export default MapContainer;
