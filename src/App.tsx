@@ -6,16 +6,15 @@ import {
   CustomPolygon,
   CustomRectangle,
 } from "./lib/Map/layer/annotation";
-import InnerText from "./lib/Map/Text";
-import FullScreenFeature from "./lib/Map/control/FullScreenFeature";
-import ControlSection from "./lib/Map/control/layout/ControlSection";
-import ZoomFeature from "./lib/Map/control/ZoomFeature";
-import CompassWheel from "./lib/Map/control/CompassWheel";
-import { TileLayer } from "./lib/Map/layer/tileLayer";
+import { InnerText } from "./lib/Map/Text";
+import { FullScreenFeature } from "./lib/Map/control/FullScreenFeature";
+import { ControlSection } from "./lib/Map/control/layout/ControlSection";
+import { ZoomFeature } from "./lib/Map/control/ZoomFeature";
+import { CompassWheel } from "./lib/Map/control/CompassWheel";
 import { ImageOveray, LayerGroup, MapContainer, fromLonLat } from "./lib/Map";
-import DrawingTools from "./lib/Map/control/DrawingTools";
+import { DrawingTools } from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";
-import CustomMultiPoint from "./lib/Map/layer/annotation/MultiPoint";
+import { CustomMultiPoint } from "./lib/Map/layer/annotation/MultiPoint";
 import { icon } from "./lib";
 import { Map, View } from "ol";
 

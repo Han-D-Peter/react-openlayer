@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { ReactNode, forwardRef } from "react";
@@ -49,13 +50,13 @@ const StyledButton = styled.button<{
   height: 30px;
   background: white;
   border: 1px solid #d9d9d9;
-  border-radius: ${props => getborderRadiusBySide(props.side)};
+  border-radius: ${(props) => getborderRadiusBySide(props.side)};
   &:hover {
-    border: 1px solid ${props => (props.isDisabled ? "#d9d9d9" : "#000000")};
+    border: 1px solid ${(props) => (props.isDisabled ? "#d9d9d9" : "#000000")};
   }
 `;
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       children,
@@ -85,5 +86,3 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
-
-export default Button;

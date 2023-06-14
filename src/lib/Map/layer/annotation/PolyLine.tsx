@@ -13,7 +13,7 @@ import VectorSource from "ol/source/Vector";
 import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
-import useMap from "../../hooks/incontext/useMap";
+import { useMap } from "../../hooks/incontext/useMap";
 import { makeText } from "../../utils/object";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { Annotation } from ".";
@@ -23,7 +23,7 @@ export interface CustomPolyLineProps extends Annotation {
   positions: Coordinate[];
 }
 
-const CustomPolyLine = ({
+export const CustomPolyLine = ({
   positions,
   color = "BLUE",
   properties = {},
@@ -155,5 +155,3 @@ const CustomPolyLine = ({
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;
 };
-
-export default CustomPolyLine;

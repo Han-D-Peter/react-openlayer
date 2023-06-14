@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import useMap from "./useMap";
+import { useMap } from "./useMap";
 import { MapBrowserEvent } from "ol";
 import Feature, { FeatureLike } from "ol/Feature";
 import { Geometry } from "ol/geom";
 
-export default function useSelectAnnotation() {
+export function useSelectAnnotation() {
   const [selectedAnnotation, setSelectedAnnotation] =
     useState<FeatureLike | null>(null);
 

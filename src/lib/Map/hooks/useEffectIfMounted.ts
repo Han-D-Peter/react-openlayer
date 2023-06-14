@@ -1,7 +1,7 @@
 import { DependencyList, useEffect, useMemo } from "react";
 import useIsMount from "./useIsMounted";
 
-const useEffectIfMounted = (
+export const useEffectIfMounted = (
   callback: () => void | Function,
   deps: DependencyList
 ) => {
@@ -14,5 +14,3 @@ const useEffectIfMounted = (
     }
   }, dependency);
 };
-
-export default useEffectIfMounted;

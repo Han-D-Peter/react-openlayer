@@ -1,15 +1,15 @@
 import { FeatureLike } from "ol/Feature";
 import { ANNOTATION_COLOR } from "../../constants";
 import { ReactElement } from "react";
-import InnerText, { InnerTextProps } from "../../Text";
+import { InnerText, InnerTextProps } from "../../Text";
 
-export { default as CustomCircle } from "./Circle";
-export { default as CustomMarker } from "./Marker";
-export { default as CustomMultiPoint } from "./MultiPoint";
-export { default as CustomPolygon } from "./Polygon";
-export { default as CustomPolyLine } from "./PolyLine";
-export { default as CustomRectangle } from "./Rectangle";
-export { default as CustomTextMarker } from "./TextMarker";
+export * from "./Circle";
+export * from "./Marker";
+export * from "./MultiPoint";
+export * from "./Polygon";
+export * from "./PolyLine";
+export * from "./Rectangle";
+export * from "./TextMarker";
 
 export interface Annotation {
   color?: keyof typeof ANNOTATION_COLOR;

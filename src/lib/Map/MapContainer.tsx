@@ -12,9 +12,9 @@ import { fromLonLat } from "ol/proj";
 import { Tile as TileLayer } from "ol/layer";
 import { OSM } from "ol/source";
 import concat from "lodash/concat";
-import MapContext from "./MapContext";
-import useHoverCursor from "./hooks/incontext/useHoverCursor";
-import FeatureStore from "./FeatureStore";
+import { MapContext } from "./MapContext";
+import { useHoverCursor } from "./hooks/incontext/useHoverCursor";
+import { FeatureStore } from "./FeatureStore";
 
 import "ol/ol.css";
 
@@ -74,7 +74,7 @@ export interface MapProps {
   children?: ReactNode;
 }
 
-const MapContainer = forwardRef<Map, MapProps>(
+export const MapContainer = forwardRef<Map, MapProps>(
   (
     {
       children,
@@ -146,5 +146,3 @@ const MapContainer = forwardRef<Map, MapProps>(
     );
   }
 );
-
-export default MapContainer;

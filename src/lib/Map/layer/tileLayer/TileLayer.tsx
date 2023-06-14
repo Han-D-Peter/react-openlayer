@@ -1,10 +1,11 @@
 import { useEffect } from "react";
+import React from "react";
 import { useMap } from "../../hooks";
 import { XYZ } from "ol/source";
 import OlTileLayer from "ol/layer/Tile";
 import { TileUrl } from "../../utils/utils";
 
-interface TileLayerProps {
+export interface TileLayerProps {
   url: string;
 
   /**
@@ -24,7 +25,7 @@ interface TileLayerProps {
   errorTileUrl?: string;
 }
 
-const TileLayer = ({
+export const TileLayer = ({
   url,
   zIndex = 0,
   maxZoom = 42,
@@ -36,7 +37,7 @@ const TileLayer = ({
     const customTmsSource = new XYZ({
       maxZoom,
       minZoom,
-      tileUrlFunction: tileCoord => {
+      tileUrlFunction: (tileCoord) => {
         const tileUrl = new TileUrl(url);
         const z = tileCoord[0];
         const x = tileCoord[1];
@@ -54,5 +55,3 @@ const TileLayer = ({
   }, [map]);
   return <></>;
 };
-
-export default TileLayer;

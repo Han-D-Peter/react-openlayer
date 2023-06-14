@@ -1,4 +1,5 @@
-import Button, { ButtonProps } from "../Button";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
 import { useMap } from "../../../hooks";
@@ -12,7 +13,7 @@ import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { PolygonIcon } from "src/lib/Map/constants/icons/PolygonIcon";
+import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
 
 export interface PolygonDrawButtonProps extends ButtonProps {
   /**
@@ -27,7 +28,7 @@ export interface PolygonDrawButtonProps extends ButtonProps {
   onCanvas?: boolean;
 }
 
-export default function PolygonDrawButton({
+export function PolygonDrawButton({
   onEnd,
   onClick,
   onCanvas = false,

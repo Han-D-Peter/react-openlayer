@@ -1,14 +1,15 @@
-import ControlGroup from "./layout/ControlGroup";
+import React from "react";
+import { ControlGroup } from "./layout/ControlGroup";
 import { useState } from "react";
-import PointDrawButton from "./element/drawing/PointDrawButton";
-import PolylineDrawButton from "./element/drawing/PolylineDrawButton";
-import RectangleDrawButton from "./element/drawing/RectangleDrawButton";
-import PolygonDrawButton from "./element/drawing/PolygonDrawButton";
-import TextDrawButton from "./element/drawing/TextDrawButton";
-import ModifyAnnotation from "./element/function/ModifyAnnotation";
-import MoveAnnotation from "./element/function/MoveAnnotation";
-import DeleteAnnotation from "./element/function/DeleteAnnotation";
-import MultiPointDrawButton from "./element/drawing/MultiPointDrawButton";
+import { PointDrawButton } from "./element/drawing/PointDrawButton";
+import { PolylineDrawButton } from "./element/drawing/PolylineDrawButton";
+import { RectangleDrawButton } from "./element/drawing/RectangleDrawButton";
+import { PolygonDrawButton } from "./element/drawing/PolygonDrawButton";
+import { TextDrawButton } from "./element/drawing/TextDrawButton";
+import { ModifyAnnotation } from "./element/function/ModifyAnnotation";
+import { MoveAnnotation } from "./element/function/MoveAnnotation";
+import { DeleteAnnotation } from "./element/function/DeleteAnnotation";
+import { MultiPointDrawButton } from "./element/drawing/MultiPointDrawButton";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
 
@@ -27,7 +28,7 @@ export interface DrawingToolsProps {
   onCanvas?: boolean;
 }
 
-export default function DrawingTools({
+export function DrawingTools({
   multiMarker = true,
   marker = true,
   polyline = true,

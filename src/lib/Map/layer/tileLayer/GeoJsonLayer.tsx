@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useRef } from "react";
 import proj4 from "proj4";
 import GeoJSON from "ol/format/GeoJSON";
@@ -35,7 +36,7 @@ proj4.defs("WGS:84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
 
 register(proj4);
 
-type Coordinate =
+export type Coordinate =
   | "EPSG:5185"
   | "EPSG:5186"
   | "EPSG:5187"
@@ -43,7 +44,7 @@ type Coordinate =
   | "EPSG:3857"
   | "WGS:84";
 
-interface GeoJsonLayerProps {
+export interface GeoJsonLayerProps {
   geoJson: Record<string, any>;
 
   /**
@@ -54,7 +55,7 @@ interface GeoJsonLayerProps {
   zIndex?: number;
 }
 
-export default function GeoJsonLayer({
+export function GeoJsonLayer({
   geoJson,
   zIndex = 1,
   projectionCode = "EPSG:5186",
@@ -74,7 +75,7 @@ export default function GeoJsonLayer({
     const geoJsonFormat = new GeoJSON();
     const features = geoJsonFormat.readFeatures(geoJson);
 
-    features.forEach(feature => {
+    features.forEach((feature) => {
       const geoMetry = feature.getGeometry();
       if (geoMetry) {
         geoMetry.transform(fromProjection, toProjection);

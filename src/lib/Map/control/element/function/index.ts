@@ -1,3 +1,3 @@
-export { default as DeleteAnnotation } from "./DeleteAnnotation";
-export { default as ModifyAnnotattion } from "./ModifyAnnotation";
-export { default as MoveAnnotation } from "./MoveAnnotation";
+export * from "./DeleteAnnotation";
+export * from "./ModifyAnnotation";
+export * from "./MoveAnnotation";

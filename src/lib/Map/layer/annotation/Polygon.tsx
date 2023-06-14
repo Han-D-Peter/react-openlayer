@@ -15,14 +15,14 @@ import { SelectEvent } from "ol/interaction/Select";
 import { Text } from "ol/style";
 import { Annotation } from ".";
 import { makeText } from "../../utils/object";
-import useMap from "../../hooks/incontext/useMap";
+import { useMap } from "../../hooks/incontext/useMap";
 import { ANNOTATION_COLOR } from "../../constants/color";
 
 export interface CustomPolygonProps extends Annotation {
   positions: Coordinate[][];
 }
 
-const CustomPolygon = ({
+export const CustomPolygon = ({
   positions,
   color = "BLUE",
   properties = {},
@@ -154,5 +154,3 @@ const CustomPolygon = ({
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;
 };
-
-export default CustomPolygon;

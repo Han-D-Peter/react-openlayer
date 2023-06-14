@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { Collection } from "ol";
 import { Translate } from "ol/interaction";
 import { TranslateEvent } from "ol/interaction/Translate";
-import Button, { ButtonProps } from "../Button";
+import { Button, ButtonProps } from "../Button";
 import { useMap, useSelectAnnotation } from "../../../hooks";
 import { MovementIcon } from "../../../constants/icons/MovementIcon";
 
@@ -11,7 +11,7 @@ export interface MoveAnnotationProps extends ButtonProps {
   onChange?: (e: TranslateEvent) => void;
 }
 
-export default function MoveAnnotation(props: MoveAnnotationProps) {
+export function MoveAnnotation(props: MoveAnnotationProps) {
   const translateInteractionRef = useRef<Translate | null>(null);
   const clickedAnnotation = useSelectAnnotation();
   const map = useMap();

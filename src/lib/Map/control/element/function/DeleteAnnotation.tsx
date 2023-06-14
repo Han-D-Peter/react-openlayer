@@ -1,17 +1,17 @@
-import { useMap } from "src/lib/Map/hooks";
-import Button, { ButtonProps } from "../Button";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Select } from "ol/interaction";
-import useSelectAnnotation from "src/lib/Map/hooks/incontext/useSelectAnnotation";
 import { SelectEvent } from "ol/interaction/Select";
 import VectorSource from "ol/source/Vector";
-import { EraserIcon } from "src/lib/Map/constants/icons/EraserIcon";
+import { EraserIcon } from "../../../constants/icons/EraserIcon";
+import { useMap, useSelectAnnotation } from "../../../hooks";
 
 export interface DeleteAnnotationProps extends ButtonProps {
   onChange?: (e: SelectEvent) => void;
 }
 
-export default function DeleteAnnotation(props: DeleteAnnotationProps) {
+export function DeleteAnnotation(props: DeleteAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
   const map = useMap();
   const selectInteractionRef = useRef<Select | null>(null);

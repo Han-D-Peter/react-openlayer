@@ -1,4 +1,5 @@
-import Button, { ButtonProps } from "../Button";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
 import { useMap } from "../../../hooks";
@@ -11,7 +12,7 @@ import Text from "ol/style/Text";
 import Stroke from "ol/style/Stroke";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { TextIcon } from "src/lib/Map/constants/icons/TextIcon";
+import { TextIcon } from "../../../constants/icons/TextIcon";
 
 export interface TextDrawButtonProps extends ButtonProps {
   /**
@@ -26,7 +27,7 @@ export interface TextDrawButtonProps extends ButtonProps {
   onCanvas?: boolean;
 }
 
-export default function TextDrawButton({
+export function TextDrawButton({
   onEnd,
   onClick,
   onCanvas = false,

@@ -13,7 +13,7 @@ import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Text } from "ol/style";
-import useMap from "../../hooks/incontext/useMap";
+import { useMap } from "../../hooks/incontext/useMap";
 import { Location } from "../../MapContainer";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { makeText } from "../../utils/object";
@@ -24,7 +24,7 @@ interface CustomCircleProps extends Annotation {
   radius: number;
 }
 
-const CustomCircle = ({
+export const CustomCircle = ({
   center,
   radius,
   color = "BLUE",
@@ -160,5 +160,3 @@ const CustomCircle = ({
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;
 };
-
-export default CustomCircle;

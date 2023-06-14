@@ -1,18 +1,18 @@
-import Button, { ButtonProps } from "../Button";
-import useSelectAnnotation from "src/lib/Map/hooks/incontext/useSelectAnnotation";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useCallback, useEffect, useRef } from "react";
 import { Modify } from "ol/interaction";
 import { doubleClick } from "ol/events/condition";
 import { Collection } from "ol";
-import { useMap } from "src/lib/Map/hooks";
 import { ModifyEvent } from "ol/interaction/Modify";
-import { ModifyIcon } from "src/lib/Map/constants/icons/ModifyIcon";
+import { ModifyIcon } from "../../../constants/icons/ModifyIcon";
+import { useMap, useSelectAnnotation } from "../../../hooks";
 
 export interface ModifyAnnotationProps extends ButtonProps {
   onChange?: (e: ModifyEvent) => void;
 }
 
-export default function ModifyAnnotation(props: ModifyAnnotationProps) {
+export function ModifyAnnotation(props: ModifyAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
 
   const modifyInteractionRef = useRef<Modify | null>(null);

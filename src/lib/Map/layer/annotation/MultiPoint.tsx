@@ -19,7 +19,7 @@ export interface CustomMultiPointProps extends Annotation {
   positions: Coordinate[];
 }
 
-export default function CustomMultiPoint({
+export function CustomMultiPoint({
   positions,
   color = "BLUE",
   properties = {},

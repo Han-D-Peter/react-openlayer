@@ -1,4 +1,5 @@
-import Button, { ButtonProps } from "../Button";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
 import { useMap } from "../../../hooks";
@@ -10,7 +11,7 @@ import Icon from "ol/style/Icon";
 import { DrawEvent } from "ol/interaction/Draw";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { PointIcon } from "src/lib/Map/constants/icons/PointIcon";
+import { PointIcon } from "../../../constants/icons/PointIcon";
 
 export interface PointDrawButtonProps extends ButtonProps {
   /**
@@ -24,7 +25,7 @@ export interface PointDrawButtonProps extends ButtonProps {
   onCanvas?: boolean;
 }
 
-export default function PointDrawButton({
+export function PointDrawButton({
   onEnd,
   onClick,
   onCanvas = false,

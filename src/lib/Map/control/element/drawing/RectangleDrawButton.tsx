@@ -1,4 +1,5 @@
-import Button, { ButtonProps } from "../Button";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
 import { useMap } from "../../../hooks";
@@ -12,9 +13,9 @@ import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { RectangleIcon } from "src/lib/Map/constants/icons/RectangleIcon";
+import { RectangleIcon } from "../../../constants/icons/RectangleIcon";
 
-interface RectangleDrawButtonProps extends ButtonProps {
+export interface RectangleDrawButtonProps extends ButtonProps {
   /**
    * @description You can get Multipoint feature what was made by callback function.
    */
@@ -27,7 +28,7 @@ interface RectangleDrawButtonProps extends ButtonProps {
   onCanvas?: boolean;
 }
 
-export default function RectangleDrawButton({
+export function RectangleDrawButton({
   onEnd,
   onClick,
   onCanvas = false,

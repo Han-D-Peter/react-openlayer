@@ -1,4 +1,5 @@
-import Button, { ButtonProps } from "../Button";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
 import { useMap } from "../../../hooks";
@@ -12,7 +13,7 @@ import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { PolylineIcon } from "src/lib/Map/constants/icons/PolylineIcon";
+import { PolylineIcon } from "../../../constants/icons/PolylineIcon";
 
 export interface PolylineDrawButtonProps extends ButtonProps {
   /**
@@ -27,7 +28,7 @@ export interface PolylineDrawButtonProps extends ButtonProps {
   onCanvas?: boolean;
 }
 
-export default function PolylineDrawButton({
+export function PolylineDrawButton({
   onEnd,
   onClick,
   onCanvas = false,

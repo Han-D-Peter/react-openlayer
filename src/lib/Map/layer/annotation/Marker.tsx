@@ -13,7 +13,7 @@ import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
-import useMap from "../../hooks/incontext/useMap";
+import { useMap } from "../../hooks/incontext/useMap";
 import { icon, makeText } from "../../utils/object";
 
 export interface CustomMarkerProps extends Annotation {
@@ -21,7 +21,7 @@ export interface CustomMarkerProps extends Annotation {
   selected?: boolean;
 }
 
-const CustomMarker = ({
+export const CustomMarker = ({
   center,
   color = "BLUE",
   properties = {},
@@ -172,5 +172,3 @@ const CustomMarker = ({
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;
 };
-
-export default CustomMarker;

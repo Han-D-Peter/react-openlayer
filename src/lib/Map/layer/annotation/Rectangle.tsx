@@ -11,7 +11,7 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
-import useMap from "../../hooks/incontext/useMap";
+import { useMap } from "../../hooks/incontext/useMap";
 import { makeText } from "../../utils/object";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { Annotation } from ".";
@@ -22,7 +22,7 @@ export interface CustomRectangleProps extends Annotation {
   positions: Coordinate[][];
 }
 
-const CustomRectangle = ({
+export const CustomRectangle = ({
   positions,
   color = "BLUE",
   properties = {},
@@ -156,5 +156,3 @@ const CustomRectangle = ({
   }, [children, color, map, onClick, onHover, properties]);
   return <></>;
 };
-
-export default CustomRectangle;

@@ -6,6 +6,7 @@ import VectorSource from 'ol/source/Vector';
 import Style from 'ol/style/Style';
 import { Circle, Fill, Stroke, Text, Style as Style$1 } from 'ol/style';
 import { toLonLat, fromLonLat } from 'ol/proj';
+export { fromLonLat, toLonLat } from 'ol/proj';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import Fill$1 from 'ol/style/Fill';
@@ -17,7 +18,7 @@ import { doubleClick, click, pointerMove } from 'ol/events/condition';
 import { Control as Control$2, FullScreen, defaults as defaults$2, Zoom as Zoom$2 } from 'ol/control';
 import Circle$1 from 'ol/geom/Circle';
 import Feature$2 from 'ol/Feature';
-import { Point as Point$3, MultiPoint, Polygon as Polygon$1, LineString } from 'ol/geom';
+import { Point as Point$3, MultiPoint, Polygon as Polygon$1, LineString, Circle as Circle$2 } from 'ol/geom';
 import { XYZ, ImageStatic, OSM } from 'ol/source';
 import OlTileLayer from 'ol/layer/Tile';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -490,6 +491,7 @@ function PointDrawButton(_a) {
         isMarker: true
       }),
       image: new Icon({
+        scale: 0.07,
         src: icon.marker,
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
@@ -513,6 +515,7 @@ function PointDrawButton(_a) {
         isMarker: true
       }),
       image: new Icon({
+        scale: 0.07,
         src: icon.marker,
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
@@ -618,7 +621,7 @@ function PolygonDrawButton(_a) {
         color: "rgba(2, 26, 255, 0.3)"
       }),
       image: new Icon({
-        src: "mapicon/polygon.svg",
+        src: "/images/polygon.svg",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     })
@@ -735,7 +738,7 @@ function PolylineDrawButton(_a) {
         color: "rgba(2, 26, 255, 0.3)"
       }),
       image: new Icon({
-        src: "mapicon/polyline.svg",
+        src: "/images/polyline.svg",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     })
@@ -852,7 +855,7 @@ function RectangleDrawButton(_a) {
         color: "rgba(2, 26, 255, 0.3)"
       }),
       image: new Icon({
-        src: "mapicon/Rectangle.svg",
+        src: "/images/Rectangle.svg",
         anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
     })
@@ -16897,7 +16900,7 @@ function setLayerMapProperty(layer, map) {
  * @fires import("./render/Event.js").default#rendercomplete
  * @api
  */
-class Map$1 extends BaseObject$1 {
+class Map extends BaseObject$1 {
   /**
    * @param {MapOptions} [options] Map options.
    */
@@ -18499,7 +18502,7 @@ function createOptionsInternal(options) {
     values: values,
   };
 }
-var OlMap = Map$1;
+var Map$1 = Map;
 
 function ModifyIcon({
   color = "black",
@@ -27566,9 +27569,10 @@ function LayerGroup({
   });
 }
 
-const ImageMarker = ({
+const ImageOveray = ({
   imageUrl,
   altText = "unknown",
+  zIndex = 0,
   bounds
 }) => {
   const map = useMap();
@@ -27580,6 +27584,11 @@ const ImageMarker = ({
     })
   }));
   useEffect(() => {
+    if (imageRef.current) {
+      imageRef.current.setZIndex(zIndex);
+    }
+  }, [zIndex]);
+  useEffect(() => {
     const imageLayer = imageRef.current;
     map.addLayer(imageLayer);
     return () => {
@@ -27589,7 +27598,138 @@ const ImageMarker = ({
   return jsx(Fragment, {});
 };
 
-const Map = /*#__PURE__*/forwardRef(({
+function useHoverCursor(mapRefObj) {
+  const onPointerMove = event => {
+    const map = event.map;
+    const pixel = event.pixel;
+    // features에 대해 forEachFeatureAtPixel을 사용하여 해당 feature 위에 마우스를 올렸을 때 커서 스타일 변경
+    map.getTargetElement().style.cursor = "default";
+    map.forEachFeatureAtPixel(pixel, feature => {
+      const geometry = feature.getGeometry();
+      if (geometry instanceof Point$3) {
+        map.getTargetElement().style.cursor = "pointer"; // 커서 스타일 변경
+        return;
+      } else if (geometry instanceof MultiPoint) {
+        map.getTargetElement().style.cursor = "pointer";
+      } else if (geometry instanceof Polygon$1) {
+        map.getTargetElement().style.cursor = "pointer";
+      } else if (geometry instanceof LineString) {
+        map.getTargetElement().style.cursor = "pointer";
+      } else if (geometry instanceof Circle$2) {
+        map.getTargetElement().style.cursor = "pointer";
+      }
+    });
+  };
+  useEffect(() => {
+    mapRefObj.on("pointermove", onPointerMove);
+    return () => {
+      mapRefObj.un("pointermove", onPointerMove);
+    };
+  }, []);
+}
+
+const FeatureContext = /*#__PURE__*/createContext(null);
+
+function useResetabledState() {
+  const [state, setState] = useState(null);
+  const changeState = useCallback(value => {
+    setState(value);
+  }, []);
+  const resetState = useCallback(() => {
+    setState(null);
+  }, []);
+  return [state, changeState, resetState];
+}
+
+function SelectedFeature({
+  feature
+}) {
+  const map = useMap();
+  const markerLayerRef = useRef(null);
+  useEffect(() => {
+    const markerLayer = markerLayerRef.current;
+    if (markerLayer) {
+      markerLayer.setSource(null); // Clear previous markers
+      if (feature) {
+        console.log("type", feature.getType());
+        if (feature.getType() === "Point") {
+          const coordinates = feature.getCoordinates();
+          console.log("coordinates", toLonLat(coordinates));
+        }
+        if (feature.getType() === "Polygon") {
+          const coordinates = feature.getCoordinates();
+          console.log("coordinates", [coordinates[0].map(coord => toLonLat(coord))]);
+        }
+        if (feature.getType() === "LineString") {
+          const coordinates = feature.getCoordinates();
+          console.log("coordinates", coordinates.map(coord => toLonLat(coord)));
+        }
+        if (feature.getType() === "Circle") {
+          const coordinates = feature.getCenter();
+          console.log("coordinates", toLonLat(coordinates));
+        }
+        // const vertices = coordinates.flat();
+        // const markers = vertices.map((vertex) => {
+        //   const point = new Point(vertex);
+        //   return new Feature({ geometry: point });
+        // });
+        // const markerSource = new VectorSource({ features: markers });
+        // markerLayer.setSource(markerSource);
+      }
+    }
+  }, [feature]);
+  useEffect(() => {
+    const markerLayer = new VectorLayer({
+      source: new VectorSource()
+      // Add your desired style for the markers here
+    });
+
+    map.addLayer(markerLayer);
+    markerLayerRef.current = markerLayer;
+    return () => {
+      map.removeLayer(markerLayer);
+    };
+  }, [map]);
+  return jsx(Fragment, {});
+}
+
+function FeatureStore(_a) {
+  var props = __rest(_a, []);
+  const map = useMap();
+  const [selectedFeature, selectFeature, unSelectFeature] = useResetabledState();
+  const providerValue = useMemo(() => ({
+    selectedFeature,
+    selectFeature,
+    unSelectFeature
+  }), [selectedFeature, selectFeature, unSelectFeature]);
+  useEffect(() => {
+    const onClick = e => {
+      const pixel = e.pixel;
+      map.forEachFeatureAtPixel(pixel, feature => {
+        const geometry = feature.getGeometry();
+        // 토글
+        if (selectedFeature === geometry) {
+          selectFeature(null);
+        } else {
+          selectFeature(geometry);
+        }
+      });
+    };
+    map.on("click", onClick);
+    return () => {
+      map.un("click", onClick);
+    };
+  }, [selectedFeature, map]);
+  return jsxs(FeatureContext.Provider, Object.assign({
+    value: providerValue
+  }, {
+    children: [jsx(SelectedFeature, {
+      feature: selectedFeature
+    }), props.children]
+  }));
+}
+
+const MapContainer = /*#__PURE__*/forwardRef(({
   children,
   isZoomAbled = true,
   isRotateAbled = false,
@@ -27601,7 +27741,7 @@ const Map = /*#__PURE__*/forwardRef(({
   height = "1000px",
   width = "1000px"
 }, ref) => {
-  const mapObj = useRef(new OlMap({
+  const mapObj = useRef(new Map$1({
     controls: defaults$2({
       zoom: isZoomAbled,
       rotate: isRotateAbled
@@ -27619,7 +27759,8 @@ const Map = /*#__PURE__*/forwardRef(({
       constrainResolution: true
     })
   }));
-  useImperativeHandle(ref, () => mapObj);
+  useHoverCursor(mapObj.current);
+  useImperativeHandle(ref, () => mapObj.current);
   useLayoutEffect(() => {
     const mapRef = mapObj.current;
     const defaultZoomControl = mapRef.getControls().getArray().find(control => control instanceof Zoom$2);
@@ -27632,16 +27773,18 @@ const Map = /*#__PURE__*/forwardRef(({
     };
   }, []);
   // MapContext.Provider 에 객체 저장
-  return jsxs(MapContext.Provider, Object.assign({
+  return jsx(MapContext.Provider, Object.assign({
     value: mapObj.current
   }, {
-    children: [jsx("div", {
-      id: "map",
-      style: {
-        width,
-        height
-      }
-    }), children]
+    children: jsxs(FeatureStore, {
+      children: [jsx("div", {
+        id: "map",
+        style: {
+          width,
+          height
+        }
+      }), children]
+    })
   }));
 });
 
@@ -27655,5 +27798,5 @@ function InnerText({
   return jsx(Fragment, {});
 }
 
-export { Button, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, TextMarker as CustomTextMarker, DeleteAnnotation, DrawingTools, FullScreenFeature, GeoJsonLayer, ImageMarker as ImageOveray, LayerGroup, Map, ModifyAnnotation as ModifyAnnotattion, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, InnerText as Text, TextDrawButton, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useIsMount as useIsMounted, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
+export { Button, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FullScreenFeature, GeoJsonLayer, ImageOveray, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
 //# sourceMappingURL=index.es.js.map

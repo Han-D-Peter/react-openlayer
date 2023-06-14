@@ -5,7 +5,7 @@ import ImageLayer from "ol/layer/Image";
 import { ImageStatic } from "ol/source";
 import { Location } from "../MapContainer";
 
-export interface ImageMarkerProps {
+export interface ImageOverayProps {
   imageUrl: string;
   altText?: string;
   zIndex?: number;
@@ -15,12 +15,12 @@ export interface ImageMarkerProps {
   bounds: Location[];
 }
 
-const ImageMarker = ({
+export const ImageOveray = ({
   imageUrl,
   altText = "unknown",
   zIndex = 0,
   bounds,
-}: ImageMarkerProps) => {
+}: ImageOverayProps) => {
   const map = useMap();
   const imageRef = useRef(
     new ImageLayer({
@@ -48,5 +48,3 @@ const ImageMarker = ({
   }, []);
   return <></>;
 };
-
-export default ImageMarker;

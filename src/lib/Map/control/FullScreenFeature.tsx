@@ -1,10 +1,11 @@
+import React from "react";
 import styled from "@emotion/styled";
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks";
 import { FullScreen } from "ol/control";
-import ControlGroup from "./layout/ControlGroup";
-import Button from "./element/Button";
-import useEffectIfMounted from "../hooks/useEffectIfMounted";
+import { ControlGroup } from "./layout/ControlGroup";
+import { Button } from "./element/Button";
+import { useEffectIfMounted } from "../hooks/useEffectIfMounted";
 import { FullScreenIcon } from "../constants/icons/FullScreenIcon";
 import { FullScreenExitIcon } from "../constants/icons/FullScreenExitIcon";
 
@@ -16,7 +17,7 @@ const InnerButton = styled.div`
   align-items: center;
 `;
 
-const FullScreenFeature = () => {
+export const FullScreenFeature = () => {
   const map = useMap();
   const ref = useRef<HTMLButtonElement>(null);
   const onBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -82,5 +83,3 @@ const FullScreenFeature = () => {
     </ControlGroup>
   );
 };
-
-export default FullScreenFeature;

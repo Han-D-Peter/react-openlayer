@@ -8,7 +8,7 @@ export interface InnerTextProps {
   isPopup?: boolean;
 }
 
-export default function InnerText({
+export function InnerText({
   color,
   size,
   outline,

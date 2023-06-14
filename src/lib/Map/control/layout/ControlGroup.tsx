@@ -1,12 +1,13 @@
+import React from "react";
 import { Children, ReactElement, cloneElement } from "react";
-import Button from "../element/Button";
+import { Button } from "../element/Button";
 
 export interface ControlGroupProps {
   children:
     | ReactElement<typeof Button>
     | (boolean | ReactElement<typeof Button>)[];
 }
-const ControlGroup = ({ children }: ControlGroupProps) => {
+export const ControlGroup = ({ children }: ControlGroupProps) => {
   return (
     <div style={{ margin: "10px 0 10px 0 " }}>
       {Children.map(children, (child, index) => {
@@ -30,5 +31,3 @@ const ControlGroup = ({ children }: ControlGroupProps) => {
     </div>
   );
 };
-
-export default ControlGroup;
