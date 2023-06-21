@@ -32,7 +32,7 @@ function App() {
 
   return (
     <div className="App">
-      <MapContainer ref={ref}>
+      <MapContainer ref={ref} isAbledSelection>
         {/* <GeoJsonLayer geoJson={geoJsonSample} /> */}
         {/* <TileLayer url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png" /> */}
         <ImageOverlay

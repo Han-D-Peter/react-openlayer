@@ -142,10 +142,6 @@ export const CustomPolygon = ({
         annotationRef.current.setStyle(hoveredFeatureStyle);
       } else if (event.selected.length === 0 && children?.props.isPopup) {
         const hoveredFeatureStyle = annotationRef.current.getStyle() as Style;
-        console.log(
-          "🚀 ~ file: Polygon.tsx:142 ~ onHoverHandler ~ hoveredFeatureStyle:",
-          annotationRef.current
-        );
 
         hoveredFeatureStyle.setText(new Text());
         annotationRef.current.setStyle(hoveredFeatureStyle);
