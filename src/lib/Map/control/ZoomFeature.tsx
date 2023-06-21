@@ -35,7 +35,6 @@ export const ZoomFeature = () => {
 
   const handleWheel = (event: WheelEvent) => {
     event.preventDefault();
-    console.log(map.getView().getZoom());
     setZoomAmount(map.getView().getZoom() ?? 0);
   };
 

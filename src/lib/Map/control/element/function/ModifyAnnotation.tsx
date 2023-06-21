@@ -19,11 +19,38 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
 
   const map = useMap();
 
-  const onModifyEnd = useCallback((event: ModifyEvent) => {
-    if (props.onChange) {
-      props.onChange(event);
+  const onModifyStart = useCallback(() => {
+    if (clickedAnnotation) {
+      const existProperties = clickedAnnotation.getProperties();
+      const existMapProperties = map.getProperties();
+      clickedAnnotation.setProperties({
+        ...existProperties,
+        isModifying: true,
+      });
+
+      map.setProperties({ ...existMapProperties, isModifying: true });
     }
-  }, []);
+  }, [clickedAnnotation]);
+
+  const onModifyEnd = useCallback(
+    (event: ModifyEvent) => {
+      if (props.onChange) {
+        props.onChange(event);
+      }
+      const existProperties = clickedAnnotation.getProperties();
+      clickedAnnotation.setProperties({
+        ...existProperties,
+        isModifying: true,
+      });
+    },
+    [clickedAnnotation, props.onChange]
+  );
+
+  // 수정중임을 map 에 명시
+  useEffect(() => {
+    const existMapProperties = map.getProperties();
+    map.setProperties({ ...existMapProperties, isModifying: props.isActive });
+  }, [props.isActive]);
 
   useEffect(() => {
     if (clickedAnnotation && props.isActive) {
@@ -32,11 +59,13 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
           features: new Collection([clickedAnnotation]),
           deleteCondition: doubleClick,
         });
+        modifyInteractionRef.current.on("modifystart", onModifyStart);
         modifyInteractionRef.current.on("modifyend", onModifyEnd);
         map.addInteraction(modifyInteractionRef.current);
       }
     } else {
       if (modifyInteractionRef.current) {
+        modifyInteractionRef.current.un("modifystart", onModifyStart);
         modifyInteractionRef.current.un("modifyend", onModifyEnd);
         map.removeInteraction(modifyInteractionRef.current);
         modifyInteractionRef.current = null;
@@ -45,6 +74,7 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
 
     return () => {
       if (modifyInteractionRef.current) {
+        modifyInteractionRef.current.un("modifystart", onModifyStart);
         modifyInteractionRef.current.un("modifyend", onModifyEnd);
         map.removeInteraction(modifyInteractionRef.current);
         modifyInteractionRef.current = null;

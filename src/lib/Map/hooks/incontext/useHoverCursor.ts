@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { Map as OlMap } from "ol";
+import { Map } from "ol";
 import MapBrowserEvent from "ol/MapBrowserEvent";
 import { Circle, LineString, MultiPoint, Point, Polygon } from "ol/geom";
 
-export default function useHoverCursor(mapRefObj: OlMap) {
+export function useHoverCursor(mapRefObj: Map) {
   const onPointerMove = (event: MapBrowserEvent<any>) => {
     const map = event.map;
     const pixel = event.pixel;

@@ -63,6 +63,13 @@ export const CustomMarker = ({
   );
 
   useEffect(() => {
+    if (annotationRef.current) {
+      const geometry = annotationRef.current.getGeometry() as Point;
+      geometry.setCoordinates(fromLonLat(center));
+    }
+  }, [center]);
+
+  useEffect(() => {
     if (annotationLayerRef.current) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
@@ -92,8 +99,11 @@ export const CustomMarker = ({
   useEffect(() => {
     annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
+      shape: "Marker",
+      isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
+      hasPopup: children?.props.isPopup,
     });
 
     annotationLayerRef.current.setZIndex(zIndex);
@@ -124,6 +134,9 @@ export const CustomMarker = ({
         // 선택 해제에 대한 작업 수행
         // 예: 기본 스타일 복원 등
       }
+
+      // 수정중일땐 팝업 관여하지 않음
+      if (map.getProperties().isModifying) return;
 
       // Pop up text
       if (event.selected.length > 0 && children?.props.isPopup) {

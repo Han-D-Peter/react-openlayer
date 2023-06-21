@@ -84,6 +84,8 @@ export function PolylineDrawButton({
       })
     );
     feature.setProperties({
+      shape: "Polyline",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });

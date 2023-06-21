@@ -84,6 +84,8 @@ export function RectangleDrawButton({
       })
     );
     event.feature.setProperties({
+      shape: "Rectangle",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });

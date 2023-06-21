@@ -48,7 +48,6 @@ export function MultiPointDrawButton({
 
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  console.log("isDrawing", isDrawing);
   const [pointCount, setPointCount] = useState(0);
 
   const startDrawing = () => {
@@ -62,6 +61,8 @@ export function MultiPointDrawButton({
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
     feature.setProperties({
+      shape: "MultiPoint",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });

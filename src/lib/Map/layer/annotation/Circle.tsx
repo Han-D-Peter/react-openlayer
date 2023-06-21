@@ -70,6 +70,13 @@ export const CustomCircle = ({
   );
 
   useEffect(() => {
+    if (annotationRef.current) {
+      const geometry = annotationRef.current.getGeometry() as Circle;
+      geometry.setCenter(fromLonLat(center));
+    }
+  }, [center]);
+
+  useEffect(() => {
     if (annotationLayerRef.current) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
@@ -81,8 +88,11 @@ export const CustomCircle = ({
     annotationLayerRef.current = annotationLayerRef.current;
     annotationLayerRef.current = annotationLayerRef.current;
     annotationRef.current.setProperties({
+      shape: "Circle",
+      isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
+      hasPopup: children?.props.isPopup,
     });
 
     annotationLayerRef.current.setZIndex(zIndex);
@@ -114,9 +124,14 @@ export const CustomCircle = ({
         // 예: 기본 스타일 복원 등
       }
 
+      // 수정중일땐 팝업 관여하지 않음
+      if (map.getProperties().isModifying) return;
+
       // Pop up text
       if (event.selected.length > 0 && children?.props.isPopup) {
-        annotationStyleRef.current.setText(
+        const hoveredFeature = event.selected[0];
+        const hoveredFeatureStyle = hoveredFeature.getStyle() as Style;
+        hoveredFeatureStyle.setText(
           makeText({
             text: children.props.children || "",
             size: children.props.size || 15,
@@ -126,10 +141,12 @@ export const CustomCircle = ({
           })
         );
 
-        annotationRef.current.setStyle(annotationStyleRef.current);
+        annotationRef.current.setStyle(hoveredFeatureStyle);
       } else if (event.selected.length === 0 && children?.props.isPopup) {
-        annotationStyleRef.current.setText(new Text());
-        annotationRef.current.setStyle(annotationStyleRef.current);
+        const hoveredFeatureStyle = annotationRef.current.getStyle() as Style;
+
+        hoveredFeatureStyle.setText(new Text());
+        annotationRef.current.setStyle(hoveredFeatureStyle);
       }
     }
 

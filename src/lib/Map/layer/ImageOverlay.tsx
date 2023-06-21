@@ -5,7 +5,7 @@ import ImageLayer from "ol/layer/Image";
 import { ImageStatic } from "ol/source";
 import { Location } from "../MapContainer";
 
-export interface ImageOverayProps {
+export interface ImageOverlayProps {
   imageUrl: string;
   altText?: string;
   zIndex?: number;
@@ -15,12 +15,12 @@ export interface ImageOverayProps {
   bounds: Location[];
 }
 
-export const ImageOveray = ({
+export const ImageOverlay = ({
   imageUrl,
   altText = "unknown",
   zIndex = 0,
   bounds,
-}: ImageOverayProps) => {
+}: ImageOverlayProps) => {
   const map = useMap();
   const imageRef = useRef(
     new ImageLayer({
@@ -31,6 +31,18 @@ export const ImageOveray = ({
       }),
     })
   );
+
+  useEffect(() => {
+    if (imageRef.current) {
+      imageRef.current.setSource(
+        new ImageStatic({
+          url: imageUrl,
+          imageExtent: bounds.flat(),
+          projection: "EPSG:4326",
+        })
+      );
+    }
+  }, [bounds]);
 
   useEffect(() => {
     if (imageRef.current) {

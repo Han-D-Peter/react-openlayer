@@ -37,6 +37,13 @@ export const TextMarker = ({
   const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
 
   useEffect(() => {
+    if (annotationRef.current) {
+      const geometry = annotationRef.current.getGeometry() as Point;
+      geometry.setCoordinates(fromLonLat(center));
+    }
+  }, [center]);
+
+  useEffect(() => {
     if (annotationLayerRef.current && zIndex) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
@@ -73,6 +80,8 @@ export const TextMarker = ({
 
     annotationLayerRef.current = vectorLayer;
     annotationRef.current.setProperties({
+      shape: "TextMarker",
+      isModifying: false,
       source: vectorSource,
       layer: vectorLayer,
     });

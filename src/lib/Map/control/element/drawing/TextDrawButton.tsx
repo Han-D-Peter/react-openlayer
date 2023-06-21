@@ -86,6 +86,8 @@ export function TextDrawButton({
       })
     );
     feature.setProperties({
+      shape: "TextMarker",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });

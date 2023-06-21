@@ -9,6 +9,10 @@ import { useEffectIfMounted } from "../hooks/useEffectIfMounted";
 import { FullScreenIcon } from "../constants/icons/FullScreenIcon";
 import { FullScreenExitIcon } from "../constants/icons/FullScreenExitIcon";
 
+interface FullScreenFeatureProps {
+  onChange?: (isFull: boolean) => void;
+}
+
 const InnerButton = styled.div`
   width: 100%;
   height: 100%;
@@ -17,7 +21,7 @@ const InnerButton = styled.div`
   align-items: center;
 `;
 
-export const FullScreenFeature = () => {
+export const FullScreenFeature = ({ onChange }: FullScreenFeatureProps) => {
   const map = useMap();
   const ref = useRef<HTMLButtonElement>(null);
   const onBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -44,10 +48,12 @@ export const FullScreenFeature = () => {
 
   const onFull = () => {
     setIsFull(true);
+    onChange && onChange(true);
   };
 
   const offFull = () => {
     setIsFull(false);
+    onChange && onChange(false);
   };
 
   useEffect(() => {

@@ -80,6 +80,8 @@ export function PointDrawButton({
       })
     );
     feature.setProperties({
+      shape: "Point",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });

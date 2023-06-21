@@ -84,6 +84,8 @@ export function PolygonDrawButton({
       })
     );
     feature.setProperties({
+      shape: "Polygon",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });
