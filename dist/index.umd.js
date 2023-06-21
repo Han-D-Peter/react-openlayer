@@ -19824,7 +19824,6 @@
             annotationRef.current.setStyle(hoveredFeatureStyle);
           } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
             const hoveredFeatureStyle = annotationRef.current.getStyle();
-            console.log("🚀 ~ file: Polygon.tsx:142 ~ onHoverHandler ~ hoveredFeatureStyle:", annotationRef.current);
             hoveredFeatureStyle.setText(new style.Text());
             annotationRef.current.setStyle(hoveredFeatureStyle);
           }
