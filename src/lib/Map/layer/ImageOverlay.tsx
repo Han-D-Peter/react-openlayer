@@ -3,9 +3,9 @@ import { useEffect, useRef } from "react";
 import { useMap } from "../hooks";
 import ImageLayer from "ol/layer/Image";
 import { ImageStatic } from "ol/source";
-import { Location } from "../Map";
+import { Location } from "../MapContainer";
 
-export interface ImageMarkerProps {
+export interface ImageOverlayProps {
   imageUrl: string;
   altText?: string;
   zIndex?: number;
@@ -15,12 +15,12 @@ export interface ImageMarkerProps {
   bounds: Location[];
 }
 
-const ImageMarker = ({
+export const ImageOverlay = ({
   imageUrl,
   altText = "unknown",
   zIndex = 0,
   bounds,
-}: ImageMarkerProps) => {
+}: ImageOverlayProps) => {
   const map = useMap();
   const imageRef = useRef(
     new ImageLayer({
@@ -31,6 +31,18 @@ const ImageMarker = ({
       }),
     })
   );
+
+  useEffect(() => {
+    if (imageRef.current) {
+      imageRef.current.setSource(
+        new ImageStatic({
+          url: imageUrl,
+          imageExtent: bounds.flat(),
+          projection: "EPSG:4326",
+        })
+      );
+    }
+  }, [bounds]);
 
   useEffect(() => {
     if (imageRef.current) {
@@ -48,5 +60,3 @@ const ImageMarker = ({
   }, []);
   return <></>;
 };
-
-export default ImageMarker;

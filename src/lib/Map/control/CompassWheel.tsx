@@ -1,5 +1,6 @@
+import React from "react";
 import { useEffect, useRef, useState } from "react";
-import useMap from "../hooks/incontext/useMap";
+import { useMap } from "../hooks/incontext/useMap";
 import { Control } from "ol/control";
 import { useMapRotation } from "../hooks";
 import { CompassIcon } from "../constants/icons/CompassIcon";
@@ -11,7 +12,7 @@ export interface CompassWheelProps {
   onWheel?: (degree: number) => void;
 }
 
-const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
+export const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
   const [rotationDegree, setRotate, resetRotation] = useMapRotation();
   const [mouseDown, setMouseDown] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -153,5 +154,3 @@ const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
     </div>
   );
 };
-
-export default CompassWheel;

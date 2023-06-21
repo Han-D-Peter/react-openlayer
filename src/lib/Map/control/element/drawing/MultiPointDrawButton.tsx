@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
@@ -7,10 +8,10 @@ import { DrawEvent } from "ol/interaction/Draw";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { Text, Fill, Stroke, Circle } from "ol/style";
-import { ANNOTATION_COLOR } from "src/lib/Map/constants/color";
+import { ANNOTATION_COLOR } from "../../../constants/color";
 import { useMap } from "../../../hooks";
-import Button, { ButtonProps } from "../Button";
-import { MultiPointIcon } from "src/lib/Map/constants/icons/MultiPointIcon";
+import { Button, ButtonProps } from "../Button";
+import { MultiPointIcon } from "../../../constants/icons/MultiPointIcon";
 
 export interface MultiPointDrawButtonProps extends ButtonProps {
   /**
@@ -25,7 +26,7 @@ export interface MultiPointDrawButtonProps extends ButtonProps {
   onCanvas?: boolean;
 }
 
-export default function MultiPointDrawButton({
+export function MultiPointDrawButton({
   onEnd,
   onClick,
   onCanvas = false,
@@ -47,7 +48,6 @@ export default function MultiPointDrawButton({
 
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  console.log("isDrawing", isDrawing);
   const [pointCount, setPointCount] = useState(0);
 
   const startDrawing = () => {
@@ -61,6 +61,8 @@ export default function MultiPointDrawButton({
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
     feature.setProperties({
+      shape: "MultiPoint",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });

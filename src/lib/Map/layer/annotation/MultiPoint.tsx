@@ -19,7 +19,7 @@ export interface CustomMultiPointProps extends Annotation {
   positions: Coordinate[];
 }
 
-export default function CustomMultiPoint({
+export function CustomMultiPoint({
   positions,
   color = "BLUE",
   properties = {},
@@ -75,11 +75,15 @@ export default function CustomMultiPoint({
         const pointFeature = new Feature(point);
         pointFeature.setStyle(style);
         pointFeature.setProperties({
+          shape: "MultiPoint",
+          isModifying: false,
           source: vectorSource,
           layer: vectorLayer,
+          hasPopup: children?.props.isPopup,
         });
         return pointFeature;
       });
+
     vectorSource.addFeatures(features);
 
     annotationLayerRef.current = vectorLayer;

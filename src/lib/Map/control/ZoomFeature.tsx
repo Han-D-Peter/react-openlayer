@@ -1,11 +1,12 @@
-import Button from "./element/Button";
-import ControlGroup from "./layout/ControlGroup";
+import React from "react";
+import { Button } from "./element/Button";
+import { ControlGroup } from "./layout/ControlGroup";
 import { useMap } from "../hooks";
 import { useEffect, useState } from "react";
 import { ZoomIn } from "../constants/icons/ZoomIn";
 import { ZoomOut } from "../constants/icons/ZoomOut";
 
-const ZoomFeature = () => {
+export const ZoomFeature = () => {
   const map = useMap();
   const [zoomAmount, setZoomAmount] = useState<number>(
     map.getView().getZoom() ?? 0
@@ -34,7 +35,6 @@ const ZoomFeature = () => {
 
   const handleWheel = (event: WheelEvent) => {
     event.preventDefault();
-    console.log(map.getView().getZoom());
     setZoomAmount(map.getView().getZoom() ?? 0);
   };
 
@@ -57,5 +57,3 @@ const ZoomFeature = () => {
     </ControlGroup>
   );
 };
-
-export default ZoomFeature;

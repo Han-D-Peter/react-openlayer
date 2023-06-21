@@ -1,4 +1,5 @@
-import Button, { ButtonProps } from "../Button";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
 import { useMap } from "../../../hooks";
@@ -12,7 +13,7 @@ import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { PolygonIcon } from "src/lib/Map/constants/icons/PolygonIcon";
+import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
 
 export interface PolygonDrawButtonProps extends ButtonProps {
   /**
@@ -27,7 +28,7 @@ export interface PolygonDrawButtonProps extends ButtonProps {
   onCanvas?: boolean;
 }
 
-export default function PolygonDrawButton({
+export function PolygonDrawButton({
   onEnd,
   onClick,
   onCanvas = false,
@@ -49,7 +50,7 @@ export default function PolygonDrawButton({
           color: "rgba(2, 26, 255, 0.3)",
         }),
         image: new Icon({
-          src: "mapicon/polygon.svg", // 마커 이미지 경로
+          src: "/images/polygon.svg", // 마커 이미지 경로
           anchor: [0.5, 1], // 마커 이미지의 앵커 위치
         }),
       }),
@@ -83,6 +84,8 @@ export default function PolygonDrawButton({
       })
     );
     feature.setProperties({
+      shape: "Polygon",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });

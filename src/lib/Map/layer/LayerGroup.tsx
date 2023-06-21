@@ -1,3 +1,4 @@
+import React from "react";
 import { Children, ReactElement, cloneElement } from "react";
 
 export interface LayerGroupProps {
@@ -5,7 +6,7 @@ export interface LayerGroupProps {
   children: ReactElement | ReactElement[];
 }
 
-export default function LayerGroup({ zIndex, children }: LayerGroupProps) {
+export function LayerGroup({ zIndex, children }: LayerGroupProps) {
   if (!Array.isArray(children) && zIndex) {
     return cloneElement(children, { ...children.props, zIndex });
   }

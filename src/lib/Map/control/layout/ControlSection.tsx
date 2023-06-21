@@ -1,3 +1,4 @@
+import React from "react";
 import { ReactNode, useEffect, useRef } from "react";
 import { useMap } from "../../hooks";
 import { Control } from "ol/control";
@@ -6,7 +7,7 @@ export interface ControlSectionProps {
   children?: ReactNode;
 }
 
-const ControlSection = ({ children }: ControlSectionProps) => {
+export const ControlSection = ({ children }: ControlSectionProps) => {
   const map = useMap();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -27,5 +28,3 @@ const ControlSection = ({ children }: ControlSectionProps) => {
     </div>
   );
 };
-
-export default ControlSection;

@@ -1,6 +1,6 @@
 {
   "name": "react-openlayers7",
-  "version": "0.1.20",
+  "version": "0.2.1",
   "author": {
     "name": "Han-D-Peter",
     "email": "jaesung.sound@gmail.com"
@@ -18,10 +18,10 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "lodash": "^4.17.21",
-    "ol": "^7.3.0",
     "proj4": "^2.9.0",
     "react-scripts": "5.0.1",
-    "tslib": "^2.5.0"
+    "tslib": "^2.5.0",
+    "ol": "^7.3.0"
   },
   "peerDependencies": {
     "@emotion/react": "^11.11.0",

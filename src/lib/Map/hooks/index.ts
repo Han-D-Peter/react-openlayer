@@ -1,4 +1,4 @@
 export * from "./incontext";
-export { default as useDidUpdate } from "./useDidUpdate";
-export { default as useEffectIfMounted } from "./useEffectIfMounted";
-export { default as useIsMounted } from "./useIsMounted";
+export * from "./useDidUpdate";
+export * from "./useEffectIfMounted";
+export * from "./useIsMounted";

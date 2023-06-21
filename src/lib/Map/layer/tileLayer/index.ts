@@ -1,2 +1,2 @@
-export { default as TileLayer } from "./TileLayer";
-export { default as GeoJsonLayer } from "./GeoJsonLayer";
+export * from "./TileLayer";
+export * from "./GeoJsonLayer";

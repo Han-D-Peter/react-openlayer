@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import useMap from "./useMap";
+import { useMap } from "./useMap";
 import { toLonLat } from "ol/proj";
 import { MapBrowserEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
@@ -25,7 +25,7 @@ export interface useMapEventHandlerArgs {
   onLoadStart?: (event: BaseEvent) => void;
 }
 
-const useMapEventHandler = ({
+export const useMapEventHandler = ({
   onClick,
   onHover,
   onLoaded,
@@ -99,5 +99,3 @@ const useMapEventHandler = ({
     };
   }, []);
 };
-
-export default useMapEventHandler;

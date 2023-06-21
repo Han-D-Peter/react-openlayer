@@ -1,3 +1,4 @@
+import React from "react";
 import { Coordinate } from "ol/coordinate";
 import Feature from "ol/Feature";
 import { useEffect, useRef } from "react";
@@ -7,7 +8,7 @@ import VectorSource from "ol/source/Vector";
 import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
-import useMap from "../../hooks/incontext/useMap";
+import { useMap } from "../../hooks/incontext/useMap";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import Text from "ol/style/Text";
@@ -19,7 +20,7 @@ export interface TextMarkerProps extends Annotation {
   center: Coordinate;
 }
 
-const TextMarker = ({
+export const TextMarker = ({
   center,
   color = "BLUE",
   properties = {},
@@ -34,6 +35,13 @@ const TextMarker = ({
   );
 
   const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+
+  useEffect(() => {
+    if (annotationRef.current) {
+      const geometry = annotationRef.current.getGeometry() as Point;
+      geometry.setCoordinates(fromLonLat(center));
+    }
+  }, [center]);
 
   useEffect(() => {
     if (annotationLayerRef.current && zIndex) {
@@ -72,6 +80,8 @@ const TextMarker = ({
 
     annotationLayerRef.current = vectorLayer;
     annotationRef.current.setProperties({
+      shape: "TextMarker",
+      isModifying: false,
       source: vectorSource,
       layer: vectorLayer,
     });
@@ -131,5 +141,3 @@ const TextMarker = ({
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;
 };
-
-export default TextMarker;

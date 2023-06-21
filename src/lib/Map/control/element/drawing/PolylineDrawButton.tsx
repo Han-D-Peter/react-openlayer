@@ -1,4 +1,5 @@
-import Button, { ButtonProps } from "../Button";
+import React from "react";
+import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
 import { useMap } from "../../../hooks";
@@ -12,7 +13,7 @@ import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { PolylineIcon } from "src/lib/Map/constants/icons/PolylineIcon";
+import { PolylineIcon } from "../../../constants/icons/PolylineIcon";
 
 export interface PolylineDrawButtonProps extends ButtonProps {
   /**
@@ -27,7 +28,7 @@ export interface PolylineDrawButtonProps extends ButtonProps {
   onCanvas?: boolean;
 }
 
-export default function PolylineDrawButton({
+export function PolylineDrawButton({
   onEnd,
   onClick,
   onCanvas = false,
@@ -49,7 +50,7 @@ export default function PolylineDrawButton({
           color: "rgba(2, 26, 255, 0.3)",
         }),
         image: new Icon({
-          src: "mapicon/polyline.svg", // 마커 이미지 경로
+          src: "/images/polyline.svg", // 마커 이미지 경로
           anchor: [0.5, 1], // 마커 이미지의 앵커 위치
         }),
       }),
@@ -83,6 +84,8 @@ export default function PolylineDrawButton({
       })
     );
     feature.setProperties({
+      shape: "Polyline",
+      isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
     });

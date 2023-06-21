@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import useMap from "./useMap";
+import { useMap } from "./useMap";
 
 export type useMapRatationOutput = readonly [
   /**
@@ -14,7 +14,7 @@ export type useMapRatationOutput = readonly [
   resetRotation: () => void
 ];
 
-const useMapRotation = (): useMapRatationOutput => {
+export const useMapRotation = (): useMapRatationOutput => {
   const map = useMap();
   const [rotationDegree, setRotationDegree] = useState(
     map.getView().getRotation() / (Math.PI / 180)
@@ -34,5 +34,3 @@ const useMapRotation = (): useMapRatationOutput => {
 
   return [rotationDegree, setRotate, resetRotation];
 };
-
-export default useMapRotation;

@@ -1,9 +1,6 @@
 import { DependencyList, useEffect, useRef } from "react";
 
-export default function useDidUpdate(
-  func: () => void,
-  dependencies: DependencyList
-) {
+export function useDidUpdate(func: () => void, dependencies: DependencyList) {
   const ref = useRef(false);
 
   useEffect(() => {
