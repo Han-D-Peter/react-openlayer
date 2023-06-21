@@ -11,8 +11,6 @@ import { Feature } from "ol";
 import { FeatureLike } from "ol/Feature";
 import VectorSource from "ol/source/Vector";
 import { SelectStyle } from "../utils/style";
-import { isArray } from "lodash";
-import BaseEvent from "ol/events/Event";
 
 export interface FeatureStoreProps {
   /**

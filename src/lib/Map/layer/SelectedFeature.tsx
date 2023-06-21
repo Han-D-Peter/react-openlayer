@@ -1,14 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks";
 import VectorLayer from "ol/layer/Vector";
-import { Geometry, LineString, MultiPoint, Point, Polygon } from "ol/geom";
+import { Geometry, LineString, Polygon } from "ol/geom";
 import VectorSource from "ol/source/Vector";
-import { toLonLat } from "ol/proj";
 import Feature from "ol/Feature";
 import { isArray } from "lodash";
-import { Fill, Stroke, Style, Circle } from "ol/style";
-import { ANNOTATION_COLOR } from "../constants";
-import { makeText } from "../utils";
 import { makeSelectedFeature } from "src/lib/utils/feature";
 import { Coordinate } from "ol/coordinate";
 import BaseEvent from "ol/events/Event";
