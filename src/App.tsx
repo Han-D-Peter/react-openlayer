@@ -11,7 +11,7 @@ import { FullScreenFeature } from "./lib/Map/control/FullScreenFeature";
 import { ControlSection } from "./lib/Map/control/layout/ControlSection";
 import { ZoomFeature } from "./lib/Map/control/ZoomFeature";
 import { CompassWheel } from "./lib/Map/control/CompassWheel";
-import { ImageOveray, LayerGroup, MapContainer, fromLonLat } from "./lib/Map";
+import { ImageOverlay, LayerGroup, MapContainer, fromLonLat } from "./lib/Map";
 import { DrawingTools } from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";
 import { CustomMultiPoint } from "./lib/Map/layer/annotation/MultiPoint";
@@ -35,7 +35,7 @@ function App() {
       <MapContainer ref={ref}>
         {/* <GeoJsonLayer geoJson={geoJsonSample} /> */}
         {/* <TileLayer url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png" /> */}
-        <ImageOveray
+        <ImageOverlay
           imageUrl="images/compass.png"
           bounds={[
             [126.841384, 35.191316],
@@ -62,7 +62,7 @@ function App() {
             <InnerText isPopup>Circle1</InnerText>
           </CustomCircle>
         </LayerGroup>
-        <LayerGroup zIndex={2}>
+        <LayerGroup zIndex={0}>
           <CustomCircle
             center={[126.841784, 35.191406]}
             radius={20}
