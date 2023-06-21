@@ -23,4 +23,8 @@ export const ANNOTATION_COLOR = {
     fill: "rgba(165, 42, 42, 0.3)",
     stroke: "rgb(165, 42, 42)",
   },
+  SELECT: {
+    fill: "rgba(1, 1, 1, 0.5)",
+    stroke: "rgb(1, 1, 1)",
+  },
 };
