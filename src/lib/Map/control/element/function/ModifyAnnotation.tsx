@@ -80,7 +80,7 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
         modifyInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, props.isActive]);
+  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, props.isActive]);
 
   return (
     <Button {...props}>

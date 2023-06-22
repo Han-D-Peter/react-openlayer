@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMap } from "./useMap";
 import { MapBrowserEvent } from "ol";
 import Feature, { FeatureLike } from "ol/Feature";
@@ -10,17 +10,20 @@ export function useSelectAnnotation() {
 
   const map = useMap();
 
-  const getAnnotationByClick = (event: MapBrowserEvent<any>) => {
-    const clickedFeatures = map.getFeaturesAtPixel(event.pixel);
+  const getAnnotationByClick = useCallback(
+    (event: MapBrowserEvent<any>) => {
+      const clickedFeatures = map.getFeaturesAtPixel(event.pixel);
 
-    if (clickedFeatures.length > 0) {
-      // 클릭한 어노테이션 선택
-      const selectedFeature = clickedFeatures[0] as Feature<Geometry>;
-      if (selectedAnnotation !== selectedFeature) {
-        setSelectedAnnotation(selectedFeature);
+      if (clickedFeatures.length > 0) {
+        // 클릭한 어노테이션 선택
+        const selectedFeature = clickedFeatures[0] as Feature<Geometry>;
+        if (selectedAnnotation !== selectedFeature) {
+          setSelectedAnnotation(selectedFeature);
+        }
       }
-    }
-  };
+    },
+    [map, selectedAnnotation]
+  );
 
   useEffect(() => {
     map.on("singleclick", getAnnotationByClick);

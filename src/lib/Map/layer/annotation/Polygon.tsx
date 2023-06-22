@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Coordinate } from "ol/coordinate";
 import Feature from "ol/Feature";
 import { useEffect, useRef } from "react";
@@ -9,14 +9,13 @@ import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Select } from "ol/interaction";
-import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Text } from "ol/style";
 import { Annotation } from ".";
 import { makeText } from "../../utils/object";
 import { useMap } from "../../hooks/incontext/useMap";
 import { ANNOTATION_COLOR } from "../../constants/color";
+import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
 
 export interface CustomPolygonProps extends Annotation {
   positions: Coordinate[][];
@@ -67,50 +66,25 @@ export const CustomPolygon = ({
     })
   );
 
-  useEffect(() => {
-    if (annotationRef.current) {
-      const geometry = annotationRef.current.getGeometry() as Polygon;
-      geometry.setCoordinates([
-        positions[0].map((position) => fromLonLat(position)),
-      ]);
-    }
-  }, [positions]);
+  const onClickHandler = useCallback(
+    (event: SelectEvent) => {
+      if (event.selected.length > 0) {
+        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+        if (onClick) {
+          onClick({
+            annotation: annotationRef.current,
+            properties,
+          });
+        }
+        // 선택된 Feature에 대한 작업 수행
+        // 예: 스타일 변경, 정보 표시 등
+      }
+    },
+    [onClick, properties]
+  );
 
-  useEffect(() => {
-    if (annotationLayerRef.current) {
-      annotationLayerRef.current.setZIndex(zIndex);
-    }
-  }, [zIndex]);
-
-  useEffect(() => {
-    annotationRef.current.setStyle(annotationStyleRef.current);
-
-    annotationRef.current.setProperties({
-      shape: "Polygon",
-      isModifying: false,
-      source: annotationLayerRef.current.getSource(),
-      layer: annotationLayerRef.current,
-      hasPopup: children?.props.isPopup,
-    });
-    annotationLayerRef.current.setZIndex(zIndex);
-
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [annotationLayerRef.current],
-    });
-
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [annotationLayerRef.current],
-    });
-
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
-    map.addLayer(annotationLayerRef.current);
-
-    function onHoverHandler(event: SelectEvent) {
+  const onHoverHandler = useCallback(
+    (event: SelectEvent) => {
       if (event.selected.length > 0) {
         if (onHover) {
           onHover({ annotation: annotationRef.current, properties });
@@ -146,31 +120,48 @@ export const CustomPolygon = ({
         hoveredFeatureStyle.setText(new Text());
         annotationRef.current.setStyle(hoveredFeatureStyle);
       }
-    }
+    },
+    [children, map, onHover, properties]
+  );
 
-    function onClickHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties,
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler,
+  });
+
+  useEffect(() => {
+    if (annotationRef.current) {
+      const geometry = annotationRef.current.getGeometry() as Polygon;
+      geometry.setCoordinates([
+        positions[0].map((position) => fromLonLat(position)),
+      ]);
     }
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
+  }, [positions]);
+
+  useEffect(() => {
+    if (annotationLayerRef.current) {
+      annotationLayerRef.current.setZIndex(zIndex);
+    }
+  }, [zIndex]);
+
+  useEffect(() => {
+    annotationRef.current.setStyle(annotationStyleRef.current);
+
+    annotationRef.current.setProperties({
+      shape: "Polygon",
+      isModifying: false,
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current,
+      hasPopup: children?.props.isPopup,
+    });
+    annotationLayerRef.current.setZIndex(zIndex);
+
+    map.addLayer(annotationLayerRef.current);
 
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       map.removeLayer(annotationLayerRef.current);
     };
-  }, [color, map, onHover, properties, onClick]);
+  }, [color, map, onHover, properties, onClick, children, zIndex]);
   return <></>;
 };

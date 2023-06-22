@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Map } from "ol";
 import MapBrowserEvent from "ol/MapBrowserEvent";
 import { Circle, LineString, MultiPoint, Point, Polygon } from "ol/geom";
 
 export function useHoverCursor(mapRefObj: Map) {
-  const onPointerMove = (event: MapBrowserEvent<any>) => {
+  const onPointerMove = useCallback((event: MapBrowserEvent<any>) => {
     const map = event.map;
     const pixel = event.pixel;
 
@@ -12,20 +12,17 @@ export function useHoverCursor(mapRefObj: Map) {
     map.getTargetElement().style.cursor = "default";
     map.forEachFeatureAtPixel(pixel, (feature) => {
       const geometry = feature.getGeometry();
-      if (geometry instanceof Point) {
+      if (
+        geometry instanceof Point ||
+        geometry instanceof MultiPoint ||
+        geometry instanceof Polygon ||
+        geometry instanceof LineString ||
+        geometry instanceof Circle
+      ) {
         map.getTargetElement().style.cursor = "pointer"; // 커서 스타일 변경
-        return;
-      } else if (geometry instanceof MultiPoint) {
-        map.getTargetElement().style.cursor = "pointer";
-      } else if (geometry instanceof Polygon) {
-        map.getTargetElement().style.cursor = "pointer";
-      } else if (geometry instanceof LineString) {
-        map.getTargetElement().style.cursor = "pointer";
-      } else if (geometry instanceof Circle) {
-        map.getTargetElement().style.cursor = "pointer";
       }
     });
-  };
+  }, []);
 
   useEffect(() => {
     mapRefObj.on("pointermove", onPointerMove);
@@ -33,5 +30,5 @@ export function useHoverCursor(mapRefObj: Map) {
     return () => {
       mapRefObj.un("pointermove", onPointerMove);
     };
-  }, []);
+  }, [onPointerMove]);
 }

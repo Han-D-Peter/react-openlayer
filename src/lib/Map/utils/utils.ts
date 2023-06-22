@@ -1,4 +1,3 @@
-import { Feature } from "ol";
 import { FeatureLike } from "ol/Feature";
 import { Geometry, LineString, MultiPoint, Point, Polygon } from "ol/geom";
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useRef } from "react";
 import Feature from "ol/Feature";
 import { Point } from "ol/geom";
@@ -15,6 +15,7 @@ import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
 import { useMap } from "../../hooks/incontext/useMap";
 import { icon, makeText } from "../../utils/object";
+import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
 
 export interface CustomMarkerProps extends Annotation {
   center: Coordinate;
@@ -62,6 +63,62 @@ export const CustomMarker = ({
     })
   );
 
+  const onHoverHandler = useCallback(
+    (event: SelectEvent) => {
+      if (event.selected.length > 0) {
+        if (onHover) {
+          onHover({ annotation: annotationRef.current, properties });
+        }
+      } else {
+        // hover 이벤트에 의해 선택된 Circle이 없는 경우
+        // 선택 해제에 대한 작업 수행
+        // 예: 기본 스타일 복원 등
+      }
+
+      // 수정중일땐 팝업 관여하지 않음
+      if (map.getProperties().isModifying) return;
+
+      // Pop up text
+      if (event.selected.length > 0 && children?.props.isPopup) {
+        annotationStyleRef.current.setText(
+          makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true,
+          })
+        );
+
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      } else if (event.selected.length === 0 && children?.props.isPopup) {
+        annotationStyleRef.current.setText(new Text());
+        annotationRef.current.setStyle(annotationStyleRef.current);
+      }
+    },
+    [children, map, onHover, properties]
+  );
+
+  const onClickHandler = (event: SelectEvent) => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties,
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  };
+
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler,
+  });
+
   useEffect(() => {
     if (annotationRef.current) {
       const geometry = annotationRef.current.getGeometry() as Point;
@@ -108,77 +165,9 @@ export const CustomMarker = ({
 
     annotationLayerRef.current.setZIndex(zIndex);
 
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [annotationLayerRef.current],
-    });
-
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [annotationLayerRef.current],
-    });
-
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
     map.addLayer(annotationLayerRef.current);
 
-    function onHoverHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({ annotation: annotationRef.current, properties });
-        }
-      } else {
-        // hover 이벤트에 의해 선택된 Circle이 없는 경우
-        // 선택 해제에 대한 작업 수행
-        // 예: 기본 스타일 복원 등
-      }
-
-      // 수정중일땐 팝업 관여하지 않음
-      if (map.getProperties().isModifying) return;
-
-      // Pop up text
-      if (event.selected.length > 0 && children?.props.isPopup) {
-        annotationStyleRef.current.setText(
-          makeText({
-            text: children.props.children || "",
-            size: children.props.size || 15,
-            color: children.props.color ? children.props.color : "black",
-            outline: children.props.outline,
-            isMarker: true,
-          })
-        );
-
-        annotationRef.current.setStyle(annotationStyleRef.current);
-      } else if (event.selected.length === 0 && children?.props.isPopup) {
-        annotationStyleRef.current.setText(new Text());
-        annotationRef.current.setStyle(annotationStyleRef.current);
-      }
-    }
-
-    function onClickHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties,
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
-
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       // eslint-disable-next-line react-hooks/exhaustive-deps
       map.removeLayer(annotationLayerRef.current);
     };

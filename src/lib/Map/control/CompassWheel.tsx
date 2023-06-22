@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks/incontext/useMap";
 import { Control } from "ol/control";
@@ -41,23 +41,26 @@ export const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
     setMouseDown(false);
   };
 
-  const handleMouseMove = (e: { movementY: any }) => {
-    if (mouseDown) {
-      const { movementY } = e;
-      const abjustedMovementY = movementY * 0.7;
-      setRotation((prevRotation) => {
-        let newRotation = (prevRotation + abjustedMovementY) % 360;
-        if (newRotation < 0) {
-          newRotation += 360;
-        }
-        if (onWheel) {
-          onWheel(newRotation);
-        }
-        setRotate(newRotation);
-        return newRotation;
-      });
-    }
-  };
+  const handleMouseMove = useCallback(
+    (e: { movementY: any }) => {
+      if (mouseDown) {
+        const { movementY } = e;
+        const abjustedMovementY = movementY * 0.7;
+        setRotation((prevRotation) => {
+          let newRotation = (prevRotation + abjustedMovementY) % 360;
+          if (newRotation < 0) {
+            newRotation += 360;
+          }
+          if (onWheel) {
+            onWheel(newRotation);
+          }
+          setRotate(newRotation);
+          return newRotation;
+        });
+      }
+    },
+    [mouseDown]
+  );
 
   const resetValue = () => {
     setRotation(0);
@@ -72,7 +75,7 @@ export const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [mouseDown]);
+  }, [handleMouseMove, mouseDown]);
 
   useEffect(() => {
     const customControl = new Control({
