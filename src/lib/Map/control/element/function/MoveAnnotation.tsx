@@ -38,7 +38,7 @@ export function MoveAnnotation(props: MoveAnnotationProps) {
         translateInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, props.isActive]);
+  }, [clickedAnnotation, map, onMoveEnd, props.isActive]);
 
   return (
     <Button {...props}>

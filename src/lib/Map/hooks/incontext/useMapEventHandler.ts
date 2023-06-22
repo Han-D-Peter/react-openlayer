@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useMap } from "./useMap";
 import { toLonLat } from "ol/proj";
 import { MapBrowserEvent } from "ol";
@@ -33,35 +33,50 @@ export const useMapEventHandler = ({
 }: useMapEventHandlerArgs) => {
   const map = useMap();
 
-  function clickEventHandler(event: MapBrowserEvent<any>) {
-    if (onClick) {
-      onClick({ event, lonlat: toLonLat(event.coordinate) });
-    }
-  }
+  const clickEventHandler = useCallback(
+    (event: MapBrowserEvent<any>) => {
+      if (onClick) {
+        onClick({ event, lonlat: toLonLat(event.coordinate) });
+      }
+    },
+    [onClick]
+  );
 
-  function hoverEventHandler(event: MapBrowserEvent<any>) {
-    if (onHover) {
-      onHover({ event, lonlat: toLonLat(event.coordinate) });
-    }
-  }
+  const hoverEventHandler = useCallback(
+    (event: MapBrowserEvent<any>) => {
+      if (onHover) {
+        onHover({ event, lonlat: toLonLat(event.coordinate) });
+      }
+    },
+    [onHover]
+  );
 
-  function renderCompletedEventHandler(event: RenderEvent) {
-    if (onLoaded) {
-      onLoaded(event);
-    }
-  }
+  const renderCompletedEventHandler = useCallback(
+    (event: RenderEvent) => {
+      if (onLoaded) {
+        onLoaded(event);
+      }
+    },
+    [onLoaded]
+  );
 
-  function loadStartedEventHandler(event: BaseEvent) {
-    if (onLoadStart) {
-      onLoadStart(event);
-    }
-  }
+  const loadStartedEventHandler = useCallback(
+    (event: BaseEvent) => {
+      if (onLoadStart) {
+        onLoadStart(event);
+      }
+    },
+    [onLoadStart]
+  );
 
-  function loadEndedEventHandler(event: BaseEvent) {
-    if (onLoadStart) {
-      onLoadStart(event);
-    }
-  }
+  const loadEndedEventHandler = useCallback(
+    (event: BaseEvent) => {
+      if (onLoadStart) {
+        onLoadStart(event);
+      }
+    },
+    [onLoadStart]
+  );
 
   useEffect(() => {
     map.on("click", clickEventHandler);
@@ -69,33 +84,33 @@ export const useMapEventHandler = ({
     return () => {
       map.un("click", clickEventHandler);
     };
-  }, []);
+  }, [clickEventHandler, map]);
 
   useEffect(() => {
     map.on("pointermove", hoverEventHandler);
     return () => {
       map.un("pointermove", hoverEventHandler);
     };
-  }, []);
+  }, [hoverEventHandler, map]);
 
   useEffect(() => {
     map.on("rendercomplete", renderCompletedEventHandler);
     return () => {
       map.un("rendercomplete", renderCompletedEventHandler);
     };
-  }, []);
+  }, [map, renderCompletedEventHandler]);
 
   useEffect(() => {
     map.on("loadstart", loadStartedEventHandler);
     return () => {
       map.un("loadstart", loadStartedEventHandler);
     };
-  }, []);
+  }, [loadStartedEventHandler, map]);
 
   useEffect(() => {
     map.on("loadend", loadEndedEventHandler);
     return () => {
       map.un("loadend", loadEndedEventHandler);
     };
-  }, []);
+  }, [loadEndedEventHandler, map]);
 };
