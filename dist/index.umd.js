@@ -1,14 +1,15 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/proj'), require('@emotion/styled'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/events/condition'), require('ol/control'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/geom'), require('ol/source'), require('ol/layer/Tile'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('lodash/concat')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/proj', '@emotion/styled', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/events/condition', 'ol/control', 'ol/geom/Circle', 'ol/Feature', 'ol/geom', 'ol/source', 'ol/layer/Tile', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'lodash/concat'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.proj, global.styled, global.react$1, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.condition, global.control, global.Circle, global.Feature$2, global.geom, global.source, global.OlTileLayer, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.concat));
-})(this, (function (exports, jsxRuntime, react, interaction, VectorLayer, VectorSource, Style, style, proj, styled, react$1, Fill, Stroke, Text, Icon, Draw, condition, control, Circle, Feature$2, geom, source, OlTileLayer, GeoJSON, proj4$1, ImageLayer, layer, concat) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/control'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/source'), require('ol/layer/Tile'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('lodash/concat')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/control', 'ol/geom/Circle', 'ol/Feature', 'ol/source', 'ol/layer/Tile', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'lodash/concat'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.react$1, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.control, global.Circle, global.Feature$2, global.source, global.OlTileLayer, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.concat));
+})(this, (function (exports, jsxRuntime, react, interaction, VectorLayer, VectorSource, Style, style, geom, proj, condition, Select, styled, react$1, Fill, Stroke, Text, Icon, Draw, control, Circle, Feature$2, source, OlTileLayer, GeoJSON, proj4$1, ImageLayer, layer, concat) { 'use strict';
 
     function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
     var VectorLayer__default = /*#__PURE__*/_interopDefaultLegacy(VectorLayer);
     var VectorSource__default = /*#__PURE__*/_interopDefaultLegacy(VectorSource);
     var Style__default = /*#__PURE__*/_interopDefaultLegacy(Style);
+    var Select__default = /*#__PURE__*/_interopDefaultLegacy(Select);
     var styled__default = /*#__PURE__*/_interopDefaultLegacy(styled);
     var Fill__default = /*#__PURE__*/_interopDefaultLegacy(Fill);
     var Stroke__default = /*#__PURE__*/_interopDefaultLegacy(Stroke);
@@ -79,6 +80,33 @@
       }
     };
 
+    const FeatureContext = /*#__PURE__*/react.createContext(null);
+
+    function useFeatureStore() {
+      return react.useContext(FeatureContext);
+    }
+
+    function useHoverCursor(mapRefObj) {
+      const onPointerMove = react.useCallback(event => {
+        const map = event.map;
+        const pixel = event.pixel;
+        // features에 대해 forEachFeatureAtPixel을 사용하여 해당 feature 위에 마우스를 올렸을 때 커서 스타일 변경
+        map.getTargetElement().style.cursor = "default";
+        map.forEachFeatureAtPixel(pixel, feature => {
+          const geometry = feature.getGeometry();
+          if (geometry instanceof geom.Point || geometry instanceof geom.MultiPoint || geometry instanceof geom.Polygon || geometry instanceof geom.LineString || geometry instanceof geom.Circle) {
+            map.getTargetElement().style.cursor = "pointer"; // 커서 스타일 변경
+          }
+        });
+      }, []);
+      react.useEffect(() => {
+        mapRefObj.on("pointermove", onPointerMove);
+        return () => {
+          mapRefObj.un("pointermove", onPointerMove);
+        };
+      }, [onPointerMove]);
+    }
+
     const MapContext = /*#__PURE__*/react.createContext(null);
 
     function useMap() {
@@ -92,67 +120,67 @@
       onLoadStart
     }) => {
       const map = useMap();
-      function clickEventHandler(event) {
+      const clickEventHandler = react.useCallback(event => {
         if (onClick) {
           onClick({
             event,
             lonlat: proj.toLonLat(event.coordinate)
           });
         }
-      }
-      function hoverEventHandler(event) {
+      }, [onClick]);
+      const hoverEventHandler = react.useCallback(event => {
         if (onHover) {
           onHover({
             event,
             lonlat: proj.toLonLat(event.coordinate)
           });
         }
-      }
-      function renderCompletedEventHandler(event) {
+      }, [onHover]);
+      const renderCompletedEventHandler = react.useCallback(event => {
         if (onLoaded) {
           onLoaded(event);
         }
-      }
-      function loadStartedEventHandler(event) {
+      }, [onLoaded]);
+      const loadStartedEventHandler = react.useCallback(event => {
         if (onLoadStart) {
           onLoadStart(event);
         }
-      }
-      function loadEndedEventHandler(event) {
+      }, [onLoadStart]);
+      const loadEndedEventHandler = react.useCallback(event => {
         if (onLoadStart) {
           onLoadStart(event);
         }
-      }
+      }, [onLoadStart]);
       react.useEffect(() => {
         map.on("click", clickEventHandler);
         return () => {
           map.un("click", clickEventHandler);
         };
-      }, []);
+      }, [clickEventHandler, map]);
       react.useEffect(() => {
         map.on("pointermove", hoverEventHandler);
         return () => {
           map.un("pointermove", hoverEventHandler);
         };
-      }, []);
+      }, [hoverEventHandler, map]);
       react.useEffect(() => {
         map.on("rendercomplete", renderCompletedEventHandler);
         return () => {
           map.un("rendercomplete", renderCompletedEventHandler);
         };
-      }, []);
+      }, [map, renderCompletedEventHandler]);
       react.useEffect(() => {
         map.on("loadstart", loadStartedEventHandler);
         return () => {
           map.un("loadstart", loadStartedEventHandler);
         };
-      }, []);
+      }, [loadStartedEventHandler, map]);
       react.useEffect(() => {
         map.on("loadend", loadEndedEventHandler);
         return () => {
           map.un("loadend", loadEndedEventHandler);
         };
-      }, []);
+      }, [loadEndedEventHandler, map]);
     };
 
     const useMapRotation = () => {
@@ -173,7 +201,7 @@
     function useSelectAnnotation() {
       const [selectedAnnotation, setSelectedAnnotation] = react.useState(null);
       const map = useMap();
-      const getAnnotationByClick = event => {
+      const getAnnotationByClick = react.useCallback(event => {
         const clickedFeatures = map.getFeaturesAtPixel(event.pixel);
         if (clickedFeatures.length > 0) {
           // 클릭한 어노테이션 선택
@@ -182,7 +210,7 @@
             setSelectedAnnotation(selectedFeature);
           }
         }
-      };
+      }, [map, selectedAnnotation]);
       react.useEffect(() => {
         map.on("singleclick", getAnnotationByClick);
         return () => {
@@ -190,6 +218,44 @@
         };
       }, []);
       return selectedAnnotation;
+    }
+
+    function useInteractionEvent({
+      annotation,
+      onClick,
+      onHover
+    }) {
+      const map = useMap();
+      const clickSelect = react.useMemo(() => new Select__default["default"]({
+        condition: condition.click,
+        style: null,
+        layers: [annotation]
+      }), [annotation]);
+      const hoverSelect = react.useMemo(() => new Select__default["default"]({
+        condition: condition.pointerMove,
+        style: null,
+        layers: [annotation]
+      }), [annotation]);
+      react.useEffect(() => {
+        if (onHover) {
+          hoverSelect.on("select", onHover);
+        }
+        if (onClick) {
+          clickSelect.on("select", onClick);
+        }
+        map.addInteraction(clickSelect);
+        map.addInteraction(hoverSelect);
+        return () => {
+          if (onHover) {
+            hoverSelect.un("select", onHover);
+          }
+          if (onClick) {
+            clickSelect.un("select", onClick);
+          }
+          map.removeInteraction(clickSelect);
+          map.removeInteraction(hoverSelect);
+        };
+      }, [onClick, onHover, map, hoverSelect, clickSelect]);
     }
 
     function useDidUpdate(func, dependencies) {
@@ -1071,12 +1137,6 @@
       });
     }
 
-    const FeatureContext = /*#__PURE__*/react.createContext(null);
-
-    function useFeatureStore() {
-      return react.useContext(FeatureContext);
-    }
-
     function DeleteAnnotation(props) {
       const clickedAnnotation = useSelectAnnotation();
       const {
@@ -1084,22 +1144,16 @@
       } = useFeatureStore();
       const map = useMap();
       const selectInteractionRef = react.useRef(null);
-      const removeSelectedFeatures = event => {
+      const removeSelectedFeatures = react.useCallback(event => {
         const selectedFeatures = event.selected;
         selectFeature(null);
         selectedFeatures.forEach(selectedFeature => {
           if (selectedFeature.getGeometry()) {
             const vectorSource = selectedFeature.getProperties().source;
             vectorSource.clear();
-            // 삭제와 동시에 vectorLayer를 빼서 안보이게 하는 로직
-            // draw tool 마다 각각의 레이어를 가지는데 빼버리면 새로 그렸을때 화면에 보이지 않음
-            // const vectorLayer = selectedFeature.getProperties()
-            //   .layer as VectorLayer<VectorSource>;
-            // map.removeLayer(vectorLayer);
           }
         });
-      };
-
+      }, [selectFeature]);
       react.useEffect(() => {
         if (props.isActive) {
           if (!selectInteractionRef.current) {
@@ -1114,7 +1168,7 @@
             selectInteractionRef.current = null;
           }
         }
-      }, [map, props.isActive]);
+      }, [map, props.isActive, removeSelectedFeatures]);
       react.useEffect(() => {
         if (selectInteractionRef.current && clickedAnnotation) {
           selectInteractionRef.current.getFeatures().clear();
@@ -18604,7 +18658,7 @@
             modifyInteractionRef.current = null;
           }
         };
-      }, [clickedAnnotation, map, props.isActive]);
+      }, [clickedAnnotation, map, onModifyEnd, onModifyStart, props.isActive]);
       return jsxRuntime.jsx(Button, Object.assign({}, props, {
         children: jsxRuntime.jsx(ModifyIcon, {})
       }));
@@ -18656,7 +18710,7 @@
             translateInteractionRef.current = null;
           }
         };
-      }, [clickedAnnotation, map, props.isActive]);
+      }, [clickedAnnotation, map, onMoveEnd, props.isActive]);
       return jsxRuntime.jsx(Button, Object.assign({}, props, {
         children: jsxRuntime.jsx(MovementIcon, {})
       }));
@@ -18929,7 +18983,7 @@
       const handleMouseUp = () => {
         setMouseDown(false);
       };
-      const handleMouseMove = e => {
+      const handleMouseMove = react.useCallback(e => {
         if (mouseDown) {
           const {
             movementY
@@ -18947,7 +19001,7 @@
             return newRotation;
           });
         }
-      };
+      }, [mouseDown]);
       const resetValue = () => {
         setRotation(0);
         resetRotation();
@@ -18959,7 +19013,7 @@
           window.removeEventListener("mousemove", handleMouseMove);
           window.removeEventListener("mouseup", handleMouseUp);
         };
-      }, [mouseDown]);
+      }, [handleMouseMove, mouseDown]);
       react.useEffect(() => {
         const customControl = new control.Control({
           element: ref.current ? ref.current : undefined
@@ -19392,6 +19446,53 @@
           isMarker: true
         }) : undefined
       }));
+      const onHoverHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          if (onHover) {
+            onHover({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+        }
+        // 수정중일땐 팝업 관여하지 않음
+        if (map.getProperties().isModifying) return;
+        // Pop up text
+        if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          const hoveredFeature = event.selected[0];
+          const hoveredFeatureStyle = hoveredFeature.getStyle();
+          hoveredFeatureStyle.setText(makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true
+          }));
+          annotationRef.current.setStyle(hoveredFeatureStyle);
+        } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          const hoveredFeatureStyle = annotationRef.current.getStyle();
+          hoveredFeatureStyle.setText(new style.Text());
+          annotationRef.current.setStyle(hoveredFeatureStyle);
+        }
+      }, [children, map, onHover, properties]);
+      const onClickHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+          if (onClick) {
+            onClick({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+          // 선택된 Feature에 대한 작업 수행
+          // 예: 스타일 변경, 정보 표시 등
+        }
+      }, [onClick, properties]);
+      useInteractionEvent({
+        annotation: annotationLayerRef.current,
+        onClick: onClickHandler,
+        onHover: onHoverHandler
+      });
       react.useEffect(() => {
         if (annotationRef.current) {
           const geometry = annotationRef.current.getGeometry();
@@ -19405,8 +19506,6 @@
       }, [zIndex]);
       react.useEffect(() => {
         annotationRef.current.setStyle(annotationStyleRef.current);
-        annotationLayerRef.current = annotationLayerRef.current;
-        annotationLayerRef.current = annotationLayerRef.current;
         annotationRef.current.setProperties({
           shape: "Circle",
           isModifying: false,
@@ -19415,70 +19514,9 @@
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
         });
         annotationLayerRef.current.setZIndex(zIndex);
-        const clickSelect = new interaction.Select({
-          condition: condition.click,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        const hoverSelect = new interaction.Select({
-          condition: condition.pointerMove,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        map.addInteraction(hoverSelect);
-        map.addInteraction(clickSelect);
         map.addLayer(annotationLayerRef.current);
-        function onHoverHandler(event) {
-          if (event.selected.length > 0) {
-            if (onHover) {
-              onHover({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-          }
-          // 수정중일땐 팝업 관여하지 않음
-          if (map.getProperties().isModifying) return;
-          // Pop up text
-          if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            const hoveredFeature = event.selected[0];
-            const hoveredFeatureStyle = hoveredFeature.getStyle();
-            hoveredFeatureStyle.setText(makeText({
-              text: children.props.children || "",
-              size: children.props.size || 15,
-              color: children.props.color ? children.props.color : "black",
-              outline: children.props.outline,
-              isMarker: true
-            }));
-            annotationRef.current.setStyle(hoveredFeatureStyle);
-          } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            const hoveredFeatureStyle = annotationRef.current.getStyle();
-            hoveredFeatureStyle.setText(new style.Text());
-            annotationRef.current.setStyle(hoveredFeatureStyle);
-          }
-        }
-        function onClickHandler(event) {
-          if (event.selected.length > 0) {
-            // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-            if (onClick) {
-              onClick({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-            // 선택된 Feature에 대한 작업 수행
-            // 예: 스타일 변경, 정보 표시 등
-          }
-        }
-
-        hoverSelect.on("select", onHoverHandler);
-        clickSelect.on("select", onClickHandler);
         return () => {
           var _a;
-          hoverSelect.un("select", onHoverHandler);
-          clickSelect.un("select", onClickHandler);
-          map.removeInteraction(hoverSelect);
-          map.removeInteraction(clickSelect);
           (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
           map.removeLayer(annotationLayerRef.current);
         };
@@ -19518,6 +19556,51 @@
         })
       }));
 
+      const onHoverHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          if (onHover) {
+            onHover({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+        }
+        // 수정중일땐 팝업 관여하지 않음
+        if (map.getProperties().isModifying) return;
+        // Pop up text
+        if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          annotationStyleRef.current.setText(makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true
+          }));
+          annotationRef.current.setStyle(annotationStyleRef.current);
+        } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          annotationStyleRef.current.setText(new style.Text());
+          annotationRef.current.setStyle(annotationStyleRef.current);
+        }
+      }, [children, map, onHover, properties]);
+      const onClickHandler = event => {
+        if (event.selected.length > 0) {
+          // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+          if (onClick) {
+            onClick({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+          // 선택된 Feature에 대한 작업 수행
+          // 예: 스타일 변경, 정보 표시 등
+        }
+      };
+
+      useInteractionEvent({
+        annotation: annotationLayerRef.current,
+        onClick: onClickHandler,
+        onHover: onHoverHandler
+      });
       react.useEffect(() => {
         if (annotationRef.current) {
           const geometry = annotationRef.current.getGeometry();
@@ -19556,66 +19639,8 @@
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
         });
         annotationLayerRef.current.setZIndex(zIndex);
-        const clickSelect = new interaction.Select({
-          condition: condition.click,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        const hoverSelect = new interaction.Select({
-          condition: condition.pointerMove,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        map.addInteraction(hoverSelect);
-        map.addInteraction(clickSelect);
         map.addLayer(annotationLayerRef.current);
-        function onHoverHandler(event) {
-          if (event.selected.length > 0) {
-            if (onHover) {
-              onHover({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-          }
-          // 수정중일땐 팝업 관여하지 않음
-          if (map.getProperties().isModifying) return;
-          // Pop up text
-          if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            annotationStyleRef.current.setText(makeText({
-              text: children.props.children || "",
-              size: children.props.size || 15,
-              color: children.props.color ? children.props.color : "black",
-              outline: children.props.outline,
-              isMarker: true
-            }));
-            annotationRef.current.setStyle(annotationStyleRef.current);
-          } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            annotationStyleRef.current.setText(new style.Text());
-            annotationRef.current.setStyle(annotationStyleRef.current);
-          }
-        }
-        function onClickHandler(event) {
-          if (event.selected.length > 0) {
-            // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-            if (onClick) {
-              onClick({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-            // 선택된 Feature에 대한 작업 수행
-            // 예: 스타일 변경, 정보 표시 등
-          }
-        }
-
-        hoverSelect.on("select", onHoverHandler);
-        clickSelect.on("select", onClickHandler);
         return () => {
-          hoverSelect.un("select", onHoverHandler);
-          clickSelect.un("select", onClickHandler);
-          map.removeInteraction(hoverSelect);
-          map.removeInteraction(clickSelect);
           // eslint-disable-next-line react-hooks/exhaustive-deps
           map.removeLayer(annotationLayerRef.current);
         };
@@ -19634,18 +19659,47 @@
     }) {
       const map = useMap();
       const annotationRef = react.useRef(new Feature__default["default"](new geom.MultiPoint(positions.map(position => proj.fromLonLat(position)))));
-      const annotationLayerRef = react.useRef(null);
+      const annotationLayerRef = react.useRef(new VectorLayer__default["default"]({
+        source: new VectorSource__default["default"]({
+          features: [annotationRef.current]
+        })
+      }));
+      const onHoverHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          if (onHover) {
+            onHover({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+        }
+      }, [onHover, properties]);
+      const onClickHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+          if (onClick) {
+            onClick({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+          // 선택된 Feature에 대한 작업 수행
+          // 예: 스타일 변경, 정보 표시 등
+        }
+      }, []);
+      useInteractionEvent({
+        annotation: annotationLayerRef.current,
+        onClick: onClickHandler,
+        onHover: onHoverHandler
+      });
       react.useEffect(() => {
         if (annotationLayerRef.current) {
           annotationLayerRef.current.setZIndex(zIndex);
         }
       }, [zIndex]);
       react.useEffect(() => {
-        const vectorSource = new VectorSource__default["default"]();
-        const vectorLayer = new VectorLayer__default["default"]({
-          source: vectorSource
-        });
         const geometry = annotationRef.current.getGeometry();
+        const vectorSource = annotationLayerRef.current.getSource();
         const features = geometry.getPoints().map((point, index) => {
           const text = index + 1; // 순번 설정
           const style$1 = new style.Style({
@@ -19674,60 +19728,18 @@
           pointFeature.setProperties({
             shape: "MultiPoint",
             isModifying: false,
-            source: vectorSource,
-            layer: vectorLayer,
+            source: annotationLayerRef.current.getSource(),
+            layer: annotationLayerRef.current,
             hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
           });
           return pointFeature;
         });
-        vectorSource.addFeatures(features);
-        annotationLayerRef.current = vectorLayer;
-        vectorLayer.setZIndex(zIndex);
-        const clickSelect = new interaction.Select({
-          condition: condition.click,
-          style: null,
-          layers: [vectorLayer]
-        });
-        const hoverSelect = new interaction.Select({
-          condition: condition.pointerMove,
-          style: null,
-          layers: [vectorLayer]
-        });
-        map.addInteraction(hoverSelect);
-        map.addInteraction(clickSelect);
-        map.addLayer(vectorLayer);
-        function onHoverHandler(event) {
-          if (event.selected.length > 0) {
-            if (onHover) {
-              onHover({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-          }
+        if (vectorSource) {
+          vectorSource.addFeatures(features);
         }
-        function onClickHandler(event) {
-          if (event.selected.length > 0) {
-            // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-            if (onClick) {
-              onClick({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-            // 선택된 Feature에 대한 작업 수행
-            // 예: 스타일 변경, 정보 표시 등
-          }
-        }
-
-        hoverSelect.on("select", onHoverHandler);
-        clickSelect.on("select", onClickHandler);
+        map.addLayer(annotationLayerRef.current);
         return () => {
-          hoverSelect.un("select", onHoverHandler);
-          clickSelect.un("select", onClickHandler);
-          map.removeInteraction(hoverSelect);
-          map.removeInteraction(clickSelect);
-          map.removeLayer(vectorLayer);
+          map.removeLayer(annotationLayerRef.current);
         };
       }, [color, children, map, onHover, properties, onClick]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
@@ -19765,6 +19777,53 @@
           isMarker: true
         }) : undefined
       }));
+      const onClickHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+          if (onClick) {
+            onClick({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+          // 선택된 Feature에 대한 작업 수행
+          // 예: 스타일 변경, 정보 표시 등
+        }
+      }, [onClick, properties]);
+      const onHoverHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          if (onHover) {
+            onHover({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+        }
+        // 수정중일땐 팝업 관여하지 않음
+        if (map.getProperties().isModifying) return;
+        // Pop up text
+        if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          const hoveredFeature = event.selected[0];
+          const hoveredFeatureStyle = hoveredFeature.getStyle();
+          hoveredFeatureStyle.setText(makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true
+          }));
+          annotationRef.current.setStyle(hoveredFeatureStyle);
+        } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          const hoveredFeatureStyle = annotationRef.current.getStyle();
+          hoveredFeatureStyle.setText(new style.Text());
+          annotationRef.current.setStyle(hoveredFeatureStyle);
+        }
+      }, [children, map, onHover, properties]);
+      useInteractionEvent({
+        annotation: annotationLayerRef.current,
+        onClick: onClickHandler,
+        onHover: onHoverHandler
+      });
       react.useEffect(() => {
         if (annotationRef.current) {
           const geometry = annotationRef.current.getGeometry();
@@ -19786,72 +19845,11 @@
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
         });
         annotationLayerRef.current.setZIndex(zIndex);
-        const clickSelect = new interaction.Select({
-          condition: condition.click,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        const hoverSelect = new interaction.Select({
-          condition: condition.pointerMove,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        map.addInteraction(hoverSelect);
-        map.addInteraction(clickSelect);
         map.addLayer(annotationLayerRef.current);
-        function onHoverHandler(event) {
-          if (event.selected.length > 0) {
-            if (onHover) {
-              onHover({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-          }
-          // 수정중일땐 팝업 관여하지 않음
-          if (map.getProperties().isModifying) return;
-          // Pop up text
-          if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            const hoveredFeature = event.selected[0];
-            const hoveredFeatureStyle = hoveredFeature.getStyle();
-            hoveredFeatureStyle.setText(makeText({
-              text: children.props.children || "",
-              size: children.props.size || 15,
-              color: children.props.color ? children.props.color : "black",
-              outline: children.props.outline,
-              isMarker: true
-            }));
-            annotationRef.current.setStyle(hoveredFeatureStyle);
-          } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            const hoveredFeatureStyle = annotationRef.current.getStyle();
-            hoveredFeatureStyle.setText(new style.Text());
-            annotationRef.current.setStyle(hoveredFeatureStyle);
-          }
-        }
-        function onClickHandler(event) {
-          if (event.selected.length > 0) {
-            // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-            if (onClick) {
-              onClick({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-            // 선택된 Feature에 대한 작업 수행
-            // 예: 스타일 변경, 정보 표시 등
-          }
-        }
-
-        hoverSelect.on("select", onHoverHandler);
-        clickSelect.on("select", onClickHandler);
         return () => {
-          hoverSelect.un("select", onHoverHandler);
-          clickSelect.un("select", onClickHandler);
-          map.removeInteraction(hoverSelect);
-          map.removeInteraction(clickSelect);
           map.removeLayer(annotationLayerRef.current);
         };
-      }, [color, map, onHover, properties, onClick]);
+      }, [color, map, onHover, properties, onClick, children, zIndex]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     };
 
@@ -19887,6 +19885,53 @@
           isMarker: true
         }) : undefined
       }));
+      const onHoverHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          if (onHover) {
+            onHover({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+        }
+        // 수정중일땐 팝업 관여하지 않음
+        if (map.getProperties().isModifying) return;
+        // Pop up text
+        if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          const hoveredFeature = event.selected[0];
+          const hoveredFeatureStyle = hoveredFeature.getStyle();
+          hoveredFeatureStyle.setText(makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true
+          }));
+          annotationRef.current.setStyle(hoveredFeatureStyle);
+        } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          const hoveredFeatureStyle = annotationRef.current.getStyle();
+          hoveredFeatureStyle.setText(new style.Text());
+          annotationRef.current.setStyle(hoveredFeatureStyle);
+        }
+      }, []);
+      const onClickHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+          if (onClick) {
+            onClick({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+          // 선택된 Feature에 대한 작업 수행
+          // 예: 스타일 변경, 정보 표시 등
+        }
+      }, []);
+      useInteractionEvent({
+        annotation: annotationLayerRef.current,
+        onClick: onClickHandler,
+        onHover: onHoverHandler
+      });
       react.useEffect(() => {
         if (annotationRef.current) {
           const geometry = annotationRef.current.getGeometry();
@@ -19908,69 +19953,8 @@
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
         });
         annotationLayerRef.current.setZIndex(zIndex);
-        const clickSelect = new interaction.Select({
-          condition: condition.click,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        const hoverSelect = new interaction.Select({
-          condition: condition.pointerMove,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        map.addInteraction(hoverSelect);
-        map.addInteraction(clickSelect);
         map.addLayer(annotationLayerRef.current);
-        function onHoverHandler(event) {
-          if (event.selected.length > 0) {
-            if (onHover) {
-              onHover({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-          }
-          // 수정중일땐 팝업 관여하지 않음
-          if (map.getProperties().isModifying) return;
-          // Pop up text
-          if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            const hoveredFeature = event.selected[0];
-            const hoveredFeatureStyle = hoveredFeature.getStyle();
-            hoveredFeatureStyle.setText(makeText({
-              text: children.props.children || "",
-              size: children.props.size || 15,
-              color: children.props.color ? children.props.color : "black",
-              outline: children.props.outline,
-              isMarker: true
-            }));
-            annotationRef.current.setStyle(hoveredFeatureStyle);
-          } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            const hoveredFeatureStyle = annotationRef.current.getStyle();
-            hoveredFeatureStyle.setText(new style.Text());
-            annotationRef.current.setStyle(hoveredFeatureStyle);
-          }
-        }
-        function onClickHandler(event) {
-          if (event.selected.length > 0) {
-            // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-            if (onClick) {
-              onClick({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-            // 선택된 Feature에 대한 작업 수행
-            // 예: 스타일 변경, 정보 표시 등
-          }
-        }
-
-        hoverSelect.on("select", onHoverHandler);
-        clickSelect.on("select", onClickHandler);
         return () => {
-          hoverSelect.un("select", onHoverHandler);
-          clickSelect.un("select", onClickHandler);
-          map.removeInteraction(hoverSelect);
-          map.removeInteraction(clickSelect);
           map.removeLayer(annotationLayerRef.current);
         };
       }, [color, children, map, onHover, properties, onClick]);
@@ -20009,6 +19993,53 @@
           isMarker: true
         }) : undefined
       }));
+      const onHoverHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          if (onHover) {
+            onHover({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+        }
+        // 수정중일땐 팝업 관여하지 않음
+        if (map.getProperties().isModifying) return;
+        // Pop up text
+        if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          const hoveredFeature = event.selected[0];
+          const hoveredFeatureStyle = hoveredFeature.getStyle();
+          hoveredFeatureStyle.setText(makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true
+          }));
+          annotationRef.current.setStyle(hoveredFeatureStyle);
+        } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+          const hoveredFeatureStyle = annotationRef.current.getStyle();
+          hoveredFeatureStyle.setText(new style.Text());
+          annotationRef.current.setStyle(hoveredFeatureStyle);
+        }
+      }, []);
+      const onClickHandler = react.useCallback(event => {
+        if (event.selected.length > 0) {
+          // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+          if (onClick) {
+            onClick({
+              annotation: annotationRef.current,
+              properties
+            });
+          }
+          // 선택된 Feature에 대한 작업 수행
+          // 예: 스타일 변경, 정보 표시 등
+        }
+      }, []);
+      useInteractionEvent({
+        annotation: annotationLayerRef.current,
+        onClick: onClickHandler,
+        onHover: onHoverHandler
+      });
       react.useEffect(() => {
         if (annotationRef.current) {
           const geometry = annotationRef.current.getGeometry();
@@ -20031,69 +20062,8 @@
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
         });
         annotationLayerRef.current.setZIndex(zIndex);
-        const clickSelect = new interaction.Select({
-          condition: condition.click,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        const hoverSelect = new interaction.Select({
-          condition: condition.pointerMove,
-          style: null,
-          layers: [annotationLayerRef.current]
-        });
-        map.addInteraction(hoverSelect);
-        map.addInteraction(clickSelect);
         map.addLayer(annotationLayerRef.current);
-        function onHoverHandler(event) {
-          if (event.selected.length > 0) {
-            if (onHover) {
-              onHover({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-          }
-          // 수정중일땐 팝업 관여하지 않음
-          if (map.getProperties().isModifying) return;
-          // Pop up text
-          if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            const hoveredFeature = event.selected[0];
-            const hoveredFeatureStyle = hoveredFeature.getStyle();
-            hoveredFeatureStyle.setText(makeText({
-              text: children.props.children || "",
-              size: children.props.size || 15,
-              color: children.props.color ? children.props.color : "black",
-              outline: children.props.outline,
-              isMarker: true
-            }));
-            annotationRef.current.setStyle(hoveredFeatureStyle);
-          } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-            const hoveredFeatureStyle = annotationRef.current.getStyle();
-            hoveredFeatureStyle.setText(new style.Text());
-            annotationRef.current.setStyle(hoveredFeatureStyle);
-          }
-        }
-        function onClickHandler(event) {
-          if (event.selected.length > 0) {
-            // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-            if (onClick) {
-              onClick({
-                annotation: annotationRef.current,
-                properties
-              });
-            }
-            // 선택된 Feature에 대한 작업 수행
-            // 예: 스타일 변경, 정보 표시 등
-          }
-        }
-
-        hoverSelect.on("select", onHoverHandler);
-        clickSelect.on("select", onClickHandler);
         return () => {
-          hoverSelect.un("select", onHoverHandler);
-          clickSelect.un("select", onClickHandler);
-          map.removeInteraction(hoverSelect);
-          map.removeInteraction(clickSelect);
           map.removeLayer(annotationLayerRef.current);
         };
       }, [children, color, map, onClick, onHover, properties]);
@@ -27732,47 +27702,6 @@
       }, []);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     };
-
-    function useHoverCursor(mapRefObj) {
-      const onPointerMove = event => {
-        const map = event.map;
-        const pixel = event.pixel;
-        // features에 대해 forEachFeatureAtPixel을 사용하여 해당 feature 위에 마우스를 올렸을 때 커서 스타일 변경
-        map.getTargetElement().style.cursor = "default";
-        map.forEachFeatureAtPixel(pixel, feature => {
-          const geometry = feature.getGeometry();
-          if (geometry instanceof geom.Point) {
-            map.getTargetElement().style.cursor = "pointer"; // 커서 스타일 변경
-            return;
-          } else if (geometry instanceof geom.MultiPoint) {
-            map.getTargetElement().style.cursor = "pointer";
-          } else if (geometry instanceof geom.Polygon) {
-            map.getTargetElement().style.cursor = "pointer";
-          } else if (geometry instanceof geom.LineString) {
-            map.getTargetElement().style.cursor = "pointer";
-          } else if (geometry instanceof geom.Circle) {
-            map.getTargetElement().style.cursor = "pointer";
-          }
-        });
-      };
-      react.useEffect(() => {
-        mapRefObj.on("pointermove", onPointerMove);
-        return () => {
-          mapRefObj.un("pointermove", onPointerMove);
-        };
-      }, []);
-    }
-
-    function useResetabledState() {
-      const [state, setState] = react.useState(null);
-      const changeState = react.useCallback(value => {
-        setState(value);
-      }, []);
-      const resetState = react.useCallback(() => {
-        setState(null);
-      }, []);
-      return [state, changeState, resetState];
-    }
 
     var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -45107,6 +45036,17 @@
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     }
 
+    function useResetabledState() {
+      const [state, setState] = react.useState(null);
+      const changeState = react.useCallback(value => {
+        setState(value);
+      }, []);
+      const resetState = react.useCallback(() => {
+        setState(null);
+      }, []);
+      return [state, changeState, resetState];
+    }
+
     class SelectStyle {
       constructor() {
         this.beforeStyle = null;
@@ -45342,6 +45282,7 @@
     exports.CustomRectangle = CustomRectangle;
     exports.DeleteAnnotation = DeleteAnnotation;
     exports.DrawingTools = DrawingTools;
+    exports.FeatureStore = FeatureStore;
     exports.FullScreenFeature = FullScreenFeature;
     exports.GeoJsonLayer = GeoJsonLayer;
     exports.ImageOverlay = ImageOverlay;
@@ -45355,6 +45296,7 @@
     exports.PolygonDrawButton = PolygonDrawButton;
     exports.PolylineDrawButton = PolylineDrawButton;
     exports.RectangleDrawButton = RectangleDrawButton;
+    exports.SelectedFeature = SelectedFeature;
     exports.TextDrawButton = TextDrawButton;
     exports.TextMarker = TextMarker;
     exports.TileLayer = TileLayer;
@@ -45369,6 +45311,9 @@
     exports.makeText = makeText;
     exports.useDidUpdate = useDidUpdate;
     exports.useEffectIfMounted = useEffectIfMounted;
+    exports.useFeatureStore = useFeatureStore;
+    exports.useHoverCursor = useHoverCursor;
+    exports.useInteractionEvent = useInteractionEvent;
     exports.useMap = useMap;
     exports.useMapEventHandler = useMapEventHandler;
     exports.useMapRotation = useMapRotation;

@@ -1,12 +1,15 @@
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
-import { createContext, useContext, useEffect, useState, useCallback, useRef, useMemo, forwardRef, Children, cloneElement, useId, useImperativeHandle, useLayoutEffect } from 'react';
-import { Draw, Select, Modify, Translate } from 'ol/interaction';
+import { createContext, useContext, useCallback, useEffect, useState, useMemo, useRef, forwardRef, Children, cloneElement, useId, useImperativeHandle, useLayoutEffect } from 'react';
+import { Draw, Select as Select$1, Modify, Translate } from 'ol/interaction';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Style from 'ol/style/Style';
-import { Circle, Fill, Stroke, Text, Style as Style$1 } from 'ol/style';
+import { Circle as Circle$1, Fill, Stroke, Text, Style as Style$1 } from 'ol/style';
+import { Point as Point$3, MultiPoint, Polygon as Polygon$1, LineString, Circle } from 'ol/geom';
 import { toLonLat, fromLonLat } from 'ol/proj';
 export { fromLonLat, toLonLat } from 'ol/proj';
+import { click, pointerMove, doubleClick } from 'ol/events/condition';
+import Select from 'ol/interaction/Select';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import Fill$1 from 'ol/style/Fill';
@@ -14,11 +17,9 @@ import Stroke$1 from 'ol/style/Stroke';
 import Text$1 from 'ol/style/Text';
 import Icon from 'ol/style/Icon';
 import { createBox } from 'ol/interaction/Draw';
-import { doubleClick, click, pointerMove } from 'ol/events/condition';
 import { Control as Control$2, FullScreen, defaults as defaults$2, Zoom as Zoom$2 } from 'ol/control';
-import Circle$1 from 'ol/geom/Circle';
+import Circle$2 from 'ol/geom/Circle';
 import Feature$2 from 'ol/Feature';
-import { Point as Point$3, MultiPoint, Polygon as Polygon$1, LineString, Circle as Circle$2 } from 'ol/geom';
 import { XYZ, ImageStatic, OSM } from 'ol/source';
 import OlTileLayer from 'ol/layer/Tile';
 import GeoJSON from 'ol/format/GeoJSON';
@@ -85,6 +86,33 @@ const ANNOTATION_COLOR = {
   }
 };
 
+const FeatureContext = /*#__PURE__*/createContext(null);
+
+function useFeatureStore() {
+  return useContext(FeatureContext);
+}
+
+function useHoverCursor(mapRefObj) {
+  const onPointerMove = useCallback(event => {
+    const map = event.map;
+    const pixel = event.pixel;
+    // features에 대해 forEachFeatureAtPixel을 사용하여 해당 feature 위에 마우스를 올렸을 때 커서 스타일 변경
+    map.getTargetElement().style.cursor = "default";
+    map.forEachFeatureAtPixel(pixel, feature => {
+      const geometry = feature.getGeometry();
+      if (geometry instanceof Point$3 || geometry instanceof MultiPoint || geometry instanceof Polygon$1 || geometry instanceof LineString || geometry instanceof Circle) {
+        map.getTargetElement().style.cursor = "pointer"; // 커서 스타일 변경
+      }
+    });
+  }, []);
+  useEffect(() => {
+    mapRefObj.on("pointermove", onPointerMove);
+    return () => {
+      mapRefObj.un("pointermove", onPointerMove);
+    };
+  }, [onPointerMove]);
+}
+
 const MapContext = /*#__PURE__*/createContext(null);
 
 function useMap() {
@@ -98,67 +126,67 @@ const useMapEventHandler = ({
   onLoadStart
 }) => {
   const map = useMap();
-  function clickEventHandler(event) {
+  const clickEventHandler = useCallback(event => {
     if (onClick) {
       onClick({
         event,
         lonlat: toLonLat(event.coordinate)
       });
     }
-  }
-  function hoverEventHandler(event) {
+  }, [onClick]);
+  const hoverEventHandler = useCallback(event => {
     if (onHover) {
       onHover({
         event,
         lonlat: toLonLat(event.coordinate)
       });
     }
-  }
-  function renderCompletedEventHandler(event) {
+  }, [onHover]);
+  const renderCompletedEventHandler = useCallback(event => {
     if (onLoaded) {
       onLoaded(event);
     }
-  }
-  function loadStartedEventHandler(event) {
+  }, [onLoaded]);
+  const loadStartedEventHandler = useCallback(event => {
     if (onLoadStart) {
       onLoadStart(event);
     }
-  }
-  function loadEndedEventHandler(event) {
+  }, [onLoadStart]);
+  const loadEndedEventHandler = useCallback(event => {
     if (onLoadStart) {
       onLoadStart(event);
     }
-  }
+  }, [onLoadStart]);
   useEffect(() => {
     map.on("click", clickEventHandler);
     return () => {
       map.un("click", clickEventHandler);
     };
-  }, []);
+  }, [clickEventHandler, map]);
   useEffect(() => {
     map.on("pointermove", hoverEventHandler);
     return () => {
       map.un("pointermove", hoverEventHandler);
     };
-  }, []);
+  }, [hoverEventHandler, map]);
   useEffect(() => {
     map.on("rendercomplete", renderCompletedEventHandler);
     return () => {
       map.un("rendercomplete", renderCompletedEventHandler);
     };
-  }, []);
+  }, [map, renderCompletedEventHandler]);
   useEffect(() => {
     map.on("loadstart", loadStartedEventHandler);
     return () => {
       map.un("loadstart", loadStartedEventHandler);
     };
-  }, []);
+  }, [loadStartedEventHandler, map]);
   useEffect(() => {
     map.on("loadend", loadEndedEventHandler);
     return () => {
       map.un("loadend", loadEndedEventHandler);
     };
-  }, []);
+  }, [loadEndedEventHandler, map]);
 };
 
 const useMapRotation = () => {
@@ -179,7 +207,7 @@ const useMapRotation = () => {
 function useSelectAnnotation() {
   const [selectedAnnotation, setSelectedAnnotation] = useState(null);
   const map = useMap();
-  const getAnnotationByClick = event => {
+  const getAnnotationByClick = useCallback(event => {
     const clickedFeatures = map.getFeaturesAtPixel(event.pixel);
     if (clickedFeatures.length > 0) {
       // 클릭한 어노테이션 선택
@@ -188,7 +216,7 @@ function useSelectAnnotation() {
         setSelectedAnnotation(selectedFeature);
       }
     }
-  };
+  }, [map, selectedAnnotation]);
   useEffect(() => {
     map.on("singleclick", getAnnotationByClick);
     return () => {
@@ -196,6 +224,44 @@ function useSelectAnnotation() {
     };
   }, []);
   return selectedAnnotation;
+}
+
+function useInteractionEvent({
+  annotation,
+  onClick,
+  onHover
+}) {
+  const map = useMap();
+  const clickSelect = useMemo(() => new Select({
+    condition: click,
+    style: null,
+    layers: [annotation]
+  }), [annotation]);
+  const hoverSelect = useMemo(() => new Select({
+    condition: pointerMove,
+    style: null,
+    layers: [annotation]
+  }), [annotation]);
+  useEffect(() => {
+    if (onHover) {
+      hoverSelect.on("select", onHover);
+    }
+    if (onClick) {
+      clickSelect.on("select", onClick);
+    }
+    map.addInteraction(clickSelect);
+    map.addInteraction(hoverSelect);
+    return () => {
+      if (onHover) {
+        hoverSelect.un("select", onHover);
+      }
+      if (onClick) {
+        clickSelect.un("select", onClick);
+      }
+      map.removeInteraction(clickSelect);
+      map.removeInteraction(hoverSelect);
+    };
+  }, [onClick, onHover, map, hoverSelect, clickSelect]);
 }
 
 function useDidUpdate(func, dependencies) {
@@ -384,7 +450,7 @@ function MultiPointDrawButton(_a) {
   useEffect(() => {
     features.forEach((feature, index) => {
       const style = new Style({
-        image: new Circle({
+        image: new Circle$1({
           radius: 10,
           fill: new Fill({
             color: ANNOTATION_COLOR.BLUE.fill // 원의 색상
@@ -1077,12 +1143,6 @@ function EraserIcon({
   });
 }
 
-const FeatureContext = /*#__PURE__*/createContext(null);
-
-function useFeatureStore() {
-  return useContext(FeatureContext);
-}
-
 function DeleteAnnotation(props) {
   const clickedAnnotation = useSelectAnnotation();
   const {
@@ -1090,26 +1150,20 @@ function DeleteAnnotation(props) {
   } = useFeatureStore();
   const map = useMap();
   const selectInteractionRef = useRef(null);
-  const removeSelectedFeatures = event => {
+  const removeSelectedFeatures = useCallback(event => {
     const selectedFeatures = event.selected;
     selectFeature(null);
     selectedFeatures.forEach(selectedFeature => {
       if (selectedFeature.getGeometry()) {
         const vectorSource = selectedFeature.getProperties().source;
         vectorSource.clear();
-        // 삭제와 동시에 vectorLayer를 빼서 안보이게 하는 로직
-        // draw tool 마다 각각의 레이어를 가지는데 빼버리면 새로 그렸을때 화면에 보이지 않음
-        // const vectorLayer = selectedFeature.getProperties()
-        //   .layer as VectorLayer<VectorSource>;
-        // map.removeLayer(vectorLayer);
       }
     });
-  };
-
+  }, [selectFeature]);
   useEffect(() => {
     if (props.isActive) {
       if (!selectInteractionRef.current) {
-        selectInteractionRef.current = new Select();
+        selectInteractionRef.current = new Select$1();
         selectInteractionRef.current.on("select", removeSelectedFeatures);
         map.addInteraction(selectInteractionRef.current);
       }
@@ -1120,7 +1174,7 @@ function DeleteAnnotation(props) {
         selectInteractionRef.current = null;
       }
     }
-  }, [map, props.isActive]);
+  }, [map, props.isActive, removeSelectedFeatures]);
   useEffect(() => {
     if (selectInteractionRef.current && clickedAnnotation) {
       selectInteractionRef.current.getFeatures().clear();
@@ -18610,7 +18664,7 @@ function ModifyAnnotation(props) {
         modifyInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, props.isActive]);
+  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, props.isActive]);
   return jsx(Button, Object.assign({}, props, {
     children: jsx(ModifyIcon, {})
   }));
@@ -18662,7 +18716,7 @@ function MoveAnnotation(props) {
         translateInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, props.isActive]);
+  }, [clickedAnnotation, map, onMoveEnd, props.isActive]);
   return jsx(Button, Object.assign({}, props, {
     children: jsx(MovementIcon, {})
   }));
@@ -18935,7 +18989,7 @@ const CompassWheel = ({
   const handleMouseUp = () => {
     setMouseDown(false);
   };
-  const handleMouseMove = e => {
+  const handleMouseMove = useCallback(e => {
     if (mouseDown) {
       const {
         movementY
@@ -18953,7 +19007,7 @@ const CompassWheel = ({
         return newRotation;
       });
     }
-  };
+  }, [mouseDown]);
   const resetValue = () => {
     setRotation(0);
     resetRotation();
@@ -18965,7 +19019,7 @@ const CompassWheel = ({
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [mouseDown]);
+  }, [handleMouseMove, mouseDown]);
   useEffect(() => {
     const customControl = new Control$2({
       element: ref.current ? ref.current : undefined
@@ -19376,7 +19430,7 @@ const CustomCircle = ({
   children
 }) => {
   const map = useMap();
-  const annotationRef = useRef(new Feature$1(new Circle$1(fromLonLat(center), radius)));
+  const annotationRef = useRef(new Feature$1(new Circle$2(fromLonLat(center), radius)));
   const annotationLayerRef = useRef(new VectorLayer({
     source: new VectorSource({
       features: [annotationRef.current]
@@ -19398,6 +19452,53 @@ const CustomCircle = ({
       isMarker: true
     }) : undefined
   }));
+  const onHoverHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      if (onHover) {
+        onHover({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+    }
+    // 수정중일땐 팝업 관여하지 않음
+    if (map.getProperties().isModifying) return;
+    // Pop up text
+    if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      const hoveredFeature = event.selected[0];
+      const hoveredFeatureStyle = hoveredFeature.getStyle();
+      hoveredFeatureStyle.setText(makeText({
+        text: children.props.children || "",
+        size: children.props.size || 15,
+        color: children.props.color ? children.props.color : "black",
+        outline: children.props.outline,
+        isMarker: true
+      }));
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      const hoveredFeatureStyle = annotationRef.current.getStyle();
+      hoveredFeatureStyle.setText(new Text());
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    }
+  }, [children, map, onHover, properties]);
+  const onClickHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  }, [onClick, properties]);
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler
+  });
   useEffect(() => {
     if (annotationRef.current) {
       const geometry = annotationRef.current.getGeometry();
@@ -19411,8 +19512,6 @@ const CustomCircle = ({
   }, [zIndex]);
   useEffect(() => {
     annotationRef.current.setStyle(annotationStyleRef.current);
-    annotationLayerRef.current = annotationLayerRef.current;
-    annotationLayerRef.current = annotationLayerRef.current;
     annotationRef.current.setProperties({
       shape: "Circle",
       isModifying: false,
@@ -19421,70 +19520,9 @@ const CustomCircle = ({
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
     });
     annotationLayerRef.current.setZIndex(zIndex);
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
     map.addLayer(annotationLayerRef.current);
-    function onHoverHandler(event) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-      }
-      // 수정중일땐 팝업 관여하지 않음
-      if (map.getProperties().isModifying) return;
-      // Pop up text
-      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        const hoveredFeature = event.selected[0];
-        const hoveredFeatureStyle = hoveredFeature.getStyle();
-        hoveredFeatureStyle.setText(makeText({
-          text: children.props.children || "",
-          size: children.props.size || 15,
-          color: children.props.color ? children.props.color : "black",
-          outline: children.props.outline,
-          isMarker: true
-        }));
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        const hoveredFeatureStyle = annotationRef.current.getStyle();
-        hoveredFeatureStyle.setText(new Text());
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      }
-    }
-    function onClickHandler(event) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
     return () => {
       var _a;
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
       map.removeLayer(annotationLayerRef.current);
     };
@@ -19524,6 +19562,51 @@ const CustomMarker = ({
     })
   }));
 
+  const onHoverHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      if (onHover) {
+        onHover({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+    }
+    // 수정중일땐 팝업 관여하지 않음
+    if (map.getProperties().isModifying) return;
+    // Pop up text
+    if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      annotationStyleRef.current.setText(makeText({
+        text: children.props.children || "",
+        size: children.props.size || 15,
+        color: children.props.color ? children.props.color : "black",
+        outline: children.props.outline,
+        isMarker: true
+      }));
+      annotationRef.current.setStyle(annotationStyleRef.current);
+    } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      annotationStyleRef.current.setText(new Text());
+      annotationRef.current.setStyle(annotationStyleRef.current);
+    }
+  }, [children, map, onHover, properties]);
+  const onClickHandler = event => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  };
+
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler
+  });
   useEffect(() => {
     if (annotationRef.current) {
       const geometry = annotationRef.current.getGeometry();
@@ -19562,66 +19645,8 @@ const CustomMarker = ({
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
     });
     annotationLayerRef.current.setZIndex(zIndex);
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
     map.addLayer(annotationLayerRef.current);
-    function onHoverHandler(event) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-      }
-      // 수정중일땐 팝업 관여하지 않음
-      if (map.getProperties().isModifying) return;
-      // Pop up text
-      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        annotationStyleRef.current.setText(makeText({
-          text: children.props.children || "",
-          size: children.props.size || 15,
-          color: children.props.color ? children.props.color : "black",
-          outline: children.props.outline,
-          isMarker: true
-        }));
-        annotationRef.current.setStyle(annotationStyleRef.current);
-      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        annotationStyleRef.current.setText(new Text());
-        annotationRef.current.setStyle(annotationStyleRef.current);
-      }
-    }
-    function onClickHandler(event) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       // eslint-disable-next-line react-hooks/exhaustive-deps
       map.removeLayer(annotationLayerRef.current);
     };
@@ -19640,22 +19665,51 @@ function CustomMultiPoint({
 }) {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new MultiPoint(positions.map(position => fromLonLat(position)))));
-  const annotationLayerRef = useRef(null);
+  const annotationLayerRef = useRef(new VectorLayer({
+    source: new VectorSource({
+      features: [annotationRef.current]
+    })
+  }));
+  const onHoverHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      if (onHover) {
+        onHover({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+    }
+  }, [onHover, properties]);
+  const onClickHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  }, []);
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler
+  });
   useEffect(() => {
     if (annotationLayerRef.current) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
   }, [zIndex]);
   useEffect(() => {
-    const vectorSource = new VectorSource();
-    const vectorLayer = new VectorLayer({
-      source: vectorSource
-    });
     const geometry = annotationRef.current.getGeometry();
+    const vectorSource = annotationLayerRef.current.getSource();
     const features = geometry.getPoints().map((point, index) => {
       const text = index + 1; // 순번 설정
       const style = new Style$1({
-        image: new Circle({
+        image: new Circle$1({
           radius: 10,
           fill: new Fill({
             color: ANNOTATION_COLOR[color].fill // 원의 색상
@@ -19680,60 +19734,18 @@ function CustomMultiPoint({
       pointFeature.setProperties({
         shape: "MultiPoint",
         isModifying: false,
-        source: vectorSource,
-        layer: vectorLayer,
+        source: annotationLayerRef.current.getSource(),
+        layer: annotationLayerRef.current,
         hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
       });
       return pointFeature;
     });
-    vectorSource.addFeatures(features);
-    annotationLayerRef.current = vectorLayer;
-    vectorLayer.setZIndex(zIndex);
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [vectorLayer]
-    });
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [vectorLayer]
-    });
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
-    function onHoverHandler(event) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-      }
+    if (vectorSource) {
+      vectorSource.addFeatures(features);
     }
-    function onClickHandler(event) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
+    map.addLayer(annotationLayerRef.current);
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
-      map.removeLayer(vectorLayer);
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
   return jsx(Fragment, {});
@@ -19771,6 +19783,53 @@ const CustomPolygon = ({
       isMarker: true
     }) : undefined
   }));
+  const onClickHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  }, [onClick, properties]);
+  const onHoverHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      if (onHover) {
+        onHover({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+    }
+    // 수정중일땐 팝업 관여하지 않음
+    if (map.getProperties().isModifying) return;
+    // Pop up text
+    if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      const hoveredFeature = event.selected[0];
+      const hoveredFeatureStyle = hoveredFeature.getStyle();
+      hoveredFeatureStyle.setText(makeText({
+        text: children.props.children || "",
+        size: children.props.size || 15,
+        color: children.props.color ? children.props.color : "black",
+        outline: children.props.outline,
+        isMarker: true
+      }));
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      const hoveredFeatureStyle = annotationRef.current.getStyle();
+      hoveredFeatureStyle.setText(new Text());
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    }
+  }, [children, map, onHover, properties]);
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler
+  });
   useEffect(() => {
     if (annotationRef.current) {
       const geometry = annotationRef.current.getGeometry();
@@ -19792,72 +19851,11 @@ const CustomPolygon = ({
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
     });
     annotationLayerRef.current.setZIndex(zIndex);
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
     map.addLayer(annotationLayerRef.current);
-    function onHoverHandler(event) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-      }
-      // 수정중일땐 팝업 관여하지 않음
-      if (map.getProperties().isModifying) return;
-      // Pop up text
-      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        const hoveredFeature = event.selected[0];
-        const hoveredFeatureStyle = hoveredFeature.getStyle();
-        hoveredFeatureStyle.setText(makeText({
-          text: children.props.children || "",
-          size: children.props.size || 15,
-          color: children.props.color ? children.props.color : "black",
-          outline: children.props.outline,
-          isMarker: true
-        }));
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        const hoveredFeatureStyle = annotationRef.current.getStyle();
-        hoveredFeatureStyle.setText(new Text());
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      }
-    }
-    function onClickHandler(event) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       map.removeLayer(annotationLayerRef.current);
     };
-  }, [color, map, onHover, properties, onClick]);
+  }, [color, map, onHover, properties, onClick, children, zIndex]);
   return jsx(Fragment, {});
 };
 
@@ -19893,6 +19891,53 @@ const CustomPolyLine = ({
       isMarker: true
     }) : undefined
   }));
+  const onHoverHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      if (onHover) {
+        onHover({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+    }
+    // 수정중일땐 팝업 관여하지 않음
+    if (map.getProperties().isModifying) return;
+    // Pop up text
+    if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      const hoveredFeature = event.selected[0];
+      const hoveredFeatureStyle = hoveredFeature.getStyle();
+      hoveredFeatureStyle.setText(makeText({
+        text: children.props.children || "",
+        size: children.props.size || 15,
+        color: children.props.color ? children.props.color : "black",
+        outline: children.props.outline,
+        isMarker: true
+      }));
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      const hoveredFeatureStyle = annotationRef.current.getStyle();
+      hoveredFeatureStyle.setText(new Text());
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    }
+  }, []);
+  const onClickHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  }, []);
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler
+  });
   useEffect(() => {
     if (annotationRef.current) {
       const geometry = annotationRef.current.getGeometry();
@@ -19914,69 +19959,8 @@ const CustomPolyLine = ({
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
     });
     annotationLayerRef.current.setZIndex(zIndex);
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
     map.addLayer(annotationLayerRef.current);
-    function onHoverHandler(event) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-      }
-      // 수정중일땐 팝업 관여하지 않음
-      if (map.getProperties().isModifying) return;
-      // Pop up text
-      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        const hoveredFeature = event.selected[0];
-        const hoveredFeatureStyle = hoveredFeature.getStyle();
-        hoveredFeatureStyle.setText(makeText({
-          text: children.props.children || "",
-          size: children.props.size || 15,
-          color: children.props.color ? children.props.color : "black",
-          outline: children.props.outline,
-          isMarker: true
-        }));
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        const hoveredFeatureStyle = annotationRef.current.getStyle();
-        hoveredFeatureStyle.setText(new Text());
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      }
-    }
-    function onClickHandler(event) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
@@ -20015,6 +19999,53 @@ const CustomRectangle = ({
       isMarker: true
     }) : undefined
   }));
+  const onHoverHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      if (onHover) {
+        onHover({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+    }
+    // 수정중일땐 팝업 관여하지 않음
+    if (map.getProperties().isModifying) return;
+    // Pop up text
+    if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      const hoveredFeature = event.selected[0];
+      const hoveredFeatureStyle = hoveredFeature.getStyle();
+      hoveredFeatureStyle.setText(makeText({
+        text: children.props.children || "",
+        size: children.props.size || 15,
+        color: children.props.color ? children.props.color : "black",
+        outline: children.props.outline,
+        isMarker: true
+      }));
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
+      const hoveredFeatureStyle = annotationRef.current.getStyle();
+      hoveredFeatureStyle.setText(new Text());
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    }
+  }, []);
+  const onClickHandler = useCallback(event => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  }, []);
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler
+  });
   useEffect(() => {
     if (annotationRef.current) {
       const geometry = annotationRef.current.getGeometry();
@@ -20037,69 +20068,8 @@ const CustomRectangle = ({
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
     });
     annotationLayerRef.current.setZIndex(zIndex);
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [annotationLayerRef.current]
-    });
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
     map.addLayer(annotationLayerRef.current);
-    function onHoverHandler(event) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-      }
-      // 수정중일땐 팝업 관여하지 않음
-      if (map.getProperties().isModifying) return;
-      // Pop up text
-      if (event.selected.length > 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        const hoveredFeature = event.selected[0];
-        const hoveredFeatureStyle = hoveredFeature.getStyle();
-        hoveredFeatureStyle.setText(makeText({
-          text: children.props.children || "",
-          size: children.props.size || 15,
-          color: children.props.color ? children.props.color : "black",
-          outline: children.props.outline,
-          isMarker: true
-        }));
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
-        const hoveredFeatureStyle = annotationRef.current.getStyle();
-        hoveredFeatureStyle.setText(new Text());
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      }
-    }
-    function onClickHandler(event) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       map.removeLayer(annotationLayerRef.current);
     };
   }, [children, color, map, onClick, onHover, properties]);
@@ -20163,12 +20133,12 @@ const TextMarker = ({
       layer: vectorLayer
     });
     vectorLayer.setZIndex(zIndex);
-    const clickSelect = new Select({
+    const clickSelect = new Select$1({
       condition: click,
       style: null,
       layers: [vectorLayer]
     });
-    const hoverSelect = new Select({
+    const hoverSelect = new Select$1({
       condition: pointerMove,
       style: null,
       layers: [vectorLayer]
@@ -27738,47 +27708,6 @@ const ImageOverlay = ({
   }, []);
   return jsx(Fragment, {});
 };
-
-function useHoverCursor(mapRefObj) {
-  const onPointerMove = event => {
-    const map = event.map;
-    const pixel = event.pixel;
-    // features에 대해 forEachFeatureAtPixel을 사용하여 해당 feature 위에 마우스를 올렸을 때 커서 스타일 변경
-    map.getTargetElement().style.cursor = "default";
-    map.forEachFeatureAtPixel(pixel, feature => {
-      const geometry = feature.getGeometry();
-      if (geometry instanceof Point$3) {
-        map.getTargetElement().style.cursor = "pointer"; // 커서 스타일 변경
-        return;
-      } else if (geometry instanceof MultiPoint) {
-        map.getTargetElement().style.cursor = "pointer";
-      } else if (geometry instanceof Polygon$1) {
-        map.getTargetElement().style.cursor = "pointer";
-      } else if (geometry instanceof LineString) {
-        map.getTargetElement().style.cursor = "pointer";
-      } else if (geometry instanceof Circle$2) {
-        map.getTargetElement().style.cursor = "pointer";
-      }
-    });
-  };
-  useEffect(() => {
-    mapRefObj.on("pointermove", onPointerMove);
-    return () => {
-      mapRefObj.un("pointermove", onPointerMove);
-    };
-  }, []);
-}
-
-function useResetabledState() {
-  const [state, setState] = useState(null);
-  const changeState = useCallback(value => {
-    setState(value);
-  }, []);
-  const resetState = useCallback(() => {
-    setState(null);
-  }, []);
-  return [state, changeState, resetState];
-}
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -44991,7 +44920,7 @@ const makeSelectedFeature = nomalizedCoordinates => {
   const features = multiPointGeometry.getPoints().map((point, index) => {
     const text = index + 1; // 순번 설정
     const style = new Style$1({
-      image: new Circle({
+      image: new Circle$1({
         radius: 10,
         fill: new Fill({
           color: ANNOTATION_COLOR["SELECT"].stroke // 원의 색상
@@ -45111,6 +45040,17 @@ function SelectedFeature({
     }
   }, [coordinates]);
   return jsx(Fragment, {});
+}
+
+function useResetabledState() {
+  const [state, setState] = useState(null);
+  const changeState = useCallback(value => {
+    setState(value);
+  }, []);
+  const resetState = useCallback(() => {
+    setState(null);
+  }, []);
+  return [state, changeState, resetState];
 }
 
 class SelectStyle {
@@ -45328,5 +45268,5 @@ function InnerText({
   return jsx(Fragment, {});
 }
 
-export { Button, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FullScreenFeature, GeoJsonLayer, ImageOverlay, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
+export { Button, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FeatureStore, FullScreenFeature, GeoJsonLayer, ImageOverlay, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, SelectedFeature, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useFeatureStore, useHoverCursor, useInteractionEvent, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
 //# sourceMappingURL=index.es.js.map

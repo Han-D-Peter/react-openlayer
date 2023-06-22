@@ -104,7 +104,8 @@ export const MapContainer = forwardRef<Map, MapProps>(
     },
     ref
   ) => {
-    const mapId = useId();
+    const id = useId();
+    const mapId = `react-openlayers-map-${id}`;
     const mapObj = useRef<Map>(
       new Map({
         controls: defaultControls({
