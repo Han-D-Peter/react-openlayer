@@ -1,5 +1,5 @@
+import React from "react";
 import Feature from "ol/Feature";
-import { Select } from "ol/interaction";
 import { useCallback, useEffect, useRef } from "react";
 import { Coordinate } from "ol/coordinate";
 import Style from "ol/style/Style";
@@ -9,13 +9,11 @@ import { Polygon } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { useMap } from "../../hooks/incontext/useMap";
 import { makeText } from "../../utils/object";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { Annotation } from ".";
-import React from "react";
 import { Text } from "ol/style";
 import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
 

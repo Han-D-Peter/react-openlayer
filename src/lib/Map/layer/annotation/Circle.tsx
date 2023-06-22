@@ -9,8 +9,6 @@ import VectorSource from "ol/source/Vector";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import { fromLonLat } from "ol/proj";
-import { Select } from "ol/interaction";
-import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Text } from "ol/style";
 import { useMap } from "../../hooks/incontext/useMap";

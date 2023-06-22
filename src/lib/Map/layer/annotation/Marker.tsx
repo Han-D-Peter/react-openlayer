@@ -9,8 +9,6 @@ import { Coordinate } from "ol/coordinate";
 import Style from "ol/style/Style";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Select } from "ol/interaction";
-import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
 import { useMap } from "../../hooks/incontext/useMap";
