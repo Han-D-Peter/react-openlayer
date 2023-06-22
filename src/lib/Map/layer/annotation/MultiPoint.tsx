@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useCallback } from "react";
 import { useEffect, useRef } from "react";
 import { Coordinate } from "ol/coordinate";
 import Feature from "ol/Feature";
@@ -14,6 +15,7 @@ import { Select } from "ol/interaction";
 import { click, pointerMove } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
+import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
 
 export interface CustomMultiPointProps extends Annotation {
   positions: Coordinate[];
@@ -34,7 +36,48 @@ export function CustomMultiPoint({
       new MultiPoint(positions.map((position) => fromLonLat(position)))
     )
   );
-  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+    new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current],
+      }),
+    })
+  );
+
+  const onHoverHandler = useCallback(
+    (event: SelectEvent) => {
+      if (event.selected.length > 0) {
+        if (onHover) {
+          onHover({ annotation: annotationRef.current, properties });
+        }
+      } else {
+        // hover 이벤트에 의해 선택된 Circle이 없는 경우
+        // 선택 해제에 대한 작업 수행
+        // 예: 기본 스타일 복원 등
+      }
+    },
+    [onHover, properties]
+  );
+
+  const onClickHandler = useCallback((event: SelectEvent) => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties,
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  }, []);
+
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler,
+  });
 
   useEffect(() => {
     if (annotationLayerRef.current) {
@@ -43,11 +86,8 @@ export function CustomMultiPoint({
   }, [zIndex]);
 
   useEffect(() => {
-    const vectorSource = new VectorSource();
-    const vectorLayer = new VectorLayer({
-      source: vectorSource,
-    });
     const geometry = annotationRef.current.getGeometry() as MultiPoint;
+    const vectorSource = annotationLayerRef.current.getSource();
     const features = geometry
       .getPoints()
       .map((point, index): Feature<Point> => {
@@ -77,69 +117,21 @@ export function CustomMultiPoint({
         pointFeature.setProperties({
           shape: "MultiPoint",
           isModifying: false,
-          source: vectorSource,
-          layer: vectorLayer,
+          source: annotationLayerRef.current.getSource(),
+          layer: annotationLayerRef.current,
           hasPopup: children?.props.isPopup,
         });
         return pointFeature;
       });
 
-    vectorSource.addFeatures(features);
-
-    annotationLayerRef.current = vectorLayer;
-
-    vectorLayer.setZIndex(zIndex);
-
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [vectorLayer],
-    });
-
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [vectorLayer],
-    });
-
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
-    map.addLayer(vectorLayer);
-
-    function onHoverHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({ annotation: annotationRef.current, properties });
-        }
-      } else {
-        // hover 이벤트에 의해 선택된 Circle이 없는 경우
-        // 선택 해제에 대한 작업 수행
-        // 예: 기본 스타일 복원 등
-      }
+    if (vectorSource) {
+      vectorSource.addFeatures(features);
     }
 
-    function onClickHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties,
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
+    map.addLayer(annotationLayerRef.current);
 
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
-      map.removeLayer(vectorLayer);
+      map.removeLayer(annotationLayerRef.current);
     };
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;

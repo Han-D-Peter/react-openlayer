@@ -1,6 +1,6 @@
 import Feature from "ol/Feature";
 import { Select } from "ol/interaction";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Coordinate } from "ol/coordinate";
 import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
@@ -17,6 +17,7 @@ import { ANNOTATION_COLOR } from "../../constants/color";
 import { Annotation } from ".";
 import React from "react";
 import { Text } from "ol/style";
+import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
 
 export interface CustomRectangleProps extends Annotation {
   positions: Coordinate[][];
@@ -68,6 +69,63 @@ export const CustomRectangle = ({
     })
   );
 
+  const onHoverHandler = useCallback((event: SelectEvent) => {
+    if (event.selected.length > 0) {
+      if (onHover) {
+        onHover({ annotation: annotationRef.current, properties });
+      }
+    } else {
+      // hover 이벤트에 의해 선택된 Circle이 없는 경우
+      // 선택 해제에 대한 작업 수행
+      // 예: 기본 스타일 복원 등
+    }
+
+    // 수정중일땐 팝업 관여하지 않음
+    if (map.getProperties().isModifying) return;
+
+    // Pop up text
+    if (event.selected.length > 0 && children?.props.isPopup) {
+      const hoveredFeature = event.selected[0];
+      const hoveredFeatureStyle = hoveredFeature.getStyle() as Style;
+      hoveredFeatureStyle.setText(
+        makeText({
+          text: children.props.children || "",
+          size: children.props.size || 15,
+          color: children.props.color ? children.props.color : "black",
+          outline: children.props.outline,
+          isMarker: true,
+        })
+      );
+
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    } else if (event.selected.length === 0 && children?.props.isPopup) {
+      const hoveredFeatureStyle = annotationRef.current.getStyle() as Style;
+
+      hoveredFeatureStyle.setText(new Text());
+      annotationRef.current.setStyle(hoveredFeatureStyle);
+    }
+  }, []);
+
+  const onClickHandler = useCallback((event: SelectEvent) => {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties,
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  }, []);
+
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler,
+  });
+
   useEffect(() => {
     if (annotationRef.current) {
       const geometry = annotationRef.current.getGeometry() as Polygon;
@@ -97,79 +155,9 @@ export const CustomRectangle = ({
 
     annotationLayerRef.current.setZIndex(zIndex);
 
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [annotationLayerRef.current],
-    });
-
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [annotationLayerRef.current],
-    });
-
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
-
     map.addLayer(annotationLayerRef.current);
-    function onHoverHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({ annotation: annotationRef.current, properties });
-        }
-      } else {
-        // hover 이벤트에 의해 선택된 Circle이 없는 경우
-        // 선택 해제에 대한 작업 수행
-        // 예: 기본 스타일 복원 등
-      }
 
-      // 수정중일땐 팝업 관여하지 않음
-      if (map.getProperties().isModifying) return;
-
-      // Pop up text
-      if (event.selected.length > 0 && children?.props.isPopup) {
-        const hoveredFeature = event.selected[0];
-        const hoveredFeatureStyle = hoveredFeature.getStyle() as Style;
-        hoveredFeatureStyle.setText(
-          makeText({
-            text: children.props.children || "",
-            size: children.props.size || 15,
-            color: children.props.color ? children.props.color : "black",
-            outline: children.props.outline,
-            isMarker: true,
-          })
-        );
-
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      } else if (event.selected.length === 0 && children?.props.isPopup) {
-        const hoveredFeatureStyle = annotationRef.current.getStyle() as Style;
-
-        hoveredFeatureStyle.setText(new Text());
-        annotationRef.current.setStyle(hoveredFeatureStyle);
-      }
-    }
-
-    function onClickHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties,
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       map.removeLayer(annotationLayerRef.current);
     };
   }, [children, color, map, onClick, onHover, properties]);
