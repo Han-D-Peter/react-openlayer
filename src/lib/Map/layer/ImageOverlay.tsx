@@ -1,9 +1,10 @@
-import React from "react";
+import React, { forwardRef, useCallback, useImperativeHandle } from "react";
 import { useEffect, useRef } from "react";
 import { useMap } from "../hooks";
 import ImageLayer from "ol/layer/Image";
 import { ImageStatic } from "ol/source";
 import { Location } from "../MapContainer";
+import { Map } from "ol";
 
 export interface ImageOverlayProps {
   imageUrl: string;
@@ -15,48 +16,69 @@ export interface ImageOverlayProps {
   bounds: Location[];
 }
 
-export const ImageOverlay = ({
-  imageUrl,
-  altText = "unknown",
-  zIndex = 0,
-  bounds,
-}: ImageOverlayProps) => {
-  const map = useMap();
-  const imageRef = useRef(
-    new ImageLayer({
-      source: new ImageStatic({
-        url: imageUrl,
-        imageExtent: bounds.flat(),
-        projection: "EPSG:4326",
-      }),
-    })
-  );
+export interface ImageOverlayRef {
+  removeFrom: () => void;
+  addTo: () => void;
+}
 
-  useEffect(() => {
-    if (imageRef.current) {
-      imageRef.current.setSource(
-        new ImageStatic({
+export const ImageOverlay = forwardRef<ImageOverlayRef, ImageOverlayProps>(
+  ({ imageUrl, altText = "unknown", zIndex = 0, bounds }, ref) => {
+    const map = useMap();
+    const imageRef = useRef(
+      new ImageLayer({
+        source: new ImageStatic({
           url: imageUrl,
           imageExtent: bounds.flat(),
           projection: "EPSG:4326",
-        })
-      );
-    }
-  }, [bounds]);
+        }),
+      })
+    );
 
-  useEffect(() => {
-    if (imageRef.current) {
-      imageRef.current.setZIndex(zIndex);
-    }
-  }, [zIndex]);
+    const removeFrom = useCallback(() => {
+      map.removeLayer(imageRef.current);
+    }, [map]);
 
-  useEffect(() => {
-    const imageLayer = imageRef.current;
-    map.addLayer(imageLayer);
+    const addTo = useCallback(() => {
+      map.addLayer(imageRef.current);
+    }, [map]);
 
-    return () => {
-      map.removeLayer(imageLayer);
-    };
-  }, []);
-  return <></>;
-};
+    useImperativeHandle(
+      ref,
+      () => {
+        return {
+          removeFrom,
+          addTo,
+        };
+      },
+      [removeFrom, addTo]
+    );
+
+    useEffect(() => {
+      if (imageRef.current) {
+        imageRef.current.setSource(
+          new ImageStatic({
+            url: imageUrl,
+            imageExtent: bounds.flat(),
+            projection: "EPSG:4326",
+          })
+        );
+      }
+    }, [bounds, imageUrl]);
+
+    useEffect(() => {
+      if (imageRef.current) {
+        imageRef.current.setZIndex(zIndex);
+      }
+    }, [zIndex]);
+
+    useEffect(() => {
+      const imageLayer = imageRef.current;
+      map.addLayer(imageLayer);
+
+      return () => {
+        map.removeLayer(imageLayer);
+      };
+    }, []);
+    return <></>;
+  }
+);
