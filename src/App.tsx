@@ -11,7 +11,15 @@ import { FullScreenFeature } from "./lib/Map/control/FullScreenFeature";
 import { ControlSection } from "./lib/Map/control/layout/ControlSection";
 import { ZoomFeature } from "./lib/Map/control/ZoomFeature";
 import { CompassWheel } from "./lib/Map/control/CompassWheel";
-import { ImageOverlay, LayerGroup, MapContainer, fromLonLat } from "./lib/Map";
+import {
+  ImageOverlay,
+  ImageOverlayProps,
+  ImageOverlayRef,
+  LayerGroup,
+  MapContainer,
+  TileLayer,
+  fromLonLat,
+} from "./lib/Map";
 import { DrawingTools } from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";
 import { CustomMultiPoint } from "./lib/Map/layer/annotation/MultiPoint";
@@ -29,13 +37,30 @@ function App() {
   }
 
   const ref = useRef<Map>(null);
+  const imageRef = useRef<ImageOverlayRef>(null);
 
   return (
     <div className="App">
+      <button
+        onClick={() => {
+          // ref.current?.setView(
+          //   new View({ center: fromLonLat([126.840884, 35.190816]), zoom: 10 })
+          // );
+          if (ref.current) {
+            imageRef.current?.removeFrom(ref.current);
+          }
+        }}
+      >
+        off
+      </button>
       <MapContainer ref={ref} isAbledSelection>
         {/* <GeoJsonLayer geoJson={geoJsonSample} /> */}
-        {/* <TileLayer url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png" /> */}
+        <TileLayer
+          crossOrigin={"anonymous"}
+          url="https://d3ma6smoldwaof.cloudfront.net/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
+        />
         <ImageOverlay
+          ref={imageRef}
           imageUrl="images/compass.png"
           bounds={[
             [126.841384, 35.191316],
@@ -83,6 +108,19 @@ function App() {
                   [126.840476, 35.190219],
                   [126.840604, 35.190133],
                   [126.841268, 35.190381],
+                ]}
+              >
+                <InnerText>multi</InnerText>
+              </CustomMultiPoint>
+              <CustomMultiPoint
+                onClick={(event) =>
+                  console.log("event", getProfileFromFeature(event.annotation))
+                }
+                positions={[
+                  [126.843624, 35.190556],
+                  [126.840416, 35.190159],
+                  [126.840544, 35.190073],
+                  [126.841208, 35.190321],
                 ]}
               >
                 <InnerText>multi</InnerText>
@@ -155,15 +193,6 @@ function App() {
           <DrawingTools onCanvas />
         </ControlSection>
       </MapContainer>
-      <button
-        onClick={() => {
-          ref.current?.setView(
-            new View({ center: fromLonLat([126.840884, 35.190816]), zoom: 10 })
-          );
-        }}
-      >
-        off
-      </button>
     </div>
   );
 }

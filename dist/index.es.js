@@ -1,5 +1,5 @@
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
-import { createContext, useContext, useCallback, useEffect, useState, useMemo, useRef, forwardRef, Children, cloneElement, useId, useImperativeHandle, useLayoutEffect } from 'react';
+import { createContext, useContext, useCallback, useEffect, useState, useMemo, useRef, forwardRef, Children, cloneElement, useImperativeHandle, memo, useId, useLayoutEffect } from 'react';
 import { Draw, Select as Select$1, Modify, Translate } from 'ol/interaction';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
@@ -20246,13 +20246,15 @@ const TileLayer = ({
   url,
   zIndex = 0,
   maxZoom = 42,
-  minZoom = 0
+  minZoom = 0,
+  crossOrigin = null
 }) => {
   const map = useMap();
   useEffect(() => {
     const customTmsSource = new XYZ({
       maxZoom,
       minZoom,
+      crossOrigin,
       tileUrlFunction: tileCoord => {
         const tileUrl = new TileUrl(url);
         const z = tileCoord[0];
@@ -20260,7 +20262,25 @@ const TileLayer = ({
         const y = Math.pow(2, z) - tileCoord[2] - 1;
         return tileUrl.getUrlFromPosition(z, x, y);
       }
+      // tileLoadFunction: function (imageTile, src) {
+      //   if (imageTile instanceof ImageTile) {
+      //     const tileImage = imageTile.getImage() as HTMLImageElement;
+      //     tileImage.onload = function () {
+      //       imageTile.setState(TileState.LOADED);
+      //     };
+      //     tileImage.onerror = function () {
+      //       const tileCoord = imageTile.getTileCoord();
+      //       const state = TileState.ERROR;
+      //       const missingTile = createMissingTile(tileCoord, state);
+      //       imageTile.setState(TileState.ERROR);
+      //       const missingImage = missingTile.getImage() as HTMLImageElement;
+      //       imageTile.setImage(missingImage);
+      //       tileImage.src = src;
+      //     };
+      //   }
+      // },
     });
+
     const customTmsLayer = new OlTileLayer({
       source: customTmsSource,
       zIndex
@@ -27671,12 +27691,12 @@ function LayerGroup({
   });
 }
 
-const ImageOverlay = ({
+const ImageOverlay = /*#__PURE__*/forwardRef(({
   imageUrl,
   altText = "unknown",
   zIndex = 0,
   bounds
-}) => {
+}, ref) => {
   const map = useMap();
   const imageRef = useRef(new ImageLayer({
     source: new ImageStatic({
@@ -27685,6 +27705,18 @@ const ImageOverlay = ({
       projection: "EPSG:4326"
     })
   }));
+  const removeFrom = useCallback(() => {
+    map.removeLayer(imageRef.current);
+  }, [map]);
+  const addTo = useCallback(() => {
+    map.addLayer(imageRef.current);
+  }, [map]);
+  useImperativeHandle(ref, () => {
+    return {
+      removeFrom,
+      addTo
+    };
+  }, [removeFrom, addTo]);
   useEffect(() => {
     if (imageRef.current) {
       imageRef.current.setSource(new ImageStatic({
@@ -27693,7 +27725,7 @@ const ImageOverlay = ({
         projection: "EPSG:4326"
       }));
     }
-  }, [bounds]);
+  }, [bounds, imageUrl]);
   useEffect(() => {
     if (imageRef.current) {
       imageRef.current.setZIndex(zIndex);
@@ -27707,7 +27739,7 @@ const ImageOverlay = ({
     };
   }, []);
   return jsx(Fragment, {});
-};
+});
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -45179,7 +45211,7 @@ function FeatureStore({
   }));
 }
 
-const MapContainer = /*#__PURE__*/forwardRef(({
+const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
   children,
   isZoomAbled = true,
   isRotateAbled = false,
@@ -45193,14 +45225,17 @@ const MapContainer = /*#__PURE__*/forwardRef(({
   isShownOsm = true,
   isAbledSelection = false
 }, ref) => {
-  const mapId = useId();
+  const id = useId();
+  const mapId = `react-openlayers-map-${id}`;
   const mapObj = useRef(new Map$1({
     controls: defaults$2({
       zoom: isZoomAbled,
       rotate: isRotateAbled
     }).extend([]),
     layers: isShownOsm ? [new Tile({
-      source: new OSM()
+      source: new OSM({
+        crossOrigin: "anonymous"
+      })
     })] : undefined,
     // 하위 요소 중 id 가 map 인 element가 있어야함.
     view: new View$1({
@@ -45256,7 +45291,7 @@ const MapContainer = /*#__PURE__*/forwardRef(({
       }))
     }))
   }));
-});
+}));
 
 function InnerText({
   color,
