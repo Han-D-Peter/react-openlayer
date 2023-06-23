@@ -1,4 +1,4 @@
-import React, { useEffect, useId } from "react";
+import React, { memo, useEffect, useId } from "react";
 import {
   ReactNode,
   useLayoutEffect,
@@ -86,100 +86,104 @@ export interface MapProps {
   children?: ReactNode;
 }
 
-export const MapContainer = forwardRef<Map, MapProps>(
-  (
-    {
-      children,
-      isZoomAbled = true,
-      isRotateAbled = false,
-      center = [126.841, 35.1896563],
-      zoomLevel = 18,
-      bounds,
-      maxZoom = 24,
-      minZoom = 3,
-      height = "1000px",
-      width = "1000px",
-      isShownOsm = true,
-      isAbledSelection = false,
-    },
-    ref
-  ) => {
-    const id = useId();
-    const mapId = `react-openlayers-map-${id}`;
-    const mapObj = useRef<Map>(
-      new Map({
-        controls: defaultControls({
-          zoom: isZoomAbled,
-          rotate: isRotateAbled,
-        }).extend([]),
-        layers: isShownOsm
-          ? [
-              new TileLayer({
-                source: new OSM(),
-              }),
-            ]
-          : undefined,
-        // 하위 요소 중 id 가 map 인 element가 있어야함.
-        view: new View({
-          extent: bounds
-            ? fromLonLat(concat<number>([...[...bounds[0], ...bounds[1]]]))
+export const MapContainer = memo(
+  forwardRef<Map, MapProps>(
+    (
+      {
+        children,
+        isZoomAbled = true,
+        isRotateAbled = false,
+        center = [126.841, 35.1896563],
+        zoomLevel = 18,
+        bounds,
+        maxZoom = 24,
+        minZoom = 3,
+        height = "1000px",
+        width = "1000px",
+        isShownOsm = true,
+        isAbledSelection = false,
+      },
+      ref
+    ) => {
+      const id = useId();
+      const mapId = `react-openlayers-map-${id}`;
+      const mapObj = useRef<Map>(
+        new Map({
+          controls: defaultControls({
+            zoom: isZoomAbled,
+            rotate: isRotateAbled,
+          }).extend([]),
+          layers: isShownOsm
+            ? [
+                new TileLayer({
+                  source: new OSM({
+                    crossOrigin: "anonymous",
+                  }),
+                }),
+              ]
             : undefined,
-          center: fromLonLat(center),
-          zoom: zoomLevel,
-          maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
-          minZoom: !isZoomAbled ? zoomLevel : minZoom,
-          constrainResolution: true,
-        }),
-      })
-    );
+          // 하위 요소 중 id 가 map 인 element가 있어야함.
+          view: new View({
+            extent: bounds
+              ? fromLonLat(concat<number>([...[...bounds[0], ...bounds[1]]]))
+              : undefined,
+            center: fromLonLat(center),
+            zoom: zoomLevel,
+            maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
+            minZoom: !isZoomAbled ? zoomLevel : minZoom,
+            constrainResolution: true,
+          }),
+        })
+      );
 
-    useEffect(() => {
-      if (mapObj.current) {
-        const view = mapObj.current.getView();
-        view.setZoom(zoomLevel);
-      }
-    }, [zoomLevel]);
+      useEffect(() => {
+        if (mapObj.current) {
+          const view = mapObj.current.getView();
+          view.setZoom(zoomLevel);
+        }
+      }, [zoomLevel]);
 
-    useEffect(() => {
-      if (mapObj.current) {
-        const view = mapObj.current.getView();
-        view.setCenter(fromLonLat(center));
-      }
-    }, [center]);
+      useEffect(() => {
+        if (mapObj.current) {
+          const view = mapObj.current.getView();
+          view.setCenter(fromLonLat(center));
+        }
+      }, [center]);
 
-    useHoverCursor(mapObj.current);
+      useHoverCursor(mapObj.current);
 
-    useImperativeHandle(ref, () => mapObj.current);
+      useImperativeHandle(ref, () => mapObj.current);
 
-    useLayoutEffect(() => {
-      const mapRef = mapObj.current;
-      const defaultZoomControl = mapRef
-        .getControls()
-        .getArray()
-        .find((control: Control) => control instanceof Zoom);
+      useLayoutEffect(() => {
+        const mapRef = mapObj.current;
+        const defaultZoomControl = mapRef
+          .getControls()
+          .getArray()
+          .find((control: Control) => control instanceof Zoom);
 
-      if (defaultZoomControl) {
-        mapRef.removeControl(defaultZoomControl);
-      }
-      mapRef.setTarget(mapId);
-      return () => {
-        mapRef.setTarget(undefined);
-      };
-    }, [mapId]);
+        if (defaultZoomControl) {
+          mapRef.removeControl(defaultZoomControl);
+        }
+        mapRef.setTarget(mapId);
+        return () => {
+          mapRef.setTarget(undefined);
+        };
+      }, [mapId]);
 
-    // MapContext.Provider 에 객체 저장
-    return (
-      <MapContext.Provider value={mapObj.current}>
-        <FeatureStore isAbledSelection={isAbledSelection}>
-          <div
-            id={mapId}
-            className="react-openlayers-map-container"
-            style={{ width, height }}
-          >
-            {children}
-          </div>
-        </FeatureStore>
-      </MapContext.Provider>
-    );
-  }
+      // MapContext.Provider 에 객체 저장
+      return (
+        <MapContext.Provider value={mapObj.current}>
+          <FeatureStore isAbledSelection={isAbledSelection}>
+            <div
+              id={mapId}
+              className="react-openlayers-map-container"
+              style={{ width, height }}
+            >
+              {children}
+            </div>
+          </FeatureStore>
+        </MapContext.Provider>
+      );
+    }
+  )
 );
