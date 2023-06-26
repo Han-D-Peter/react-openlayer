@@ -1,14 +1,9 @@
-import { useEffect } from "react";
 import React from "react";
+import { useEffect } from "react";
 import { useMap } from "../../hooks";
-import { TileImage, XYZ } from "ol/source";
 import OlTileLayer from "ol/layer/Tile";
 import { TileUrl } from "../../utils/utils";
-import TileState from "ol/TileState";
-import { Coordinate } from "ol/coordinate";
-import { ImageTile, Tile } from "ol";
-import { createEmpty } from "ol/extent";
-import { TileCoord } from "ol/tilecoord";
+import { XYZ } from "ol/source";
 
 export interface TileLayerProps {
   url: string;
@@ -44,6 +39,7 @@ export const TileLayer = ({
   maxZoom = 42,
   minZoom = 0,
   crossOrigin = null,
+  errorTileUrl,
 }: TileLayerProps) => {
   const map = useMap();
 
@@ -57,7 +53,8 @@ export const TileLayer = ({
         const z = tileCoord[0];
         const x = tileCoord[1];
         const y = Math.pow(2, z) - tileCoord[2] - 1;
-        return tileUrl.getUrlFromPosition(z, x, y);
+        const tileImageUrl = tileUrl.getUrlFromPosition(z, x, y);
+        return tileImageUrl || errorTileUrl || ""; // 에러 타일 URL 반환
       },
     });
 
@@ -67,6 +64,6 @@ export const TileLayer = ({
     });
 
     map.addLayer(customTmsLayer);
-  }, [map]);
+  }, [map, errorTileUrl]);
   return <></>;
 };
