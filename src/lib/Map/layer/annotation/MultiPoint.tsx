@@ -5,7 +5,7 @@ import { Coordinate } from "ol/coordinate";
 import Feature from "ol/Feature";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { useMap } from "../../hooks";
-import { MultiPoint, Point } from "ol/geom";
+import { Geometry, MultiPoint } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -36,9 +36,7 @@ export function CustomMultiPoint({
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
     new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
+      source: new VectorSource({}),
     })
   );
 
@@ -85,45 +83,45 @@ export function CustomMultiPoint({
 
   useEffect(() => {
     const geometry = annotationRef.current.getGeometry() as MultiPoint;
-    const vectorSource = annotationLayerRef.current.getSource();
-    const features = geometry
-      .getPoints()
-      .map((point, index): Feature<Point> => {
-        const text = index + 1; // 순번 설정
-        const style = new Style({
-          image: new Circle({
-            radius: 10,
-            fill: new Fill({
-              color: ANNOTATION_COLOR[color].fill, // 원의 색상
-            }),
-            stroke: new Stroke({
-              color: ANNOTATION_COLOR[color].stroke, // 테두리 선의 색상
-              width: 2,
-            }),
+    const vectorSource =
+      annotationLayerRef.current.getSource() as VectorSource<Geometry>;
+
+    const points = geometry.getPoints().map((point, index) => {
+      const text = index + 1; // 순번 설정
+      const style = new Style({
+        image: new Circle({
+          radius: 10,
+          fill: new Fill({
+            color: ANNOTATION_COLOR[color].fill, // 원의 색상
           }),
-          text: makeText({
-            text: String(text),
-            size: children?.props.size || 15,
-            color: children?.props.color ? children.props.color : "black",
-            outline: children?.props.outline,
-            isMarker: false,
+          stroke: new Stroke({
+            color: ANNOTATION_COLOR[color].stroke, // 테두리 선의 색상
+            width: 2,
           }),
-        });
-        style.getText().setText(text.toString());
-        const pointFeature = new Feature(point);
-        pointFeature.setStyle(style);
-        pointFeature.setProperties({
-          shape: "MultiPoint",
-          isModifying: false,
-          source: annotationLayerRef.current.getSource(),
-          layer: annotationLayerRef.current,
-          hasPopup: children?.props.isPopup,
-        });
-        return pointFeature;
+        }),
+        text: makeText({
+          text: String(text),
+          size: children?.props.size || 15,
+          color: children?.props.color ? children.props.color : "black",
+          outline: children?.props.outline,
+          isMarker: false,
+        }),
       });
+      style.getText().setText(text.toString());
+      const pointFeature = new Feature(point);
+      pointFeature.setStyle(style);
+      pointFeature.setProperties({
+        shape: "MultiPoint",
+        isModifying: false,
+        source: annotationLayerRef.current.getSource(),
+        layer: annotationLayerRef.current,
+        hasPopup: children?.props.isPopup,
+      });
+      return pointFeature;
+    });
 
     if (vectorSource) {
-      vectorSource.addFeatures(features);
+      vectorSource.addFeatures(points);
     }
 
     map.addLayer(annotationLayerRef.current);
