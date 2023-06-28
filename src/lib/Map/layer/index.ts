@@ -3,3 +3,4 @@ export * from "./tileLayer";
 export * from "./LayerGroup";
 export * from "./ImageOverlay";
 export * from "./SelectedFeature";
+export * from "./CaptureMap";
