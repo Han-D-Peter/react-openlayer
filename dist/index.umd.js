@@ -19642,8 +19642,10 @@
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
+          var _a;
           // eslint-disable-next-line react-hooks/exhaustive-deps
           map.removeLayer(annotationLayerRef.current);
+          (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
         };
       }, [color, children, map, onHover, properties, onClick]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
@@ -19738,7 +19740,9 @@
         }
         map.addLayer(annotationLayerRef.current);
         return () => {
+          var _a;
           map.removeLayer(annotationLayerRef.current);
+          (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
         };
       }, [color, children, map, onHover, properties, onClick]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
@@ -19846,7 +19850,9 @@
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
+          var _a;
           map.removeLayer(annotationLayerRef.current);
+          (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
         };
       }, [color, map, onHover, properties, onClick, children, zIndex]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
@@ -19954,7 +19960,9 @@
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
+          var _a;
           map.removeLayer(annotationLayerRef.current);
+          (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
         };
       }, [color, children, map, onHover, properties, onClick]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
@@ -20063,7 +20071,9 @@
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
+          var _a;
           map.removeLayer(annotationLayerRef.current);
+          (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
         };
       }, [children, color, map, onClick, onHover, properties]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
@@ -45301,6 +45311,7 @@
         mapRef.setTarget(mapId);
         return () => {
           mapRef.setTarget(undefined);
+          mapRef.setLayers([]);
         };
       }, [mapId]);
       // MapContext.Provider 에 객체 저장

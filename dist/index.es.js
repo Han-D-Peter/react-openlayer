@@ -19648,8 +19648,10 @@ const CustomMarker = ({
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
+      var _a;
       // eslint-disable-next-line react-hooks/exhaustive-deps
       map.removeLayer(annotationLayerRef.current);
+      (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
   }, [color, children, map, onHover, properties, onClick]);
   return jsx(Fragment, {});
@@ -19744,7 +19746,9 @@ function CustomMultiPoint({
     }
     map.addLayer(annotationLayerRef.current);
     return () => {
+      var _a;
       map.removeLayer(annotationLayerRef.current);
+      (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
   }, [color, children, map, onHover, properties, onClick]);
   return jsx(Fragment, {});
@@ -19852,7 +19856,9 @@ const CustomPolygon = ({
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
+      var _a;
       map.removeLayer(annotationLayerRef.current);
+      (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
   }, [color, map, onHover, properties, onClick, children, zIndex]);
   return jsx(Fragment, {});
@@ -19960,7 +19966,9 @@ const CustomPolyLine = ({
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
+      var _a;
       map.removeLayer(annotationLayerRef.current);
+      (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
   }, [color, children, map, onHover, properties, onClick]);
   return jsx(Fragment, {});
@@ -20069,7 +20077,9 @@ const CustomRectangle = ({
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
+      var _a;
       map.removeLayer(annotationLayerRef.current);
+      (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
   }, [children, color, map, onClick, onHover, properties]);
   return jsx(Fragment, {});
@@ -45307,6 +45317,7 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
     mapRef.setTarget(mapId);
     return () => {
       mapRef.setTarget(undefined);
+      mapRef.setLayers([]);
     };
   }, [mapId]);
   // MapContext.Provider 에 객체 저장

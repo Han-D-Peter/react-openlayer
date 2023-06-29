@@ -71,7 +71,7 @@ export const CaptureMap = ({ onCaptured }: CaptureMapProps) => {
   }, [imageSrc]);
 
   useEffect(() => {
-    map.once("rendercomplete", capture);
+    map.on("rendercomplete", capture);
     return () => {
       map.un("rendercomplete", capture);
     };
