@@ -128,6 +128,7 @@ export function CustomMultiPoint({
 
     return () => {
       map.removeLayer(annotationLayerRef.current);
+      annotationLayerRef.current.getSource()?.clear();
     };
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;

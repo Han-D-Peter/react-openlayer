@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback } from "react";
 import { Coordinate } from "ol/coordinate";
 import Feature from "ol/Feature";
@@ -161,6 +162,7 @@ export const CustomPolygon = ({
 
     return () => {
       map.removeLayer(annotationLayerRef.current);
+      annotationLayerRef.current.getSource()?.clear();
     };
   }, [color, map, onHover, properties, onClick, children, zIndex]);
   return <></>;

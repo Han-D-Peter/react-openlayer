@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useCallback } from "react";
 import { useEffect, useRef } from "react";
 import Feature from "ol/Feature";
@@ -168,6 +169,7 @@ export const CustomMarker = ({
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       map.removeLayer(annotationLayerRef.current);
+      annotationLayerRef.current.getSource()?.clear();
     };
   }, [color, children, map, onHover, properties, onClick]);
   return <></>;

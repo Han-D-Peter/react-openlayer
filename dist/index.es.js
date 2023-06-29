@@ -20,8 +20,8 @@ import { createBox } from 'ol/interaction/Draw';
 import { Control as Control$2, FullScreen, defaults as defaults$2, Zoom as Zoom$2 } from 'ol/control';
 import Circle$2 from 'ol/geom/Circle';
 import Feature$2 from 'ol/Feature';
-import { XYZ, ImageStatic, OSM } from 'ol/source';
 import OlTileLayer from 'ol/layer/Tile';
+import { XYZ, ImageStatic, OSM } from 'ol/source';
 import GeoJSON from 'ol/format/GeoJSON';
 import { register } from 'ol/proj/proj4';
 import ImageLayer from 'ol/layer/Image';
@@ -122,8 +122,9 @@ function useMap() {
 const useMapEventHandler = ({
   onClick,
   onHover,
-  onLoaded,
-  onLoadStart
+  onMapLoaded,
+  onLoadStarted,
+  onTileLoadEnded
 }) => {
   const map = useMap();
   const clickEventHandler = useCallback(event => {
@@ -143,20 +144,20 @@ const useMapEventHandler = ({
     }
   }, [onHover]);
   const renderCompletedEventHandler = useCallback(event => {
-    if (onLoaded) {
-      onLoaded(event);
+    if (onMapLoaded) {
+      onMapLoaded(event);
     }
-  }, [onLoaded]);
+  }, [onMapLoaded]);
   const loadStartedEventHandler = useCallback(event => {
-    if (onLoadStart) {
-      onLoadStart(event);
+    if (onLoadStarted) {
+      onLoadStarted(event);
     }
-  }, [onLoadStart]);
+  }, [onLoadStarted]);
   const loadEndedEventHandler = useCallback(event => {
-    if (onLoadStart) {
-      onLoadStart(event);
+    if (onTileLoadEnded) {
+      onTileLoadEnded(event);
     }
-  }, [onLoadStart]);
+  }, [onTileLoadEnded]);
   useEffect(() => {
     map.on("click", clickEventHandler);
     return () => {
@@ -19666,9 +19667,7 @@ function CustomMultiPoint({
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new MultiPoint(positions.map(position => fromLonLat(position)))));
   const annotationLayerRef = useRef(new VectorLayer({
-    source: new VectorSource({
-      features: [annotationRef.current]
-    })
+    source: new VectorSource({})
   }));
   const onHoverHandler = useCallback(event => {
     if (event.selected.length > 0) {
@@ -19706,7 +19705,7 @@ function CustomMultiPoint({
   useEffect(() => {
     const geometry = annotationRef.current.getGeometry();
     const vectorSource = annotationLayerRef.current.getSource();
-    const features = geometry.getPoints().map((point, index) => {
+    const points = geometry.getPoints().map((point, index) => {
       const text = index + 1; // 순번 설정
       const style = new Style$1({
         image: new Circle$1({
@@ -19741,7 +19740,7 @@ function CustomMultiPoint({
       return pointFeature;
     });
     if (vectorSource) {
-      vectorSource.addFeatures(features);
+      vectorSource.addFeatures(points);
     }
     map.addLayer(annotationLayerRef.current);
     return () => {
@@ -20247,7 +20246,8 @@ const TileLayer = ({
   zIndex = 0,
   maxZoom = 42,
   minZoom = 0,
-  crossOrigin = null
+  crossOrigin = null,
+  errorTileUrl
 }) => {
   const map = useMap();
   useEffect(() => {
@@ -20260,25 +20260,9 @@ const TileLayer = ({
         const z = tileCoord[0];
         const x = tileCoord[1];
         const y = Math.pow(2, z) - tileCoord[2] - 1;
-        return tileUrl.getUrlFromPosition(z, x, y);
+        const tileImageUrl = tileUrl.getUrlFromPosition(z, x, y);
+        return tileImageUrl || errorTileUrl || ""; // 에러 타일 URL 반환
       }
-      // tileLoadFunction: function (imageTile, src) {
-      //   if (imageTile instanceof ImageTile) {
-      //     const tileImage = imageTile.getImage() as HTMLImageElement;
-      //     tileImage.onload = function () {
-      //       imageTile.setState(TileState.LOADED);
-      //     };
-      //     tileImage.onerror = function () {
-      //       const tileCoord = imageTile.getTileCoord();
-      //       const state = TileState.ERROR;
-      //       const missingTile = createMissingTile(tileCoord, state);
-      //       imageTile.setState(TileState.ERROR);
-      //       const missingImage = missingTile.getImage() as HTMLImageElement;
-      //       imageTile.setImage(missingImage);
-      //       tileImage.src = src;
-      //     };
-      //   }
-      // },
     });
 
     const customTmsLayer = new OlTileLayer({
@@ -20286,7 +20270,7 @@ const TileLayer = ({
       zIndex
     });
     map.addLayer(customTmsLayer);
-  }, [map]);
+  }, [map, errorTileUrl]);
   return jsx(Fragment, {});
 };
 
@@ -45074,6 +45058,59 @@ function SelectedFeature({
   return jsx(Fragment, {});
 }
 
+const CaptureMap = ({
+  onCaptured
+}) => {
+  const map = useMap();
+  const [imageSrc, setImageSrc] = useState(null);
+  const capture = useCallback(() => {
+    if (!map) return;
+    const mapCanvas = document.createElement("canvas");
+    const size = map.getSize();
+    mapCanvas.width = size[0];
+    mapCanvas.height = size[1];
+    const mapContext = mapCanvas.getContext("2d");
+    Array.prototype.forEach.call(map.getViewport().querySelectorAll(".ol-layer canvas, canvas.ol-layer"), function (canvas) {
+      if (canvas.width > 0) {
+        const opacity = canvas.parentNode.style.opacity || canvas.style.opacity;
+        mapContext.globalAlpha = opacity === "" ? 1 : Number(opacity);
+        let matrix;
+        const transform = canvas.style.transform;
+        if (transform) {
+          // Get the transform parameters from the style's transform matrix
+          matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(",").map(Number);
+        } else {
+          matrix = [parseFloat(canvas.style.width) / canvas.width, 0, 0, parseFloat(canvas.style.height) / canvas.height, 0, 0];
+        }
+        // Apply the transform to the export map context
+        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+        const backgroundColor = canvas.parentNode.style.backgroundColor;
+        if (backgroundColor) {
+          mapContext.fillStyle = backgroundColor;
+          mapContext.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        mapContext.drawImage(canvas, 0, 0);
+      }
+    });
+    mapContext.globalAlpha = 1;
+    mapContext.setTransform(1, 0, 0, 1, 0, 0);
+    const url = mapCanvas.toDataURL();
+    setImageSrc(url);
+  }, [map]);
+  useEffect(() => {
+    if (onCaptured && imageSrc) {
+      onCaptured(imageSrc);
+    }
+  }, [imageSrc]);
+  useEffect(() => {
+    map.once("rendercomplete", capture);
+    return () => {
+      map.un("rendercomplete", capture);
+    };
+  }, [capture, map]);
+  return jsx(Fragment, {});
+};
+
 function useResetabledState() {
   const [state, setState] = useState(null);
   const changeState = useCallback(value => {
@@ -45303,5 +45340,5 @@ function InnerText({
   return jsx(Fragment, {});
 }
 
-export { Button, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FeatureStore, FullScreenFeature, GeoJsonLayer, ImageOverlay, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, SelectedFeature, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useFeatureStore, useHoverCursor, useInteractionEvent, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
+export { Button, CaptureMap, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FeatureStore, FullScreenFeature, GeoJsonLayer, ImageOverlay, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, SelectedFeature, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useFeatureStore, useHoverCursor, useInteractionEvent, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
 //# sourceMappingURL=index.es.js.map

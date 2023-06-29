@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/control'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/source'), require('ol/layer/Tile'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('lodash/concat')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/control', 'ol/geom/Circle', 'ol/Feature', 'ol/source', 'ol/layer/Tile', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'lodash/concat'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.react$1, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.control, global.Circle, global.Feature$2, global.source, global.OlTileLayer, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.concat));
-})(this, (function (exports, jsxRuntime, react, interaction, VectorLayer, VectorSource, Style, style, geom, proj, condition, Select, styled, react$1, Fill, Stroke, Text, Icon, Draw, control, Circle, Feature$2, source, OlTileLayer, GeoJSON, proj4$1, ImageLayer, layer, concat) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/control'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/layer/Tile'), require('ol/source'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('lodash/concat')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/control', 'ol/geom/Circle', 'ol/Feature', 'ol/layer/Tile', 'ol/source', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'lodash/concat'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.react$1, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.control, global.Circle, global.Feature$2, global.OlTileLayer, global.source, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.concat));
+})(this, (function (exports, jsxRuntime, react, interaction, VectorLayer, VectorSource, Style, style, geom, proj, condition, Select, styled, react$1, Fill, Stroke, Text, Icon, Draw, control, Circle, Feature$2, OlTileLayer, source, GeoJSON, proj4$1, ImageLayer, layer, concat) { 'use strict';
 
     function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -116,8 +116,9 @@
     const useMapEventHandler = ({
       onClick,
       onHover,
-      onLoaded,
-      onLoadStart
+      onMapLoaded,
+      onLoadStarted,
+      onTileLoadEnded
     }) => {
       const map = useMap();
       const clickEventHandler = react.useCallback(event => {
@@ -137,20 +138,20 @@
         }
       }, [onHover]);
       const renderCompletedEventHandler = react.useCallback(event => {
-        if (onLoaded) {
-          onLoaded(event);
+        if (onMapLoaded) {
+          onMapLoaded(event);
         }
-      }, [onLoaded]);
+      }, [onMapLoaded]);
       const loadStartedEventHandler = react.useCallback(event => {
-        if (onLoadStart) {
-          onLoadStart(event);
+        if (onLoadStarted) {
+          onLoadStarted(event);
         }
-      }, [onLoadStart]);
+      }, [onLoadStarted]);
       const loadEndedEventHandler = react.useCallback(event => {
-        if (onLoadStart) {
-          onLoadStart(event);
+        if (onTileLoadEnded) {
+          onTileLoadEnded(event);
         }
-      }, [onLoadStart]);
+      }, [onTileLoadEnded]);
       react.useEffect(() => {
         map.on("click", clickEventHandler);
         return () => {
@@ -19660,9 +19661,7 @@
       const map = useMap();
       const annotationRef = react.useRef(new Feature__default["default"](new geom.MultiPoint(positions.map(position => proj.fromLonLat(position)))));
       const annotationLayerRef = react.useRef(new VectorLayer__default["default"]({
-        source: new VectorSource__default["default"]({
-          features: [annotationRef.current]
-        })
+        source: new VectorSource__default["default"]({})
       }));
       const onHoverHandler = react.useCallback(event => {
         if (event.selected.length > 0) {
@@ -19700,7 +19699,7 @@
       react.useEffect(() => {
         const geometry = annotationRef.current.getGeometry();
         const vectorSource = annotationLayerRef.current.getSource();
-        const features = geometry.getPoints().map((point, index) => {
+        const points = geometry.getPoints().map((point, index) => {
           const text = index + 1; // 순번 설정
           const style$1 = new style.Style({
             image: new style.Circle({
@@ -19735,7 +19734,7 @@
           return pointFeature;
         });
         if (vectorSource) {
-          vectorSource.addFeatures(features);
+          vectorSource.addFeatures(points);
         }
         map.addLayer(annotationLayerRef.current);
         return () => {
@@ -20241,7 +20240,8 @@
       zIndex = 0,
       maxZoom = 42,
       minZoom = 0,
-      crossOrigin = null
+      crossOrigin = null,
+      errorTileUrl
     }) => {
       const map = useMap();
       react.useEffect(() => {
@@ -20254,25 +20254,9 @@
             const z = tileCoord[0];
             const x = tileCoord[1];
             const y = Math.pow(2, z) - tileCoord[2] - 1;
-            return tileUrl.getUrlFromPosition(z, x, y);
+            const tileImageUrl = tileUrl.getUrlFromPosition(z, x, y);
+            return tileImageUrl || errorTileUrl || ""; // 에러 타일 URL 반환
           }
-          // tileLoadFunction: function (imageTile, src) {
-          //   if (imageTile instanceof ImageTile) {
-          //     const tileImage = imageTile.getImage() as HTMLImageElement;
-          //     tileImage.onload = function () {
-          //       imageTile.setState(TileState.LOADED);
-          //     };
-          //     tileImage.onerror = function () {
-          //       const tileCoord = imageTile.getTileCoord();
-          //       const state = TileState.ERROR;
-          //       const missingTile = createMissingTile(tileCoord, state);
-          //       imageTile.setState(TileState.ERROR);
-          //       const missingImage = missingTile.getImage() as HTMLImageElement;
-          //       imageTile.setImage(missingImage);
-          //       tileImage.src = src;
-          //     };
-          //   }
-          // },
         });
 
         const customTmsLayer = new OlTileLayer__default["default"]({
@@ -20280,7 +20264,7 @@
           zIndex
         });
         map.addLayer(customTmsLayer);
-      }, [map]);
+      }, [map, errorTileUrl]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     };
 
@@ -45068,6 +45052,59 @@
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     }
 
+    const CaptureMap = ({
+      onCaptured
+    }) => {
+      const map = useMap();
+      const [imageSrc, setImageSrc] = react.useState(null);
+      const capture = react.useCallback(() => {
+        if (!map) return;
+        const mapCanvas = document.createElement("canvas");
+        const size = map.getSize();
+        mapCanvas.width = size[0];
+        mapCanvas.height = size[1];
+        const mapContext = mapCanvas.getContext("2d");
+        Array.prototype.forEach.call(map.getViewport().querySelectorAll(".ol-layer canvas, canvas.ol-layer"), function (canvas) {
+          if (canvas.width > 0) {
+            const opacity = canvas.parentNode.style.opacity || canvas.style.opacity;
+            mapContext.globalAlpha = opacity === "" ? 1 : Number(opacity);
+            let matrix;
+            const transform = canvas.style.transform;
+            if (transform) {
+              // Get the transform parameters from the style's transform matrix
+              matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(",").map(Number);
+            } else {
+              matrix = [parseFloat(canvas.style.width) / canvas.width, 0, 0, parseFloat(canvas.style.height) / canvas.height, 0, 0];
+            }
+            // Apply the transform to the export map context
+            CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+            const backgroundColor = canvas.parentNode.style.backgroundColor;
+            if (backgroundColor) {
+              mapContext.fillStyle = backgroundColor;
+              mapContext.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            mapContext.drawImage(canvas, 0, 0);
+          }
+        });
+        mapContext.globalAlpha = 1;
+        mapContext.setTransform(1, 0, 0, 1, 0, 0);
+        const url = mapCanvas.toDataURL();
+        setImageSrc(url);
+      }, [map]);
+      react.useEffect(() => {
+        if (onCaptured && imageSrc) {
+          onCaptured(imageSrc);
+        }
+      }, [imageSrc]);
+      react.useEffect(() => {
+        map.once("rendercomplete", capture);
+        return () => {
+          map.un("rendercomplete", capture);
+        };
+      }, [capture, map]);
+      return jsxRuntime.jsx(jsxRuntime.Fragment, {});
+    };
+
     function useResetabledState() {
       const [state, setState] = react.useState(null);
       const changeState = react.useCallback(value => {
@@ -45306,6 +45343,7 @@
         get: function () { return proj.toLonLat; }
     });
     exports.Button = Button;
+    exports.CaptureMap = CaptureMap;
     exports.CompassWheel = CompassWheel;
     exports.ControlGroup = ControlGroup;
     exports.ControlSection = ControlSection;

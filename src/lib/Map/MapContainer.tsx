@@ -167,6 +167,7 @@ export const MapContainer = memo(
         mapRef.setTarget(mapId);
         return () => {
           mapRef.setTarget(undefined);
+          mapRef.setLayers([]);
         };
       }, [mapId]);
 

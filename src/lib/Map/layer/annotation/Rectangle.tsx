@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import Feature from "ol/Feature";
 import { useCallback, useEffect, useRef } from "react";
@@ -157,6 +158,7 @@ export const CustomRectangle = ({
 
     return () => {
       map.removeLayer(annotationLayerRef.current);
+      annotationLayerRef.current.getSource()?.clear();
     };
   }, [children, color, map, onClick, onHover, properties]);
   return <></>;
