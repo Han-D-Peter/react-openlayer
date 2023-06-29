@@ -59,7 +59,7 @@ export interface MapProps {
 
   /**
    * @default null
-   * @description [minX, minY, maxX, maxY]
+   * @description [[minX, minY], [maxX, maxY]]
    */
   bounds?: [Location, Location];
 

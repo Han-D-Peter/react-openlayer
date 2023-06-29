@@ -27,6 +27,7 @@ import { register } from 'ol/proj/proj4';
 import ImageLayer from 'ol/layer/Image';
 import { Tile } from 'ol/layer';
 import concat from 'lodash/concat';
+import { boundingExtent } from 'ol/extent';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -45286,7 +45287,7 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
     })] : undefined,
     // 하위 요소 중 id 가 map 인 element가 있어야함.
     view: new View$1({
-      extent: bounds ? fromLonLat(concat([...[...bounds[0], ...bounds[1]]])) : undefined,
+      extent: bounds ? concat([...[...fromLonLat(bounds[0]), ...fromLonLat(bounds[1])]]) : undefined,
       center: fromLonLat(center),
       zoom: zoomLevel,
       maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
@@ -45309,7 +45310,7 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
   useEffect(() => {
     if (mapObj.current && bounds) {
       const view = mapObj.current.getView();
-      view.fit(fromLonLat(concat([...[...bounds[0], ...bounds[1]]])));
+      view.fit(boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])]));
     }
   }, [bounds]);
   useHoverCursor(mapObj.current);

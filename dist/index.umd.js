@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/control'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/layer/Tile'), require('ol/source'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('lodash/concat')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/control', 'ol/geom/Circle', 'ol/Feature', 'ol/layer/Tile', 'ol/source', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'lodash/concat'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.react$1, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.control, global.Circle, global.Feature$2, global.OlTileLayer, global.source, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.concat));
-})(this, (function (exports, jsxRuntime, react, interaction, VectorLayer, VectorSource, Style, style, geom, proj, condition, Select, styled, react$1, Fill, Stroke, Text, Icon, Draw, control, Circle, Feature$2, OlTileLayer, source, GeoJSON, proj4$1, ImageLayer, layer, concat) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/control'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/layer/Tile'), require('ol/source'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('lodash/concat'), require('ol/extent')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/control', 'ol/geom/Circle', 'ol/Feature', 'ol/layer/Tile', 'ol/source', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'lodash/concat', 'ol/extent'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.react$1, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.control, global.Circle, global.Feature$2, global.OlTileLayer, global.source, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.concat, global.extent));
+})(this, (function (exports, jsxRuntime, react, interaction, VectorLayer, VectorSource, Style, style, geom, proj, condition, Select, styled, react$1, Fill, Stroke, Text, Icon, Draw, control, Circle, Feature$2, OlTileLayer, source, GeoJSON, proj4$1, ImageLayer, layer, concat, extent) { 'use strict';
 
     function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -45280,7 +45280,7 @@
         })] : undefined,
         // 하위 요소 중 id 가 map 인 element가 있어야함.
         view: new View$1({
-          extent: bounds ? proj.fromLonLat(concat__default["default"]([...[...bounds[0], ...bounds[1]]])) : undefined,
+          extent: bounds ? concat__default["default"]([...[...proj.fromLonLat(bounds[0]), ...proj.fromLonLat(bounds[1])]]) : undefined,
           center: proj.fromLonLat(center),
           zoom: zoomLevel,
           maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
@@ -45303,7 +45303,7 @@
       react.useEffect(() => {
         if (mapObj.current && bounds) {
           const view = mapObj.current.getView();
-          view.fit(proj.fromLonLat(concat__default["default"]([...[...bounds[0], ...bounds[1]]])));
+          view.fit(extent.boundingExtent([proj.fromLonLat(bounds[0]), proj.fromLonLat(bounds[1])]));
         }
       }, [bounds]);
       useHoverCursor(mapObj.current);
