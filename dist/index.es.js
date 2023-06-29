@@ -45113,7 +45113,7 @@ const CaptureMap = ({
     }
   }, [imageSrc]);
   useEffect(() => {
-    map.once("rendercomplete", capture);
+    map.on("rendercomplete", capture);
     return () => {
       map.un("rendercomplete", capture);
     };
@@ -45306,6 +45306,12 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
       view.setCenter(fromLonLat(center));
     }
   }, [center]);
+  useEffect(() => {
+    if (mapObj.current && bounds) {
+      const view = mapObj.current.getView();
+      view.fit(fromLonLat(concat([...[...bounds[0], ...bounds[1]]])));
+    }
+  }, [bounds]);
   useHoverCursor(mapObj.current);
   useImperativeHandle(ref, () => mapObj.current);
   useLayoutEffect(() => {

@@ -49,7 +49,14 @@ function App() {
       >
         off
       </button>
-      <MapContainer ref={ref} isAbledSelection>
+      <MapContainer
+        ref={ref}
+        isAbledSelection
+        bounds={[
+          [126.701, 35.1596563],
+          [126.841, 35.1906563],
+        ]}
+      >
         <TileLayer
           crossOrigin={"anonymous"}
           url="https://d3ma6smoldwaof.cloudfront.net/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
@@ -87,17 +94,19 @@ function App() {
           </CustomCircle>
         </LayerGroup> */}
 
-        <CustomMultiPoint
-          onClick={(event) =>
-            console.log("event", getProfileFromFeature(event.annotation))
-          }
-          positions={[
-            [126.843684, 35.190616],
-            [126.840476, 35.190219],
-            [126.840604, 35.190133],
-            [126.841268, 35.190381],
-          ]}
-        ></CustomMultiPoint>
+        {isShown && (
+          <CustomMultiPoint
+            onClick={(event) =>
+              console.log("event", getProfileFromFeature(event.annotation))
+            }
+            positions={[
+              [126.843684, 35.190616],
+              [126.840476, 35.190219],
+              [126.840604, 35.190133],
+              [126.841268, 35.190381],
+            ]}
+          ></CustomMultiPoint>
+        )}
 
         {/* {isShown && (
           <>

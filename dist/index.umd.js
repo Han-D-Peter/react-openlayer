@@ -45107,7 +45107,7 @@
         }
       }, [imageSrc]);
       react.useEffect(() => {
-        map.once("rendercomplete", capture);
+        map.on("rendercomplete", capture);
         return () => {
           map.un("rendercomplete", capture);
         };
@@ -45300,6 +45300,12 @@
           view.setCenter(proj.fromLonLat(center));
         }
       }, [center]);
+      react.useEffect(() => {
+        if (mapObj.current && bounds) {
+          const view = mapObj.current.getView();
+          view.fit(proj.fromLonLat(concat__default["default"]([...[...bounds[0], ...bounds[1]]])));
+        }
+      }, [bounds]);
       useHoverCursor(mapObj.current);
       react.useImperativeHandle(ref, () => mapObj.current);
       react.useLayoutEffect(() => {

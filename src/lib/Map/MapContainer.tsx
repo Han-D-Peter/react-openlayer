@@ -15,7 +15,7 @@ import concat from "lodash/concat";
 import { MapContext } from "./MapContext";
 import { useHoverCursor } from "./hooks/incontext/useHoverCursor";
 import { FeatureStore } from "./FeatureStore";
-
+import { boundingExtent } from "ol/extent";
 import "ol/ol.css";
 
 export type Lng = number;
@@ -59,6 +59,7 @@ export interface MapProps {
 
   /**
    * @default null
+   * @description [minX, minY, maxX, maxY]
    */
   bounds?: [Location, Location];
 
@@ -125,7 +126,9 @@ export const MapContainer = memo(
           // 하위 요소 중 id 가 map 인 element가 있어야함.
           view: new View({
             extent: bounds
-              ? fromLonLat(concat<number>([...[...bounds[0], ...bounds[1]]]))
+              ? concat<number>([
+                  ...[...fromLonLat(bounds[0]), ...fromLonLat(bounds[1])],
+                ])
               : undefined,
             center: fromLonLat(center),
             zoom: zoomLevel,
@@ -149,6 +152,15 @@ export const MapContainer = memo(
           view.setCenter(fromLonLat(center));
         }
       }, [center]);
+
+      useEffect(() => {
+        if (mapObj.current && bounds) {
+          const view = mapObj.current.getView();
+          view.fit(
+            boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])])
+          );
+        }
+      }, [bounds]);
 
       useHoverCursor(mapObj.current);
 
