@@ -125,11 +125,6 @@ export const MapContainer = memo(
             : undefined,
           // 하위 요소 중 id 가 map 인 element가 있어야함.
           view: new View({
-            extent: bounds
-              ? concat<number>([
-                  ...[...fromLonLat(bounds[0]), ...fromLonLat(bounds[1])],
-                ])
-              : undefined,
             center: fromLonLat(center),
             zoom: zoomLevel,
             maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
@@ -156,8 +151,15 @@ export const MapContainer = memo(
       useEffect(() => {
         if (mapObj.current && bounds) {
           const view = mapObj.current.getView();
-          view.fit(
+          console.log(
+            "bounds",
             boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])])
+          );
+          view.fit(
+            boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])]),
+            {
+              padding: [20, 20, 20, 20],
+            }
           );
         }
       }, [bounds]);
