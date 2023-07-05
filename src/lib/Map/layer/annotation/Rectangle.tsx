@@ -30,6 +30,7 @@ export const CustomRectangle = ({
   onHover,
   zIndex = 0,
   children,
+  opacity = 1,
 }: CustomRectangleProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
@@ -53,7 +54,7 @@ export const CustomRectangle = ({
         width: 2,
       }),
       fill: new Fill({
-        color: ANNOTATION_COLOR[color].fill,
+        color: ANNOTATION_COLOR[color].fill(opacity),
       }),
       text:
         children && !children.props.isPopup
@@ -139,6 +140,14 @@ export const CustomRectangle = ({
       annotationLayerRef.current.setZIndex(zIndex);
     }
   }, [zIndex]);
+
+  useEffect(() => {
+    annotationStyleRef.current.setFill(
+      new Fill({
+        color: ANNOTATION_COLOR[color].fill(opacity),
+      })
+    );
+  }, [opacity, color]);
 
   useEffect(() => {
     if (!map) return;

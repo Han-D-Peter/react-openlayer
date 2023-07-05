@@ -27,6 +27,7 @@ export function CustomMultiPoint({
   onHover,
   zIndex = 0,
   children,
+  opacity = 1,
 }: CustomMultiPointProps) {
   const map = useMap();
   const annotationRef = useRef<Feature<MultiPoint>>(
@@ -92,7 +93,7 @@ export function CustomMultiPoint({
         image: new Circle({
           radius: 10,
           fill: new Fill({
-            color: ANNOTATION_COLOR[color].fill, // 원의 색상
+            color: ANNOTATION_COLOR[color].fill(opacity), // 원의 색상
           }),
           stroke: new Stroke({
             color: ANNOTATION_COLOR[color].stroke, // 테두리 선의 색상
@@ -130,6 +131,6 @@ export function CustomMultiPoint({
       map.removeLayer(annotationLayerRef.current);
       annotationLayerRef.current.getSource()?.clear();
     };
-  }, [color, children, map, onHover, properties, onClick]);
+  }, [color, children, map, onHover, properties, onClick, opacity]);
   return <></>;
 }

@@ -35,7 +35,7 @@ export class SelectStyle implements SelectStyleImpl {
     );
     currentStyle.setFill(
       new Fill({
-        color: ANNOTATION_COLOR["SELECT"].fill,
+        color: ANNOTATION_COLOR["SELECT"].fill(),
       })
     );
     feature.setStyle(currentStyle);
@@ -67,7 +67,7 @@ export class SelectStyle implements SelectStyleImpl {
       );
       imageStyle.setFill(
         new Fill({
-          color: ANNOTATION_COLOR["SELECT"].fill,
+          color: ANNOTATION_COLOR["SELECT"].fill(),
         })
       );
       features[index].setStyle(currentStyle);

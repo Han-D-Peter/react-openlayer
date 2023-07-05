@@ -30,6 +30,7 @@ export const CustomPolygon = ({
   onHover,
   zIndex = 0,
   children,
+  opacity = 1,
 }: CustomPolygonProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
@@ -52,7 +53,7 @@ export const CustomPolygon = ({
         width: 2,
       }),
       fill: new Fill({
-        color: ANNOTATION_COLOR[color].fill,
+        color: ANNOTATION_COLOR[color].fill(opacity),
       }),
       text:
         children && !children.props.isPopup
@@ -124,6 +125,14 @@ export const CustomPolygon = ({
     },
     [children, map, onHover, properties]
   );
+
+  useEffect(() => {
+    annotationStyleRef.current.setFill(
+      new Fill({
+        color: ANNOTATION_COLOR[color].fill(opacity),
+      })
+    );
+  }, [opacity, color]);
 
   useInteractionEvent({
     annotation: annotationLayerRef.current,

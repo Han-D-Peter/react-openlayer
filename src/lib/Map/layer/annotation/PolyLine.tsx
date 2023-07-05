@@ -30,6 +30,7 @@ export const CustomPolyLine = ({
   onHover,
   zIndex = 0,
   children,
+  opacity = 1,
 }: CustomPolyLineProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<LineString>>(
@@ -52,7 +53,7 @@ export const CustomPolyLine = ({
         width: 2,
       }),
       fill: new Fill({
-        color: ANNOTATION_COLOR[color].fill,
+        color: ANNOTATION_COLOR[color].fill(opacity),
       }),
       text:
         children && !children.props.isPopup
@@ -66,6 +67,12 @@ export const CustomPolyLine = ({
           : undefined,
     })
   );
+
+  useEffect(() => {
+    annotationStyleRef.current.setFill(
+      new Fill({ color: ANNOTATION_COLOR[color].fill(opacity) })
+    );
+  }, [color]);
 
   const onHoverHandler = useCallback((event: SelectEvent) => {
     if (event.selected.length > 0) {
@@ -132,6 +139,14 @@ export const CustomPolyLine = ({
       );
     }
   }, [positions]);
+
+  useEffect(() => {
+    annotationStyleRef.current.setFill(
+      new Fill({
+        color: ANNOTATION_COLOR[color].fill(opacity),
+      })
+    );
+  }, [opacity, color]);
 
   useEffect(() => {
     if (annotationLayerRef.current) {
