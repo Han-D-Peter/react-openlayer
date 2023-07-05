@@ -26,7 +26,6 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { register } from 'ol/proj/proj4';
 import ImageLayer from 'ol/layer/Image';
 import { Tile } from 'ol/layer';
-import concat from 'lodash/concat';
 import { boundingExtent } from 'ol/extent';
 
 /******************************************************************************
@@ -58,31 +57,31 @@ function __rest(s, e) {
 
 const ANNOTATION_COLOR = {
   RED: {
-    fill: "rgba(248, 7, 1, 0.3)",
+    fill: opcity => `rgba(248, 7, 1, ${0.3 * opcity})`,
     stroke: "rgb(248, 7, 1)"
   },
   YELLOW: {
-    fill: "rgba(255, 254, 0, 0.3)",
+    fill: opcity => `rgba(255, 254, 0, ${0.3 * opcity})`,
     stroke: "rgb(255, 254, 0)"
   },
   GREEN: {
-    fill: "rgba(30, 128, 0, 0.3)",
+    fill: opcity => `rgba(30, 128, 0, ${0.3 * opcity})`,
     stroke: "rgb(30, 128, 0)"
   },
   SKYBLUE: {
-    fill: "rgba(135, 206, 235, 0.3)",
+    fill: opcity => `rgba(135, 206, 235, ${0.3 * opcity})`,
     stroke: "rgb(135, 206, 235)"
   },
   BLUE: {
-    fill: "rgba(2, 26, 255, 0.3)",
+    fill: opcity => `rgba(2, 26, 255, ${0.3 * opcity})`,
     stroke: "rgb(2, 26, 255)"
   },
   BROWN: {
-    fill: "rgba(165, 42, 42, 0.3)",
+    fill: opcity => `rgba(165, 42, 42, ${0.3 * opcity})`,
     stroke: "rgb(165, 42, 42)"
   },
   SELECT: {
-    fill: "rgba(1, 1, 1, 0.5)",
+    fill: () => "rgba(1, 1, 1, 0.5)",
     stroke: "rgb(1, 1, 1)"
   }
 };
@@ -455,7 +454,7 @@ function MultiPointDrawButton(_a) {
         image: new Circle$1({
           radius: 10,
           fill: new Fill({
-            color: ANNOTATION_COLOR.BLUE.fill // 원의 색상
+            color: ANNOTATION_COLOR.BLUE.fill(1) // 원의 색상
           }),
 
           stroke: new Stroke({
@@ -19429,7 +19428,8 @@ const CustomCircle = ({
   onClick,
   onHover,
   zIndex = 0,
-  children
+  children,
+  opacity = 1
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$1(new Circle$2(fromLonLat(center), radius)));
@@ -19444,7 +19444,7 @@ const CustomCircle = ({
       width: 2
     }),
     fill: new Fill$1({
-      color: ANNOTATION_COLOR[color].fill
+      color: ANNOTATION_COLOR[color].fill(opacity)
     }),
     text: children && !children.props.isPopup ? makeText({
       text: children.props.children || "",
@@ -19454,6 +19454,11 @@ const CustomCircle = ({
       isMarker: true
     }) : undefined
   }));
+  useEffect(() => {
+    annotationStyleRef.current.setFill(new Fill$1({
+      color: ANNOTATION_COLOR[color].fill(opacity)
+    }));
+  }, [opacity, color]);
   const onHoverHandler = useCallback(event => {
     if (event.selected.length > 0) {
       if (onHover) {
@@ -19665,7 +19670,8 @@ function CustomMultiPoint({
   onClick,
   onHover,
   zIndex = 0,
-  children
+  children,
+  opacity = 1
 }) {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new MultiPoint(positions.map(position => fromLonLat(position)))));
@@ -19714,7 +19720,7 @@ function CustomMultiPoint({
         image: new Circle$1({
           radius: 10,
           fill: new Fill({
-            color: ANNOTATION_COLOR[color].fill // 원의 색상
+            color: ANNOTATION_COLOR[color].fill(opacity) // 원의 색상
           }),
 
           stroke: new Stroke({
@@ -19751,7 +19757,7 @@ function CustomMultiPoint({
       map.removeLayer(annotationLayerRef.current);
       (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
     };
-  }, [color, children, map, onHover, properties, onClick]);
+  }, [color, children, map, onHover, properties, onClick, opacity]);
   return jsx(Fragment, {});
 }
 
@@ -19762,7 +19768,8 @@ const CustomPolygon = ({
   onClick,
   onHover,
   zIndex = 0,
-  children
+  children,
+  opacity = 1
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new Polygon$1([positions[0].map(position => fromLonLat(position))])));
@@ -19777,7 +19784,7 @@ const CustomPolygon = ({
       width: 2
     }),
     fill: new Fill$1({
-      color: ANNOTATION_COLOR[color].fill
+      color: ANNOTATION_COLOR[color].fill(opacity)
     }),
     text: children && !children.props.isPopup ? makeText({
       text: children.props.children || "",
@@ -19829,6 +19836,11 @@ const CustomPolygon = ({
       annotationRef.current.setStyle(hoveredFeatureStyle);
     }
   }, [children, map, onHover, properties]);
+  useEffect(() => {
+    annotationStyleRef.current.setFill(new Fill$1({
+      color: ANNOTATION_COLOR[color].fill(opacity)
+    }));
+  }, [opacity, color]);
   useInteractionEvent({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
@@ -19872,7 +19884,8 @@ const CustomPolyLine = ({
   onClick,
   onHover,
   zIndex = 0,
-  children
+  children,
+  opacity = 1
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new LineString(positions.map(position => fromLonLat(position)))));
@@ -19887,7 +19900,7 @@ const CustomPolyLine = ({
       width: 2
     }),
     fill: new Fill$1({
-      color: ANNOTATION_COLOR[color].fill
+      color: ANNOTATION_COLOR[color].fill(opacity)
     }),
     text: children && !children.props.isPopup ? makeText({
       text: children.props.children || "",
@@ -19897,6 +19910,11 @@ const CustomPolyLine = ({
       isMarker: true
     }) : undefined
   }));
+  useEffect(() => {
+    annotationStyleRef.current.setFill(new Fill$1({
+      color: ANNOTATION_COLOR[color].fill(opacity)
+    }));
+  }, [color]);
   const onHoverHandler = useCallback(event => {
     if (event.selected.length > 0) {
       if (onHover) {
@@ -19951,6 +19969,11 @@ const CustomPolyLine = ({
     }
   }, [positions]);
   useEffect(() => {
+    annotationStyleRef.current.setFill(new Fill$1({
+      color: ANNOTATION_COLOR[color].fill(opacity)
+    }));
+  }, [opacity, color]);
+  useEffect(() => {
     if (annotationLayerRef.current) {
       annotationLayerRef.current.setZIndex(zIndex);
     }
@@ -19982,7 +20005,8 @@ const CustomRectangle = ({
   onClick,
   onHover,
   zIndex = 0,
-  children
+  children,
+  opacity = 1
 }) => {
   const map = useMap();
   const annotationRef = useRef(new Feature$2(new Polygon$1([positions[0].map(position => fromLonLat(position))])));
@@ -19997,7 +20021,7 @@ const CustomRectangle = ({
       width: 2
     }),
     fill: new Fill$1({
-      color: ANNOTATION_COLOR[color].fill
+      color: ANNOTATION_COLOR[color].fill(opacity)
     }),
     text: children && !children.props.isPopup ? makeText({
       text: children.props.children || "",
@@ -20065,6 +20089,11 @@ const CustomRectangle = ({
       annotationLayerRef.current.setZIndex(zIndex);
     }
   }, [zIndex]);
+  useEffect(() => {
+    annotationStyleRef.current.setFill(new Fill$1({
+      color: ANNOTATION_COLOR[color].fill(opacity)
+    }));
+  }, [opacity, color]);
   useEffect(() => {
     if (!map) return;
     annotationRef.current.setStyle(annotationStyleRef.current);
@@ -45074,51 +45103,53 @@ const CaptureMap = ({
 }) => {
   const map = useMap();
   const [imageSrc, setImageSrc] = useState(null);
-  const capture = useCallback(() => {
-    if (!map) return;
-    const mapCanvas = document.createElement("canvas");
-    const size = map.getSize();
-    mapCanvas.width = size[0];
-    mapCanvas.height = size[1];
-    const mapContext = mapCanvas.getContext("2d");
-    Array.prototype.forEach.call(map.getViewport().querySelectorAll(".ol-layer canvas, canvas.ol-layer"), function (canvas) {
-      if (canvas.width > 0) {
-        const opacity = canvas.parentNode.style.opacity || canvas.style.opacity;
-        mapContext.globalAlpha = opacity === "" ? 1 : Number(opacity);
-        let matrix;
-        const transform = canvas.style.transform;
-        if (transform) {
-          // Get the transform parameters from the style's transform matrix
-          matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(",").map(Number);
-        } else {
-          matrix = [parseFloat(canvas.style.width) / canvas.width, 0, 0, parseFloat(canvas.style.height) / canvas.height, 0, 0];
-        }
-        // Apply the transform to the export map context
-        CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
-        const backgroundColor = canvas.parentNode.style.backgroundColor;
-        if (backgroundColor) {
-          mapContext.fillStyle = backgroundColor;
-          mapContext.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        mapContext.drawImage(canvas, 0, 0);
-      }
-    });
-    mapContext.globalAlpha = 1;
-    mapContext.setTransform(1, 0, 0, 1, 0, 0);
-    const url = mapCanvas.toDataURL();
-    setImageSrc(url);
-  }, [map]);
   useEffect(() => {
     if (onCaptured && imageSrc) {
       onCaptured(imageSrc);
     }
   }, [imageSrc]);
   useEffect(() => {
+    const capture = () => {
+      if (!map) return;
+      const mapCanvas = document.createElement("canvas");
+      const size = map.getSize();
+      console.log("size", size);
+      mapCanvas.width = size[0];
+      mapCanvas.height = size[1];
+      const mapContext = mapCanvas.getContext("2d");
+      const mapLayers = map.getViewport().querySelectorAll(".ol-layer canvas, canvas.ol-layer");
+      Array.prototype.forEach.call(mapLayers, function (canvas) {
+        if (canvas.width > 0) {
+          const opacity = canvas.parentNode.style.opacity || canvas.style.opacity;
+          mapContext.globalAlpha = opacity === "" ? 1 : Number(opacity);
+          let matrix;
+          const transform = canvas.style.transform;
+          if (transform) {
+            // Get the transform parameters from the style's transform matrix
+            matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(",").map(Number);
+          } else {
+            matrix = [parseFloat(canvas.style.width) / canvas.width, 0, 0, parseFloat(canvas.style.height) / canvas.height, 0, 0];
+          }
+          // Apply the transform to the export map context
+          CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+          const backgroundColor = canvas.parentNode.style.backgroundColor;
+          if (backgroundColor) {
+            mapContext.fillStyle = backgroundColor;
+            mapContext.fillRect(0, 0, canvas.width, canvas.height);
+          }
+          mapContext.drawImage(canvas, 0, 0);
+        }
+      });
+      mapContext.globalAlpha = 1;
+      mapContext.setTransform(1, 0, 0, 1, 0, 0);
+      const url = mapCanvas.toDataURL();
+      setImageSrc(url);
+    };
     map.on("rendercomplete", capture);
     return () => {
       map.un("rendercomplete", capture);
     };
-  }, [capture, map]);
+  }, [map]);
   return jsx(Fragment, {});
 };
 
@@ -45152,7 +45183,7 @@ class SelectStyle {
       width: 2
     }));
     currentStyle.setFill(new Fill({
-      color: ANNOTATION_COLOR["SELECT"].fill
+      color: ANNOTATION_COLOR["SELECT"].fill()
     }));
     feature.setStyle(currentStyle);
   }
@@ -45176,7 +45207,7 @@ class SelectStyle {
         width: 2
       }));
       imageStyle.setFill(new Fill({
-        color: ANNOTATION_COLOR["SELECT"].fill
+        color: ANNOTATION_COLOR["SELECT"].fill()
       }));
       features[index].setStyle(currentStyle);
     });
@@ -45287,7 +45318,6 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
     })] : undefined,
     // 하위 요소 중 id 가 map 인 element가 있어야함.
     view: new View$1({
-      extent: bounds ? concat([...[...fromLonLat(bounds[0]), ...fromLonLat(bounds[1])]]) : undefined,
       center: fromLonLat(center),
       zoom: zoomLevel,
       maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
@@ -45310,7 +45340,10 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
   useEffect(() => {
     if (mapObj.current && bounds) {
       const view = mapObj.current.getView();
-      view.fit(boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])]));
+      console.log("bounds", boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])]));
+      view.fit(boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])]), {
+        padding: [20, 20, 20, 20]
+      });
     }
   }, [bounds]);
   useHoverCursor(mapObj.current);

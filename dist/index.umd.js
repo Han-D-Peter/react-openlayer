@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/control'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/layer/Tile'), require('ol/source'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('lodash/concat'), require('ol/extent')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/control', 'ol/geom/Circle', 'ol/Feature', 'ol/layer/Tile', 'ol/source', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'lodash/concat', 'ol/extent'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.react$1, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.control, global.Circle, global.Feature$2, global.OlTileLayer, global.source, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.concat, global.extent));
-})(this, (function (exports, jsxRuntime, react, interaction, VectorLayer, VectorSource, Style, style, geom, proj, condition, Select, styled, react$1, Fill, Stroke, Text, Icon, Draw, control, Circle, Feature$2, OlTileLayer, source, GeoJSON, proj4$1, ImageLayer, layer, concat, extent) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/control'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/layer/Tile'), require('ol/source'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('ol/extent')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/control', 'ol/geom/Circle', 'ol/Feature', 'ol/layer/Tile', 'ol/source', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'ol/extent'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.react$1, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.control, global.Circle, global.Feature$2, global.OlTileLayer, global.source, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.extent));
+})(this, (function (exports, jsxRuntime, react, interaction, VectorLayer, VectorSource, Style, style, geom, proj, condition, Select, styled, react$1, Fill, Stroke, Text, Icon, Draw, control, Circle, Feature$2, OlTileLayer, source, GeoJSON, proj4$1, ImageLayer, layer, extent) { 'use strict';
 
     function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -20,7 +20,6 @@
     var OlTileLayer__default = /*#__PURE__*/_interopDefaultLegacy(OlTileLayer);
     var GeoJSON__default = /*#__PURE__*/_interopDefaultLegacy(GeoJSON);
     var ImageLayer__default = /*#__PURE__*/_interopDefaultLegacy(ImageLayer);
-    var concat__default = /*#__PURE__*/_interopDefaultLegacy(concat);
 
     /******************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -51,31 +50,31 @@
 
     const ANNOTATION_COLOR = {
       RED: {
-        fill: "rgba(248, 7, 1, 0.3)",
+        fill: opcity => `rgba(248, 7, 1, ${0.3 * opcity})`,
         stroke: "rgb(248, 7, 1)"
       },
       YELLOW: {
-        fill: "rgba(255, 254, 0, 0.3)",
+        fill: opcity => `rgba(255, 254, 0, ${0.3 * opcity})`,
         stroke: "rgb(255, 254, 0)"
       },
       GREEN: {
-        fill: "rgba(30, 128, 0, 0.3)",
+        fill: opcity => `rgba(30, 128, 0, ${0.3 * opcity})`,
         stroke: "rgb(30, 128, 0)"
       },
       SKYBLUE: {
-        fill: "rgba(135, 206, 235, 0.3)",
+        fill: opcity => `rgba(135, 206, 235, ${0.3 * opcity})`,
         stroke: "rgb(135, 206, 235)"
       },
       BLUE: {
-        fill: "rgba(2, 26, 255, 0.3)",
+        fill: opcity => `rgba(2, 26, 255, ${0.3 * opcity})`,
         stroke: "rgb(2, 26, 255)"
       },
       BROWN: {
-        fill: "rgba(165, 42, 42, 0.3)",
+        fill: opcity => `rgba(165, 42, 42, ${0.3 * opcity})`,
         stroke: "rgb(165, 42, 42)"
       },
       SELECT: {
-        fill: "rgba(1, 1, 1, 0.5)",
+        fill: () => "rgba(1, 1, 1, 0.5)",
         stroke: "rgb(1, 1, 1)"
       }
     };
@@ -448,7 +447,7 @@
             image: new style.Circle({
               radius: 10,
               fill: new style.Fill({
-                color: ANNOTATION_COLOR.BLUE.fill // 원의 색상
+                color: ANNOTATION_COLOR.BLUE.fill(1) // 원의 색상
               }),
 
               stroke: new style.Stroke({
@@ -19422,7 +19421,8 @@
       onClick,
       onHover,
       zIndex = 0,
-      children
+      children,
+      opacity = 1
     }) => {
       const map = useMap();
       const annotationRef = react.useRef(new Feature$1(new Circle__default["default"](proj.fromLonLat(center), radius)));
@@ -19437,7 +19437,7 @@
           width: 2
         }),
         fill: new Fill__default["default"]({
-          color: ANNOTATION_COLOR[color].fill
+          color: ANNOTATION_COLOR[color].fill(opacity)
         }),
         text: children && !children.props.isPopup ? makeText({
           text: children.props.children || "",
@@ -19447,6 +19447,11 @@
           isMarker: true
         }) : undefined
       }));
+      react.useEffect(() => {
+        annotationStyleRef.current.setFill(new Fill__default["default"]({
+          color: ANNOTATION_COLOR[color].fill(opacity)
+        }));
+      }, [opacity, color]);
       const onHoverHandler = react.useCallback(event => {
         if (event.selected.length > 0) {
           if (onHover) {
@@ -19658,7 +19663,8 @@
       onClick,
       onHover,
       zIndex = 0,
-      children
+      children,
+      opacity = 1
     }) {
       const map = useMap();
       const annotationRef = react.useRef(new Feature__default["default"](new geom.MultiPoint(positions.map(position => proj.fromLonLat(position)))));
@@ -19707,7 +19713,7 @@
             image: new style.Circle({
               radius: 10,
               fill: new style.Fill({
-                color: ANNOTATION_COLOR[color].fill // 원의 색상
+                color: ANNOTATION_COLOR[color].fill(opacity) // 원의 색상
               }),
 
               stroke: new style.Stroke({
@@ -19744,7 +19750,7 @@
           map.removeLayer(annotationLayerRef.current);
           (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
         };
-      }, [color, children, map, onHover, properties, onClick]);
+      }, [color, children, map, onHover, properties, onClick, opacity]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     }
 
@@ -19755,7 +19761,8 @@
       onClick,
       onHover,
       zIndex = 0,
-      children
+      children,
+      opacity = 1
     }) => {
       const map = useMap();
       const annotationRef = react.useRef(new Feature__default["default"](new geom.Polygon([positions[0].map(position => proj.fromLonLat(position))])));
@@ -19770,7 +19777,7 @@
           width: 2
         }),
         fill: new Fill__default["default"]({
-          color: ANNOTATION_COLOR[color].fill
+          color: ANNOTATION_COLOR[color].fill(opacity)
         }),
         text: children && !children.props.isPopup ? makeText({
           text: children.props.children || "",
@@ -19822,6 +19829,11 @@
           annotationRef.current.setStyle(hoveredFeatureStyle);
         }
       }, [children, map, onHover, properties]);
+      react.useEffect(() => {
+        annotationStyleRef.current.setFill(new Fill__default["default"]({
+          color: ANNOTATION_COLOR[color].fill(opacity)
+        }));
+      }, [opacity, color]);
       useInteractionEvent({
         annotation: annotationLayerRef.current,
         onClick: onClickHandler,
@@ -19865,7 +19877,8 @@
       onClick,
       onHover,
       zIndex = 0,
-      children
+      children,
+      opacity = 1
     }) => {
       const map = useMap();
       const annotationRef = react.useRef(new Feature__default["default"](new geom.LineString(positions.map(position => proj.fromLonLat(position)))));
@@ -19880,7 +19893,7 @@
           width: 2
         }),
         fill: new Fill__default["default"]({
-          color: ANNOTATION_COLOR[color].fill
+          color: ANNOTATION_COLOR[color].fill(opacity)
         }),
         text: children && !children.props.isPopup ? makeText({
           text: children.props.children || "",
@@ -19890,6 +19903,11 @@
           isMarker: true
         }) : undefined
       }));
+      react.useEffect(() => {
+        annotationStyleRef.current.setFill(new Fill__default["default"]({
+          color: ANNOTATION_COLOR[color].fill(opacity)
+        }));
+      }, [color]);
       const onHoverHandler = react.useCallback(event => {
         if (event.selected.length > 0) {
           if (onHover) {
@@ -19944,6 +19962,11 @@
         }
       }, [positions]);
       react.useEffect(() => {
+        annotationStyleRef.current.setFill(new Fill__default["default"]({
+          color: ANNOTATION_COLOR[color].fill(opacity)
+        }));
+      }, [opacity, color]);
+      react.useEffect(() => {
         if (annotationLayerRef.current) {
           annotationLayerRef.current.setZIndex(zIndex);
         }
@@ -19975,7 +19998,8 @@
       onClick,
       onHover,
       zIndex = 0,
-      children
+      children,
+      opacity = 1
     }) => {
       const map = useMap();
       const annotationRef = react.useRef(new Feature__default["default"](new geom.Polygon([positions[0].map(position => proj.fromLonLat(position))])));
@@ -19990,7 +20014,7 @@
           width: 2
         }),
         fill: new Fill__default["default"]({
-          color: ANNOTATION_COLOR[color].fill
+          color: ANNOTATION_COLOR[color].fill(opacity)
         }),
         text: children && !children.props.isPopup ? makeText({
           text: children.props.children || "",
@@ -20058,6 +20082,11 @@
           annotationLayerRef.current.setZIndex(zIndex);
         }
       }, [zIndex]);
+      react.useEffect(() => {
+        annotationStyleRef.current.setFill(new Fill__default["default"]({
+          color: ANNOTATION_COLOR[color].fill(opacity)
+        }));
+      }, [opacity, color]);
       react.useEffect(() => {
         if (!map) return;
         annotationRef.current.setStyle(annotationStyleRef.current);
@@ -45067,51 +45096,53 @@
     }) => {
       const map = useMap();
       const [imageSrc, setImageSrc] = react.useState(null);
-      const capture = react.useCallback(() => {
-        if (!map) return;
-        const mapCanvas = document.createElement("canvas");
-        const size = map.getSize();
-        mapCanvas.width = size[0];
-        mapCanvas.height = size[1];
-        const mapContext = mapCanvas.getContext("2d");
-        Array.prototype.forEach.call(map.getViewport().querySelectorAll(".ol-layer canvas, canvas.ol-layer"), function (canvas) {
-          if (canvas.width > 0) {
-            const opacity = canvas.parentNode.style.opacity || canvas.style.opacity;
-            mapContext.globalAlpha = opacity === "" ? 1 : Number(opacity);
-            let matrix;
-            const transform = canvas.style.transform;
-            if (transform) {
-              // Get the transform parameters from the style's transform matrix
-              matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(",").map(Number);
-            } else {
-              matrix = [parseFloat(canvas.style.width) / canvas.width, 0, 0, parseFloat(canvas.style.height) / canvas.height, 0, 0];
-            }
-            // Apply the transform to the export map context
-            CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
-            const backgroundColor = canvas.parentNode.style.backgroundColor;
-            if (backgroundColor) {
-              mapContext.fillStyle = backgroundColor;
-              mapContext.fillRect(0, 0, canvas.width, canvas.height);
-            }
-            mapContext.drawImage(canvas, 0, 0);
-          }
-        });
-        mapContext.globalAlpha = 1;
-        mapContext.setTransform(1, 0, 0, 1, 0, 0);
-        const url = mapCanvas.toDataURL();
-        setImageSrc(url);
-      }, [map]);
       react.useEffect(() => {
         if (onCaptured && imageSrc) {
           onCaptured(imageSrc);
         }
       }, [imageSrc]);
       react.useEffect(() => {
+        const capture = () => {
+          if (!map) return;
+          const mapCanvas = document.createElement("canvas");
+          const size = map.getSize();
+          console.log("size", size);
+          mapCanvas.width = size[0];
+          mapCanvas.height = size[1];
+          const mapContext = mapCanvas.getContext("2d");
+          const mapLayers = map.getViewport().querySelectorAll(".ol-layer canvas, canvas.ol-layer");
+          Array.prototype.forEach.call(mapLayers, function (canvas) {
+            if (canvas.width > 0) {
+              const opacity = canvas.parentNode.style.opacity || canvas.style.opacity;
+              mapContext.globalAlpha = opacity === "" ? 1 : Number(opacity);
+              let matrix;
+              const transform = canvas.style.transform;
+              if (transform) {
+                // Get the transform parameters from the style's transform matrix
+                matrix = transform.match(/^matrix\(([^\(]*)\)$/)[1].split(",").map(Number);
+              } else {
+                matrix = [parseFloat(canvas.style.width) / canvas.width, 0, 0, parseFloat(canvas.style.height) / canvas.height, 0, 0];
+              }
+              // Apply the transform to the export map context
+              CanvasRenderingContext2D.prototype.setTransform.apply(mapContext, matrix);
+              const backgroundColor = canvas.parentNode.style.backgroundColor;
+              if (backgroundColor) {
+                mapContext.fillStyle = backgroundColor;
+                mapContext.fillRect(0, 0, canvas.width, canvas.height);
+              }
+              mapContext.drawImage(canvas, 0, 0);
+            }
+          });
+          mapContext.globalAlpha = 1;
+          mapContext.setTransform(1, 0, 0, 1, 0, 0);
+          const url = mapCanvas.toDataURL();
+          setImageSrc(url);
+        };
         map.on("rendercomplete", capture);
         return () => {
           map.un("rendercomplete", capture);
         };
-      }, [capture, map]);
+      }, [map]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     };
 
@@ -45145,7 +45176,7 @@
           width: 2
         }));
         currentStyle.setFill(new style.Fill({
-          color: ANNOTATION_COLOR["SELECT"].fill
+          color: ANNOTATION_COLOR["SELECT"].fill()
         }));
         feature.setStyle(currentStyle);
       }
@@ -45169,7 +45200,7 @@
             width: 2
           }));
           imageStyle.setFill(new style.Fill({
-            color: ANNOTATION_COLOR["SELECT"].fill
+            color: ANNOTATION_COLOR["SELECT"].fill()
           }));
           features[index].setStyle(currentStyle);
         });
@@ -45280,7 +45311,6 @@
         })] : undefined,
         // 하위 요소 중 id 가 map 인 element가 있어야함.
         view: new View$1({
-          extent: bounds ? concat__default["default"]([...[...proj.fromLonLat(bounds[0]), ...proj.fromLonLat(bounds[1])]]) : undefined,
           center: proj.fromLonLat(center),
           zoom: zoomLevel,
           maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
@@ -45303,7 +45333,10 @@
       react.useEffect(() => {
         if (mapObj.current && bounds) {
           const view = mapObj.current.getView();
-          view.fit(extent.boundingExtent([proj.fromLonLat(bounds[0]), proj.fromLonLat(bounds[1])]));
+          console.log("bounds", extent.boundingExtent([proj.fromLonLat(bounds[0]), proj.fromLonLat(bounds[1])]));
+          view.fit(extent.boundingExtent([proj.fromLonLat(bounds[0]), proj.fromLonLat(bounds[1])]), {
+            padding: [20, 20, 20, 20]
+          });
         }
       }, [bounds]);
       useHoverCursor(mapObj.current);

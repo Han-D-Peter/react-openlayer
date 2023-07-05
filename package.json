@@ -1,6 +1,6 @@
 {
   "name": "react-openlayers7",
-  "version": "0.2.19",
+  "version": "0.2.28",
   "author": {
     "name": "Han-D-Peter",
     "email": "jaesung.sound@gmail.com"
@@ -67,7 +67,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prepare": "rm -rf dist && mkdir dist && rollup -c"
+    "prepare": "rm -rf dist && mkdir dist && rollup -c",
+    "deploy": "rm -rf dist && mkdir dist && rollup -c && npm publish"
   },
   "eslintConfig": {
     "extends": [
