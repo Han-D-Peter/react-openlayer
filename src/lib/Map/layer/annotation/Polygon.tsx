@@ -156,6 +156,12 @@ export const CustomPolygon = ({
   }, [zIndex]);
 
   useEffect(() => {
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current],
+      }),
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
 
     annotationRef.current.setProperties({

@@ -19511,6 +19511,12 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
+        const newLayer = new VectorLayer__default["default"]({
+          source: new VectorSource__default["default"]({
+            features: [annotationRef.current]
+          })
+        });
+        annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
         annotationRef.current.setProperties({
           shape: "Circle",
@@ -19636,6 +19642,12 @@
         annotationRef.current.setStyle(annotationStyleRef.current);
       }, [selected]);
       react.useEffect(() => {
+        const newLayer = new VectorLayer__default["default"]({
+          source: new VectorSource__default["default"]({
+            features: [annotationRef.current]
+          })
+        });
+        annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
         annotationRef.current.setProperties({
           shape: "Marker",
@@ -19705,6 +19717,12 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
+        const newLayer = new VectorLayer__default["default"]({
+          source: new VectorSource__default["default"]({
+            features: [annotationRef.current]
+          })
+        });
+        annotationLayerRef.current = newLayer;
         const geometry = annotationRef.current.getGeometry();
         const vectorSource = annotationLayerRef.current.getSource();
         const points = geometry.getPoints().map((point, index) => {
@@ -19851,6 +19869,12 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
+        const newLayer = new VectorLayer__default["default"]({
+          source: new VectorSource__default["default"]({
+            features: [annotationRef.current]
+          })
+        });
+        annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
         annotationRef.current.setProperties({
           shape: "Polygon",
@@ -19972,6 +19996,12 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
+        const newLayer = new VectorLayer__default["default"]({
+          source: new VectorSource__default["default"]({
+            features: [annotationRef.current]
+          })
+        });
+        annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
         annotationRef.current.setProperties({
           shape: "Polyline",
@@ -20089,6 +20119,12 @@
       }, [opacity, color]);
       react.useEffect(() => {
         if (!map) return;
+        const newLayer = new VectorLayer__default["default"]({
+          source: new VectorSource__default["default"]({
+            features: [annotationRef.current]
+          })
+        });
+        annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
         annotationRef.current.setProperties({
           shape: "Rectangle",
@@ -20134,6 +20170,12 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
+        const newLayer = new VectorLayer__default["default"]({
+          source: new VectorSource__default["default"]({
+            features: [annotationRef.current]
+          })
+        });
+        annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(new Style__default["default"]({
           text: new Text__default["default"]({
             text: children ? children.props.children : "",
@@ -45106,7 +45148,6 @@
           if (!map) return;
           const mapCanvas = document.createElement("canvas");
           const size = map.getSize();
-          console.log("size", size);
           mapCanvas.width = size[0];
           mapCanvas.height = size[1];
           const mapContext = mapCanvas.getContext("2d");
@@ -45333,7 +45374,6 @@
       react.useEffect(() => {
         if (mapObj.current && bounds) {
           const view = mapObj.current.getView();
-          console.log("bounds", extent.boundingExtent([proj.fromLonLat(bounds[0]), proj.fromLonLat(bounds[1])]));
           view.fit(extent.boundingExtent([proj.fromLonLat(bounds[0]), proj.fromLonLat(bounds[1])]), {
             padding: [20, 20, 20, 20]
           });

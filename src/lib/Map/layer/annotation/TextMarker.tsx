@@ -50,6 +50,12 @@ export const TextMarker = ({
   }, [zIndex]);
 
   useEffect(() => {
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current],
+      }),
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(
       new Style({
         text: new Text({

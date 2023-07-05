@@ -32,6 +32,10 @@ icon.selected = "/images/marker-selected.png";
 
 function App() {
   const [isShown, setIsShown] = useState(true);
+  const [bounds, setBounds] = useState<[Location, Location]>([
+    [126.841019, 35.189171],
+    [126.841235, 35.189381],
+  ] as unknown as [Location, Location]);
 
   function off() {
     setIsShown((prev) => !prev);
@@ -49,19 +53,13 @@ function App() {
       >
         off
       </button>
-      <MapContainer
-        ref={ref}
-        isAbledSelection
-        bounds={[
-          [126.701, 35.1596563],
-          [126.841, 35.1906563],
-        ]}
-      >
+      <MapContainer ref={ref} isAbledSelection>
         <TileLayer
+          maxZoom={23}
           crossOrigin={"anonymous"}
           url="https://d3ma6smoldwaof.cloudfront.net/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
         />
-        {/* <ImageOverlay
+        <ImageOverlay
           ref={imageRef}
           imageUrl="images/compass.png"
           bounds={[
@@ -70,12 +68,13 @@ function App() {
           ]}
         />
         <LayerGroup zIndex={1}>
-          <CustomMarker selected center={[126.841384, 35.191516]}>
-            <InnerText outline>Marker</InnerText>
+          <CustomMarker selected center={[126.840492, 35.190337]}>
+            <InnerText outline>bottom left</InnerText>
           </CustomMarker>
-          <CustomMarker center={[126.841084, 35.191516]}>
-            <InnerText outline>Marker</InnerText>
+          <CustomMarker selected center={[126.840746, 35.190475]}>
+            <InnerText outline>top right</InnerText>
           </CustomMarker>
+
           <CustomCircle
             center={[126.841884, 35.191516]}
             radius={20}
@@ -92,7 +91,7 @@ function App() {
           >
             <InnerText>Circle2</InnerText>
           </CustomCircle>
-        </LayerGroup> */}
+        </LayerGroup>
 
         {isShown && (
           <CustomMultiPoint
@@ -159,11 +158,11 @@ function App() {
           <FullScreenFeature />
           <DrawingTools onCanvas />
         </ControlSection>
-        <CaptureMap
+        {/* <CaptureMap
           onCaptured={(img) => {
             console.log("img", img);
           }}
-        />
+        /> */}
       </MapContainer>
     </div>
   );

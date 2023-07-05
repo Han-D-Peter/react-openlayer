@@ -19518,6 +19518,12 @@ const CustomCircle = ({
     }
   }, [zIndex]);
   useEffect(() => {
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current]
+      })
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
       shape: "Circle",
@@ -19643,6 +19649,12 @@ const CustomMarker = ({
     annotationRef.current.setStyle(annotationStyleRef.current);
   }, [selected]);
   useEffect(() => {
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current]
+      })
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
       shape: "Marker",
@@ -19712,6 +19724,12 @@ function CustomMultiPoint({
     }
   }, [zIndex]);
   useEffect(() => {
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current]
+      })
+    });
+    annotationLayerRef.current = newLayer;
     const geometry = annotationRef.current.getGeometry();
     const vectorSource = annotationLayerRef.current.getSource();
     const points = geometry.getPoints().map((point, index) => {
@@ -19858,6 +19876,12 @@ const CustomPolygon = ({
     }
   }, [zIndex]);
   useEffect(() => {
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current]
+      })
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
       shape: "Polygon",
@@ -19979,6 +20003,12 @@ const CustomPolyLine = ({
     }
   }, [zIndex]);
   useEffect(() => {
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current]
+      })
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
       shape: "Polyline",
@@ -20096,6 +20126,12 @@ const CustomRectangle = ({
   }, [opacity, color]);
   useEffect(() => {
     if (!map) return;
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current]
+      })
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
       shape: "Rectangle",
@@ -20141,6 +20177,12 @@ const TextMarker = ({
     }
   }, [zIndex]);
   useEffect(() => {
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current]
+      })
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(new Style({
       text: new Text$1({
         text: children ? children.props.children : "",
@@ -45113,7 +45155,6 @@ const CaptureMap = ({
       if (!map) return;
       const mapCanvas = document.createElement("canvas");
       const size = map.getSize();
-      console.log("size", size);
       mapCanvas.width = size[0];
       mapCanvas.height = size[1];
       const mapContext = mapCanvas.getContext("2d");
@@ -45340,7 +45381,6 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
   useEffect(() => {
     if (mapObj.current && bounds) {
       const view = mapObj.current.getView();
-      console.log("bounds", boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])]));
       view.fit(boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])]), {
         padding: [20, 20, 20, 20]
       });

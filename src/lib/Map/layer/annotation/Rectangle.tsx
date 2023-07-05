@@ -151,6 +151,12 @@ export const CustomRectangle = ({
 
   useEffect(() => {
     if (!map) return;
+    const newLayer = new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current],
+      }),
+    });
+    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
 
     annotationRef.current.setProperties({

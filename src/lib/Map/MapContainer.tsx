@@ -151,10 +151,7 @@ export const MapContainer = memo(
       useEffect(() => {
         if (mapObj.current && bounds) {
           const view = mapObj.current.getView();
-          console.log(
-            "bounds",
-            boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])])
-          );
+
           view.fit(
             boundingExtent([fromLonLat(bounds[0]), fromLonLat(bounds[1])]),
             {
