@@ -125,7 +125,6 @@ export const MapContainer = memo(
             : undefined,
           // 하위 요소 중 id 가 map 인 element가 있어야함.
           view: new View({
-            center: fromLonLat(center),
             zoom: zoomLevel,
             maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
             minZoom: !isZoomAbled ? zoomLevel : minZoom,
@@ -142,7 +141,7 @@ export const MapContainer = memo(
       }, [zoomLevel]);
 
       useEffect(() => {
-        if (mapObj.current) {
+        if (mapObj.current && center) {
           const view = mapObj.current.getView();
           view.setCenter(fromLonLat(center));
         }

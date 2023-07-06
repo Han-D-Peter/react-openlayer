@@ -142,6 +142,20 @@ export const CustomRectangle = ({
   }, [zIndex]);
 
   useEffect(() => {
+    if (annotationLayerRef.current && children) {
+      annotationStyleRef.current.setText(
+        makeText({
+          text: children.props.children || "",
+          size: children.props.size || 15,
+          color: children.props.color ? children.props.color : "black",
+          outline: children.props.outline,
+          isMarker: true,
+        })
+      );
+    }
+  }, [children]);
+
+  useEffect(() => {
     annotationStyleRef.current.setFill(
       new Fill({
         color: ANNOTATION_COLOR[color].fill(opacity),
