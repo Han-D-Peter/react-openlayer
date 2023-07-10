@@ -6,6 +6,8 @@ import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import { useMap } from "../../hooks";
 import { register } from "ol/proj/proj4";
+import { Fill, Stroke, Style, Text } from "ol/style";
+import { Feature } from "ol";
 
 proj4.defs(
   "EPSG:5185",
@@ -52,16 +54,20 @@ export interface GeoJsonLayerProps {
    * @description You can set coordinate option of geJson.
    */
   projectionCode?: Coordinate;
+
+  color: string;
   zIndex?: number;
 }
 
 export function GeoJsonLayer({
   geoJson,
   zIndex = 1,
+  color = "blue",
   projectionCode = "EPSG:5186",
 }: GeoJsonLayerProps) {
   const map = useMap();
   const geoJsonLayer = useRef<VectorLayer<VectorSource> | null>(null);
+
   const fromProjection = projectionCode;
   const toProjection = "EPSG:3857";
 
@@ -72,11 +78,12 @@ export function GeoJsonLayer({
   }, [zIndex]);
 
   useEffect(() => {
-    const geoJsonFormat = new GeoJSON();
+    const geoJsonFormat = new GeoJSON({ extractGeometryName: true });
     const features = geoJsonFormat.readFeatures(geoJson);
 
     features.forEach((feature) => {
       const geoMetry = feature.getGeometry();
+
       if (geoMetry) {
         geoMetry.transform(fromProjection, toProjection);
       }
@@ -87,12 +94,43 @@ export function GeoJsonLayer({
     });
 
     const vectorLayer = new VectorLayer({
+      zIndex,
       source: vectorSource,
+      style: function (feature) {
+        const properties = feature.getProperties();
+
+        const title = properties["Text"];
+
+        if (title) {
+          return new Style({
+            text: new Text({
+              text: title,
+              font: "12px Calibri,sans-serif",
+              fill: new Fill({
+                color: "#000",
+              }),
+              stroke: new Stroke({
+                color: "#fff",
+                width: 3,
+              }),
+            }),
+          });
+        } else {
+          return new Style({
+            stroke: new Stroke({
+              color,
+            }),
+          });
+        }
+      },
     });
 
     geoJsonLayer.current = vectorLayer;
 
     map.addLayer(vectorLayer);
+    return () => {
+      map.removeLayer(vectorLayer);
+    };
   }, [map, geoJson]);
   return <></>;
 }
