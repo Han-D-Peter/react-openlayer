@@ -11,7 +11,7 @@ import { DrawEvent, createBox } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
-import { Geometry } from "ol/geom";
+import { Geometry, Polygon } from "ol/geom";
 import { Feature } from "ol";
 import { RectangleIcon } from "../../../constants/icons/RectangleIcon";
 
@@ -21,6 +21,10 @@ export interface RectangleDrawButtonProps extends ButtonProps {
    */
   onEnd?: (features: Feature<Geometry>) => void;
 
+  /**
+   * @description You can set callback Fn on 'start' event.
+   */
+  onStart?: () => void;
   /**
    * @default false
    * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
@@ -32,6 +36,7 @@ export function RectangleDrawButton({
   onEnd,
   onClick,
   onCanvas = false,
+  onStart,
   ...props
 }: RectangleDrawButtonProps) {
   const map = useMap();
@@ -61,10 +66,16 @@ export function RectangleDrawButton({
     if (onClick) {
       onClick();
     }
+
+    if (onStart) {
+      onStart();
+    }
     map.addInteraction(drawRef.current);
   };
 
   const drawing = (event: DrawEvent) => {
+    const geometry = event.feature.getGeometry() as Polygon;
+
     event.feature.setStyle(
       new Style({
         stroke: new Stroke({
@@ -88,8 +99,10 @@ export function RectangleDrawButton({
       isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates(),
     });
     map.removeInteraction(drawRef.current);
+
     if (onEnd) {
       onEnd(event.feature);
     }

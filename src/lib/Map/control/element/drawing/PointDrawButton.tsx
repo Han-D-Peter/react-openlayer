@@ -9,7 +9,7 @@ import Style from "ol/style/Style";
 import { icon, makeText } from "../../../utils/object";
 import Icon from "ol/style/Icon";
 import { DrawEvent } from "ol/interaction/Draw";
-import { Geometry } from "ol/geom";
+import { Geometry, Point } from "ol/geom";
 import { Feature } from "ol";
 import { PointIcon } from "../../../constants/icons/PointIcon";
 
@@ -18,6 +18,12 @@ export interface PointDrawButtonProps extends ButtonProps {
    * @description You can get Multipoint feature what was made by callback function.
    */
   onEnd: (feature: Feature<Geometry>) => void;
+
+  /**
+   * @description You can set callback Fn on 'start' event.
+   */
+  onStart?: () => void;
+
   /**
    * @default false
    * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
@@ -29,6 +35,7 @@ export function PointDrawButton({
   onEnd,
   onClick,
   onCanvas = false,
+  onStart,
   ...props
 }: PointDrawButtonProps) {
   const map = useMap();
@@ -58,11 +65,15 @@ export function PointDrawButton({
     if (onClick) {
       onClick();
     }
+    if (onClick) {
+      onClick();
+    }
     map.addInteraction(drawRef.current);
   };
 
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
+    const geometry = feature.getGeometry() as Point;
     feature.setStyle(
       new Style({
         text: makeText({
@@ -84,7 +95,9 @@ export function PointDrawButton({
       isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates(),
     });
+
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);

@@ -6,7 +6,7 @@ import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
 import { DrawEvent } from "ol/interaction/Draw";
 import { Feature } from "ol";
-import { Geometry } from "ol/geom";
+import { Geometry, Point } from "ol/geom";
 import { Text, Fill, Stroke, Circle } from "ol/style";
 import { ANNOTATION_COLOR } from "../../../constants/color";
 import { useMap } from "../../../hooks";
@@ -20,6 +20,11 @@ export interface MultiPointDrawButtonProps extends ButtonProps {
   onEnd?: (features: Feature<Geometry>[]) => void;
 
   /**
+   * @description You can set callback Fn on 'start' event.
+   */
+  onStart?: () => void;
+
+  /**
    * @default false
    * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
    */
@@ -30,6 +35,7 @@ export function MultiPointDrawButton({
   onEnd,
   onClick,
   onCanvas = false,
+  onStart,
   ...props
 }: MultiPointDrawButtonProps) {
   const map = useMap();
@@ -48,26 +54,31 @@ export function MultiPointDrawButton({
 
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [pointCount, setPointCount] = useState(0);
+  // const [pointCount, setPointCount] = useState(1);
 
   const startDrawing = () => {
     setIsDrawing(true);
     if (onClick) {
       onClick();
     }
+
+    if (onStart) {
+      onStart();
+    }
     map.addInteraction(drawRef.current);
   };
 
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
+    const geometry = feature.getGeometry() as Point;
     feature.setProperties({
       shape: "MultiPoint",
       isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates(),
     });
     setFeatures([...features, feature]);
-    setPointCount((prev) => prev + 1);
   };
 
   const completeDrawing = () => {
@@ -77,17 +88,17 @@ export function MultiPointDrawButton({
     setFeatures([]);
     map.removeInteraction(drawRef.current);
     setIsDrawing(false);
-    setPointCount(0);
   };
 
   useEffect(() => {
     const drawingInstance = drawRef.current;
+
     drawingInstance.on("drawend", drawing);
 
     return () => {
       drawingInstance.un("drawend", drawing);
     };
-  }, []);
+  }, [features]);
 
   useEffect(() => {
     if (!props.isActive) {
@@ -117,7 +128,7 @@ export function MultiPointDrawButton({
           }),
         }),
         text: new Text({
-          text: String(pointCount + index), // 포인트의 순번 값을 텍스트로 표시
+          text: String(1 + index), // 포인트의 순번 값을 텍스트로 표시
           font: "bold 15px sans-serif",
           textAlign: "center",
 
@@ -132,7 +143,7 @@ export function MultiPointDrawButton({
       });
       feature.setStyle(style);
     });
-  }, [features, pointCount]);
+  }, [features]);
 
   return (
     <Button

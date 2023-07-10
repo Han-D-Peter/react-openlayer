@@ -12,7 +12,7 @@ import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import Icon from "ol/style/Icon";
 import { Feature } from "ol";
-import { Geometry } from "ol/geom";
+import { Geometry, Polygon } from "ol/geom";
 import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
 
 export interface PolygonDrawButtonProps extends ButtonProps {
@@ -20,6 +20,11 @@ export interface PolygonDrawButtonProps extends ButtonProps {
    * @description You can get Multipoint feature what was made by callback function.
    */
   onEnd?: (features: Feature<Geometry>) => void;
+
+  /**
+   * @description You can set callback Fn on 'start' event.
+   */
+  onStart?: () => void;
 
   /**
    * @default false
@@ -30,6 +35,7 @@ export interface PolygonDrawButtonProps extends ButtonProps {
 
 export function PolygonDrawButton({
   onEnd,
+  onStart,
   onClick,
   onCanvas = false,
   ...props
@@ -60,11 +66,15 @@ export function PolygonDrawButton({
     if (onClick) {
       onClick();
     }
+    if (onStart) {
+      onStart();
+    }
     map.addInteraction(drawRef.current);
   };
 
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
+    const geometry = feature.getGeometry() as Polygon;
     feature.setStyle(
       new Style({
         stroke: new Stroke({
@@ -88,6 +98,7 @@ export function PolygonDrawButton({
       isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates(),
     });
     map.removeInteraction(drawRef.current);
     if (onEnd) {

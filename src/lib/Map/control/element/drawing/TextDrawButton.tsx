@@ -10,7 +10,7 @@ import { DrawEvent } from "ol/interaction/Draw";
 import Fill from "ol/style/Fill";
 import Text from "ol/style/Text";
 import Stroke from "ol/style/Stroke";
-import { Geometry } from "ol/geom";
+import { Geometry, Point } from "ol/geom";
 import { Feature } from "ol";
 import { TextIcon } from "../../../constants/icons/TextIcon";
 
@@ -67,6 +67,7 @@ export function TextDrawButton({
 
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
+    const geometry = feature.getGeometry() as Point;
     feature.setStyle(
       new Style({
         text: new Text({
@@ -90,6 +91,7 @@ export function TextDrawButton({
       isModifying: false,
       source: vectorSourceRef.current,
       layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates(),
     });
     map.removeInteraction(drawRef.current);
     if (onEnd) {
