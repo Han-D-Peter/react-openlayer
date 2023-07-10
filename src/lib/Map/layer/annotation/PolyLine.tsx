@@ -164,6 +164,7 @@ export const CustomPolyLine = ({
     annotationRef.current.setStyle(annotationStyleRef.current);
 
     annotationRef.current.setProperties({
+      ...properties,
       shape: "Polyline",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),

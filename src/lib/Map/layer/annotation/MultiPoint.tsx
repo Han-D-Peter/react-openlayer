@@ -83,12 +83,6 @@ export function CustomMultiPoint({
   }, [zIndex]);
 
   useEffect(() => {
-    const newLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
-    });
-    annotationLayerRef.current = newLayer;
     const geometry = annotationRef.current.getGeometry() as MultiPoint;
     const vectorSource =
       annotationLayerRef.current.getSource() as VectorSource<Geometry>;
@@ -118,6 +112,7 @@ export function CustomMultiPoint({
       const pointFeature = new Feature(point);
       pointFeature.setStyle(style);
       pointFeature.setProperties({
+        ...properties,
         shape: "MultiPoint",
         isModifying: false,
         source: annotationLayerRef.current.getSource(),

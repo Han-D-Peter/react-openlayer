@@ -163,6 +163,7 @@ export const CustomCircle = ({
     annotationRef.current.setStyle(annotationStyleRef.current);
 
     annotationRef.current.setProperties({
+      ...properties,
       shape: "Circle",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),

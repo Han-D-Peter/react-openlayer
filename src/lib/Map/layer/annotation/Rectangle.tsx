@@ -174,6 +174,7 @@ export const CustomRectangle = ({
     annotationRef.current.setStyle(annotationStyleRef.current);
 
     annotationRef.current.setProperties({
+      ...properties,
       shape: "Rectangle",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),

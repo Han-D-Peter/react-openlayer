@@ -86,6 +86,7 @@ export const TextMarker = ({
 
     annotationLayerRef.current = vectorLayer;
     annotationRef.current.setProperties({
+      ...properties,
       shape: "TextMarker",
       isModifying: false,
       source: vectorSource,

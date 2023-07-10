@@ -179,6 +179,7 @@ export const CustomPolygon = ({
     annotationRef.current.setStyle(annotationStyleRef.current);
 
     annotationRef.current.setProperties({
+      ...properties,
       shape: "Polygon",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),

@@ -161,6 +161,7 @@ export const CustomMarker = ({
     annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
+      ...properties,
       shape: "Marker",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
