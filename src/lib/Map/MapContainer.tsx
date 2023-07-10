@@ -123,15 +123,22 @@ export const MapContainer = memo(
                 }),
               ]
             : undefined,
-          // 하위 요소 중 id 가 map 인 element가 있어야함.
-          view: new View({
-            zoom: zoomLevel,
-            maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
-            minZoom: !isZoomAbled ? zoomLevel : minZoom,
-            constrainResolution: true,
-          }),
         })
       );
+
+      useEffect(() => {
+        if (mapObj.current) {
+          const view = mapObj.current.getView();
+          view.setMinZoom(!isZoomAbled ? zoomLevel : minZoom);
+        }
+      }, [isZoomAbled, minZoom, zoomLevel]);
+
+      useEffect(() => {
+        if (mapObj.current) {
+          const view = mapObj.current.getView();
+          view.setMaxZoom(!isZoomAbled ? zoomLevel : maxZoom);
+        }
+      }, [maxZoom, isZoomAbled, zoomLevel]);
 
       useEffect(() => {
         if (mapObj.current) {
