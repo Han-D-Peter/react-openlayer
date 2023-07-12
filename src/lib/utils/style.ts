@@ -99,8 +99,10 @@ export class SelectStyle implements SelectStyleImpl {
       !isArray(this.beforeStyle)
     ) {
       const markerProperties = this.currentFeature.getProperties();
+
       if (markerProperties["hasPopup"] && !clickSelf)
         this.beforeStyle.setText(new Text());
+
       this.currentFeature.setStyle(this.beforeStyle as Style);
     }
     this.currentFeature = null;

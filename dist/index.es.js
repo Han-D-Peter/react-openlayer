@@ -387,12 +387,14 @@ function MultiPointDrawButton(_a) {
   var {
       onEnd,
       onClick,
-      onCanvas = false
+      onCanvas = false,
+      onStart
     } = _a,
-    props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+    props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({
+    zIndex: 1,
     source: vectorSourceRef.current
   }));
   const drawRef = useRef(new Draw({
@@ -401,24 +403,31 @@ function MultiPointDrawButton(_a) {
   }));
   const [features, setFeatures] = useState([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [pointCount, setPointCount] = useState(0);
+  // const [pointCount, setPointCount] = useState(1);
   const startDrawing = () => {
     setIsDrawing(true);
     if (onClick) {
       onClick();
     }
+    if (onStart) {
+      onStart();
+    }
+    map.setProperties({
+      isDrawing: true
+    });
     map.addInteraction(drawRef.current);
   };
   const drawing = event => {
     const feature = event.feature;
+    const geometry = feature.getGeometry();
     feature.setProperties({
       shape: "MultiPoint",
       isModifying: false,
       source: vectorSourceRef.current,
-      layer: vectorLayerRef.current
+      layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates()
     });
     setFeatures([...features, feature]);
-    setPointCount(prev => prev + 1);
   };
   const completeDrawing = () => {
     if (onEnd) {
@@ -426,8 +435,10 @@ function MultiPointDrawButton(_a) {
     }
     setFeatures([]);
     map.removeInteraction(drawRef.current);
+    setTimeout(() => map.setProperties({
+      isDrawing: false
+    }), 100);
     setIsDrawing(false);
-    setPointCount(0);
   };
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -435,7 +446,7 @@ function MultiPointDrawButton(_a) {
     return () => {
       drawingInstance.un("drawend", drawing);
     };
-  }, []);
+  }, [features]);
   useEffect(() => {
     if (!props.isActive) {
       map.removeInteraction(drawRef.current);
@@ -463,7 +474,7 @@ function MultiPointDrawButton(_a) {
           })
         }),
         text: new Text({
-          text: String(pointCount + index),
+          text: String(1 + index),
           font: "bold 15px sans-serif",
           textAlign: "center",
           fill: new Fill({
@@ -477,7 +488,7 @@ function MultiPointDrawButton(_a) {
       });
       feature.setStyle(style);
     });
-  }, [features, pointCount]);
+  }, [features]);
   return jsx(Button, Object.assign({
     onClick: () => {
       if (!isDrawing) {
@@ -545,12 +556,15 @@ function PointDrawButton(_a) {
   var {
       onEnd,
       onClick,
-      onCanvas = false
+      onCanvas = false,
+      onStart
     } = _a,
-    props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+    props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
   const vectorSourceRef = useRef(new VectorSource());
-  const vectorLayerRef = useRef(new VectorLayer());
+  const vectorLayerRef = useRef(new VectorLayer({
+    zIndex: 1
+  }));
   const drawRef = useRef(new Draw({
     source: vectorSourceRef.current,
     type: "Point",
@@ -574,10 +588,17 @@ function PointDrawButton(_a) {
     if (onClick) {
       onClick();
     }
+    if (onClick) {
+      onClick();
+    }
+    map.setProperties({
+      isDrawing: true
+    });
     map.addInteraction(drawRef.current);
   };
   const drawing = event => {
     const feature = event.feature;
+    const geometry = feature.getGeometry();
     feature.setStyle(new Style({
       text: makeText({
         text: "unknown",
@@ -597,12 +618,16 @@ function PointDrawButton(_a) {
       shape: "Point",
       isModifying: false,
       source: vectorSourceRef.current,
-      layer: vectorLayerRef.current
+      layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates()
     });
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
+    setTimeout(() => map.setProperties({
+      isDrawing: false
+    }), 100);
   };
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -676,13 +701,17 @@ function PolygonIcon({
 function PolygonDrawButton(_a) {
   var {
       onEnd,
+      onStart,
       onClick,
       onCanvas = false
     } = _a,
-    props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+    props = __rest(_a, ["onEnd", "onStart", "onClick", "onCanvas"]);
   const map = useMap();
+  useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
-  const vectorLayerRef = useRef(new VectorLayer());
+  const vectorLayerRef = useRef(new VectorLayer({
+    zIndex: 1
+  }));
   const drawRef = useRef(new Draw({
     source: vectorSourceRef.current,
     type: "Polygon",
@@ -705,10 +734,17 @@ function PolygonDrawButton(_a) {
     if (onClick) {
       onClick();
     }
+    if (onStart) {
+      onStart();
+    }
+    map.setProperties({
+      isDrawing: true
+    });
     map.addInteraction(drawRef.current);
   };
   const drawing = event => {
     const feature = event.feature;
+    const geometry = feature.getGeometry();
     feature.setStyle(new Style({
       stroke: new Stroke$1({
         color: "rgb(2, 26, 255)",
@@ -729,12 +765,16 @@ function PolygonDrawButton(_a) {
       shape: "Polygon",
       isModifying: false,
       source: vectorSourceRef.current,
-      layer: vectorLayerRef.current
+      layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates()
     });
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
+    setTimeout(() => map.setProperties({
+      isDrawing: false
+    }), 100);
   };
   useEffect(() => {
     const vectorLayer = new VectorLayer({
@@ -796,12 +836,15 @@ function PolylineDrawButton(_a) {
   var {
       onEnd,
       onClick,
-      onCanvas = false
+      onCanvas = false,
+      onStart
     } = _a,
-    props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+    props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
   const vectorSourceRef = useRef(new VectorSource());
-  const vectorLayerRef = useRef(new VectorLayer());
+  const vectorLayerRef = useRef(new VectorLayer({
+    zIndex: 1
+  }));
   const drawRef = useRef(new Draw({
     source: vectorSourceRef.current,
     type: "LineString",
@@ -824,10 +867,17 @@ function PolylineDrawButton(_a) {
     if (onClick) {
       onClick();
     }
+    if (onStart) {
+      onStart();
+    }
+    map.setProperties({
+      isDrawing: true
+    });
     map.addInteraction(drawRef.current);
   };
   const drawing = event => {
     const feature = event.feature;
+    const geometry = feature.getGeometry();
     feature.setStyle(new Style({
       stroke: new Stroke$1({
         color: "rgb(2, 26, 255)",
@@ -848,12 +898,16 @@ function PolylineDrawButton(_a) {
       shape: "Polyline",
       isModifying: false,
       source: vectorSourceRef.current,
-      layer: vectorLayerRef.current
+      layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates()
     });
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
+    setTimeout(() => map.setProperties({
+      isDrawing: false
+    }), 100);
   };
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -914,12 +968,15 @@ function RectangleDrawButton(_a) {
   var {
       onEnd,
       onClick,
-      onCanvas = false
+      onCanvas = false,
+      onStart
     } = _a,
-    props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+    props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
   const vectorSourceRef = useRef(new VectorSource());
-  const vectorLayerRef = useRef(new VectorLayer());
+  const vectorLayerRef = useRef(new VectorLayer({
+    zIndex: 1
+  }));
   const drawRef = useRef(new Draw({
     source: vectorSourceRef.current,
     type: "Circle",
@@ -943,9 +1000,16 @@ function RectangleDrawButton(_a) {
     if (onClick) {
       onClick();
     }
+    if (onStart) {
+      onStart();
+    }
+    map.setProperties({
+      isDrawing: true
+    });
     map.addInteraction(drawRef.current);
   };
   const drawing = event => {
+    const geometry = event.feature.getGeometry();
     event.feature.setStyle(new Style({
       stroke: new Stroke$1({
         color: "rgb(2, 26, 255)",
@@ -966,12 +1030,16 @@ function RectangleDrawButton(_a) {
       shape: "Rectangle",
       isModifying: false,
       source: vectorSourceRef.current,
-      layer: vectorLayerRef.current
+      layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates()
     });
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(event.feature);
     }
+    setTimeout(() => map.setProperties({
+      isDrawing: false
+    }), 100);
   };
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -1039,7 +1107,9 @@ function TextDrawButton(_a) {
     props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
   const map = useMap();
   const vectorSourceRef = useRef(new VectorSource());
-  const vectorLayerRef = useRef(new VectorLayer());
+  const vectorLayerRef = useRef(new VectorLayer({
+    zIndex: 1
+  }));
   const drawRef = useRef(new Draw({
     source: vectorSourceRef.current,
     type: "Point",
@@ -1064,10 +1134,14 @@ function TextDrawButton(_a) {
     if (onClick) {
       onClick();
     }
+    map.setProperties({
+      isDrawing: true
+    });
     map.addInteraction(drawRef.current);
   };
   const drawing = event => {
     const feature = event.feature;
+    const geometry = feature.getGeometry();
     feature.setStyle(new Style({
       text: new Text$1({
         text: "unknown",
@@ -1088,12 +1162,16 @@ function TextDrawButton(_a) {
       shape: "TextMarker",
       isModifying: false,
       source: vectorSourceRef.current,
-      layer: vectorLayerRef.current
+      layer: vectorLayerRef.current,
+      positions: geometry.getCoordinates()
     });
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
+    setTimeout(() => map.setProperties({
+      isDrawing: false
+    }), 100);
   };
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -19525,13 +19603,13 @@ const CustomCircle = ({
     });
     annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
-    annotationRef.current.setProperties({
+    annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
       shape: "Circle",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-    });
+    }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
@@ -19656,13 +19734,13 @@ const CustomMarker = ({
     });
     annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
-    annotationRef.current.setProperties({
+    annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
       shape: "Marker",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-    });
+    }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
@@ -19724,12 +19802,6 @@ function CustomMultiPoint({
     }
   }, [zIndex]);
   useEffect(() => {
-    const newLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current]
-      })
-    });
-    annotationLayerRef.current = newLayer;
     const geometry = annotationRef.current.getGeometry();
     const vectorSource = annotationLayerRef.current.getSource();
     const points = geometry.getPoints().map((point, index) => {
@@ -19757,13 +19829,13 @@ function CustomMultiPoint({
       style.getText().setText(text.toString());
       const pointFeature = new Feature$2(point);
       pointFeature.setStyle(style);
-      pointFeature.setProperties({
+      pointFeature.setProperties(Object.assign(Object.assign({}, properties), {
         shape: "MultiPoint",
         isModifying: false,
         source: annotationLayerRef.current.getSource(),
         layer: annotationLayerRef.current,
         hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-      });
+      }));
       return pointFeature;
     });
     if (vectorSource) {
@@ -19876,6 +19948,17 @@ const CustomPolygon = ({
     }
   }, [zIndex]);
   useEffect(() => {
+    if (annotationLayerRef.current && children) {
+      annotationStyleRef.current.setText(makeText({
+        text: children.props.children || "",
+        size: children.props.size || 15,
+        color: children.props.color ? children.props.color : "black",
+        outline: children.props.outline,
+        isMarker: true
+      }));
+    }
+  }, [children]);
+  useEffect(() => {
     const newLayer = new VectorLayer({
       source: new VectorSource({
         features: [annotationRef.current]
@@ -19883,13 +19966,13 @@ const CustomPolygon = ({
     });
     annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
-    annotationRef.current.setProperties({
+    annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
       shape: "Polygon",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-    });
+    }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
@@ -20010,13 +20093,13 @@ const CustomPolyLine = ({
     });
     annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
-    annotationRef.current.setProperties({
+    annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
       shape: "Polyline",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-    });
+    }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
@@ -20120,6 +20203,17 @@ const CustomRectangle = ({
     }
   }, [zIndex]);
   useEffect(() => {
+    if (annotationLayerRef.current && children) {
+      annotationStyleRef.current.setText(makeText({
+        text: children.props.children || "",
+        size: children.props.size || 15,
+        color: children.props.color ? children.props.color : "black",
+        outline: children.props.outline,
+        isMarker: true
+      }));
+    }
+  }, [children]);
+  useEffect(() => {
     annotationStyleRef.current.setFill(new Fill$1({
       color: ANNOTATION_COLOR[color].fill(opacity)
     }));
@@ -20133,13 +20227,13 @@ const CustomRectangle = ({
     });
     annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(annotationStyleRef.current);
-    annotationRef.current.setProperties({
+    annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
       shape: "Rectangle",
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-    });
+    }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
     return () => {
@@ -20207,12 +20301,12 @@ const TextMarker = ({
       source: vectorSource
     });
     annotationLayerRef.current = vectorLayer;
-    annotationRef.current.setProperties({
+    annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
       shape: "TextMarker",
       isModifying: false,
       source: vectorSource,
       layer: vectorLayer
-    });
+    }));
     vectorLayer.setZIndex(zIndex);
     const clickSelect = new Select$1({
       condition: click,
@@ -20352,6 +20446,9 @@ const TileLayer = ({
       zIndex
     });
     map.addLayer(customTmsLayer);
+    return () => {
+      map.removeLayer(customTmsLayer);
+    };
   }, [map, errorTileUrl]);
   return jsx(Fragment, {});
 };
@@ -27702,6 +27799,7 @@ register(proj4);
 function GeoJsonLayer({
   geoJson,
   zIndex = 1,
+  color = "blue",
   projectionCode = "EPSG:5186"
 }) {
   const map = useMap();
@@ -27714,7 +27812,9 @@ function GeoJsonLayer({
     }
   }, [zIndex]);
   useEffect(() => {
-    const geoJsonFormat = new GeoJSON();
+    const geoJsonFormat = new GeoJSON({
+      extractGeometryName: true
+    });
     const features = geoJsonFormat.readFeatures(geoJson);
     features.forEach(feature => {
       const geoMetry = feature.getGeometry();
@@ -27726,10 +27826,39 @@ function GeoJsonLayer({
       features
     });
     const vectorLayer = new VectorLayer({
-      source: vectorSource
+      zIndex,
+      source: vectorSource,
+      style: function (feature) {
+        const properties = feature.getProperties();
+        const title = properties["Text"];
+        if (title) {
+          return new Style$1({
+            text: new Text({
+              text: title,
+              font: "12px Calibri,sans-serif",
+              fill: new Fill({
+                color: "#000"
+              }),
+              stroke: new Stroke({
+                color: "#fff",
+                width: 3
+              })
+            })
+          });
+        } else {
+          return new Style$1({
+            stroke: new Stroke({
+              color
+            })
+          });
+        }
+      }
     });
     geoJsonLayer.current = vectorLayer;
     map.addLayer(vectorLayer);
+    return () => {
+      map.removeLayer(vectorLayer);
+    };
   }, [map, geoJson]);
   return jsx(Fragment, {});
 }
@@ -45287,6 +45416,10 @@ function FeatureStore({
   const selectedFeatureStyleRef = useRef(new SelectStyle());
   useEffect(() => {
     const onClick = e => {
+      const mapProperties = map.getProperties();
+      if (mapProperties["isDrawing"] === true) {
+        return;
+      }
       const pixel = e.pixel;
       // 겹쳐있는 마커 위에서부터 선택되도록 리버스
       const reversedFeture = map.getFeaturesAtPixel(pixel).reverse();
@@ -45310,7 +45443,8 @@ function FeatureStore({
           } else if (feature.getProperties().source && isMultiPoint) {
             const multiPointSource = feature.getProperties().source;
             const multiPointFeatures = multiPointSource.getFeatures();
-            // selectedFeatureStyleRef.current.makeUnSelectingsStyle();
+            selectedFeatureStyleRef.current.makeUnSelectingStyle();
+            selectedFeatureStyleRef.current.makeUnSelectingsStyle();
             selectedFeatureStyleRef.current.makeSelectingsStyle(multiPointFeatures);
             selectFeature(feature);
           }
@@ -45356,16 +45490,20 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
       source: new OSM({
         crossOrigin: "anonymous"
       })
-    })] : undefined,
-    // 하위 요소 중 id 가 map 인 element가 있어야함.
-    view: new View$1({
-      center: fromLonLat(center),
-      zoom: zoomLevel,
-      maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
-      minZoom: !isZoomAbled ? zoomLevel : minZoom,
-      constrainResolution: true
-    })
+    })] : undefined
   }));
+  useEffect(() => {
+    if (mapObj.current) {
+      const view = mapObj.current.getView();
+      view.setMinZoom(!isZoomAbled ? zoomLevel : minZoom);
+    }
+  }, [isZoomAbled, minZoom, zoomLevel]);
+  useEffect(() => {
+    if (mapObj.current) {
+      const view = mapObj.current.getView();
+      view.setMaxZoom(!isZoomAbled ? zoomLevel : maxZoom);
+    }
+  }, [maxZoom, isZoomAbled, zoomLevel]);
   useEffect(() => {
     if (mapObj.current) {
       const view = mapObj.current.getView();
@@ -45373,7 +45511,7 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
     }
   }, [zoomLevel]);
   useEffect(() => {
-    if (mapObj.current) {
+    if (mapObj.current && center) {
       const view = mapObj.current.getView();
       view.setCenter(fromLonLat(center));
     }

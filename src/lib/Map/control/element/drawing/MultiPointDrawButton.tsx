@@ -42,6 +42,7 @@ export function MultiPointDrawButton({
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(
     new VectorLayer({
+      zIndex: 1,
       source: vectorSourceRef.current,
     })
   );
@@ -65,6 +66,7 @@ export function MultiPointDrawButton({
     if (onStart) {
       onStart();
     }
+    map.setProperties({ isDrawing: true });
     map.addInteraction(drawRef.current);
   };
 
@@ -87,6 +89,7 @@ export function MultiPointDrawButton({
     }
     setFeatures([]);
     map.removeInteraction(drawRef.current);
+    setTimeout(() => map.setProperties({ isDrawing: false }), 100);
     setIsDrawing(false);
   };
 

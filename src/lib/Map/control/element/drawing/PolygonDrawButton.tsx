@@ -2,7 +2,7 @@ import React from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
-import { useMap } from "../../../hooks";
+import { useFeatureStore, useMap } from "../../../hooks";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
@@ -41,8 +41,9 @@ export function PolygonDrawButton({
   ...props
 }: PolygonDrawButtonProps) {
   const map = useMap();
+  const { selectFeature } = useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
-  const vectorLayerRef = useRef(new VectorLayer());
+  const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
       source: vectorSourceRef.current,
@@ -69,6 +70,7 @@ export function PolygonDrawButton({
     if (onStart) {
       onStart();
     }
+    map.setProperties({ isDrawing: true });
     map.addInteraction(drawRef.current);
   };
 
@@ -104,6 +106,8 @@ export function PolygonDrawButton({
     if (onEnd) {
       onEnd(feature);
     }
+    selectFeature(feature);
+    setTimeout(() => map.setProperties({ isDrawing: false }), 100);
   };
 
   useEffect(() => {

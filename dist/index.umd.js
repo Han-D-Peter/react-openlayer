@@ -380,12 +380,14 @@
       var {
           onEnd,
           onClick,
-          onCanvas = false
+          onCanvas = false,
+          onStart
         } = _a,
-        props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+        props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
       const map = useMap();
       const vectorSourceRef = react.useRef(new VectorSource__default["default"]());
       const vectorLayerRef = react.useRef(new VectorLayer__default["default"]({
+        zIndex: 1,
         source: vectorSourceRef.current
       }));
       const drawRef = react.useRef(new interaction.Draw({
@@ -394,24 +396,31 @@
       }));
       const [features, setFeatures] = react.useState([]);
       const [isDrawing, setIsDrawing] = react.useState(false);
-      const [pointCount, setPointCount] = react.useState(0);
+      // const [pointCount, setPointCount] = useState(1);
       const startDrawing = () => {
         setIsDrawing(true);
         if (onClick) {
           onClick();
         }
+        if (onStart) {
+          onStart();
+        }
+        map.setProperties({
+          isDrawing: true
+        });
         map.addInteraction(drawRef.current);
       };
       const drawing = event => {
         const feature = event.feature;
+        const geometry = feature.getGeometry();
         feature.setProperties({
           shape: "MultiPoint",
           isModifying: false,
           source: vectorSourceRef.current,
-          layer: vectorLayerRef.current
+          layer: vectorLayerRef.current,
+          positions: geometry.getCoordinates()
         });
         setFeatures([...features, feature]);
-        setPointCount(prev => prev + 1);
       };
       const completeDrawing = () => {
         if (onEnd) {
@@ -419,8 +428,10 @@
         }
         setFeatures([]);
         map.removeInteraction(drawRef.current);
+        setTimeout(() => map.setProperties({
+          isDrawing: false
+        }), 100);
         setIsDrawing(false);
-        setPointCount(0);
       };
       react.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -428,7 +439,7 @@
         return () => {
           drawingInstance.un("drawend", drawing);
         };
-      }, []);
+      }, [features]);
       react.useEffect(() => {
         if (!props.isActive) {
           map.removeInteraction(drawRef.current);
@@ -456,7 +467,7 @@
               })
             }),
             text: new style.Text({
-              text: String(pointCount + index),
+              text: String(1 + index),
               font: "bold 15px sans-serif",
               textAlign: "center",
               fill: new style.Fill({
@@ -470,7 +481,7 @@
           });
           feature.setStyle(style$1);
         });
-      }, [features, pointCount]);
+      }, [features]);
       return jsxRuntime.jsx(Button, Object.assign({
         onClick: () => {
           if (!isDrawing) {
@@ -538,12 +549,15 @@
       var {
           onEnd,
           onClick,
-          onCanvas = false
+          onCanvas = false,
+          onStart
         } = _a,
-        props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+        props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
       const map = useMap();
       const vectorSourceRef = react.useRef(new VectorSource__default["default"]());
-      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]());
+      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]({
+        zIndex: 1
+      }));
       const drawRef = react.useRef(new interaction.Draw({
         source: vectorSourceRef.current,
         type: "Point",
@@ -567,10 +581,17 @@
         if (onClick) {
           onClick();
         }
+        if (onClick) {
+          onClick();
+        }
+        map.setProperties({
+          isDrawing: true
+        });
         map.addInteraction(drawRef.current);
       };
       const drawing = event => {
         const feature = event.feature;
+        const geometry = feature.getGeometry();
         feature.setStyle(new Style__default["default"]({
           text: makeText({
             text: "unknown",
@@ -590,12 +611,16 @@
           shape: "Point",
           isModifying: false,
           source: vectorSourceRef.current,
-          layer: vectorLayerRef.current
+          layer: vectorLayerRef.current,
+          positions: geometry.getCoordinates()
         });
         map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(feature);
         }
+        setTimeout(() => map.setProperties({
+          isDrawing: false
+        }), 100);
       };
       react.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -669,13 +694,17 @@
     function PolygonDrawButton(_a) {
       var {
           onEnd,
+          onStart,
           onClick,
           onCanvas = false
         } = _a,
-        props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+        props = __rest(_a, ["onEnd", "onStart", "onClick", "onCanvas"]);
       const map = useMap();
+      useFeatureStore();
       const vectorSourceRef = react.useRef(new VectorSource__default["default"]());
-      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]());
+      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]({
+        zIndex: 1
+      }));
       const drawRef = react.useRef(new interaction.Draw({
         source: vectorSourceRef.current,
         type: "Polygon",
@@ -698,10 +727,17 @@
         if (onClick) {
           onClick();
         }
+        if (onStart) {
+          onStart();
+        }
+        map.setProperties({
+          isDrawing: true
+        });
         map.addInteraction(drawRef.current);
       };
       const drawing = event => {
         const feature = event.feature;
+        const geometry = feature.getGeometry();
         feature.setStyle(new Style__default["default"]({
           stroke: new Stroke__default["default"]({
             color: "rgb(2, 26, 255)",
@@ -722,12 +758,16 @@
           shape: "Polygon",
           isModifying: false,
           source: vectorSourceRef.current,
-          layer: vectorLayerRef.current
+          layer: vectorLayerRef.current,
+          positions: geometry.getCoordinates()
         });
         map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(feature);
         }
+        setTimeout(() => map.setProperties({
+          isDrawing: false
+        }), 100);
       };
       react.useEffect(() => {
         const vectorLayer = new VectorLayer__default["default"]({
@@ -789,12 +829,15 @@
       var {
           onEnd,
           onClick,
-          onCanvas = false
+          onCanvas = false,
+          onStart
         } = _a,
-        props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+        props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
       const map = useMap();
       const vectorSourceRef = react.useRef(new VectorSource__default["default"]());
-      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]());
+      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]({
+        zIndex: 1
+      }));
       const drawRef = react.useRef(new interaction.Draw({
         source: vectorSourceRef.current,
         type: "LineString",
@@ -817,10 +860,17 @@
         if (onClick) {
           onClick();
         }
+        if (onStart) {
+          onStart();
+        }
+        map.setProperties({
+          isDrawing: true
+        });
         map.addInteraction(drawRef.current);
       };
       const drawing = event => {
         const feature = event.feature;
+        const geometry = feature.getGeometry();
         feature.setStyle(new Style__default["default"]({
           stroke: new Stroke__default["default"]({
             color: "rgb(2, 26, 255)",
@@ -841,12 +891,16 @@
           shape: "Polyline",
           isModifying: false,
           source: vectorSourceRef.current,
-          layer: vectorLayerRef.current
+          layer: vectorLayerRef.current,
+          positions: geometry.getCoordinates()
         });
         map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(feature);
         }
+        setTimeout(() => map.setProperties({
+          isDrawing: false
+        }), 100);
       };
       react.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -907,12 +961,15 @@
       var {
           onEnd,
           onClick,
-          onCanvas = false
+          onCanvas = false,
+          onStart
         } = _a,
-        props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
+        props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
       const map = useMap();
       const vectorSourceRef = react.useRef(new VectorSource__default["default"]());
-      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]());
+      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]({
+        zIndex: 1
+      }));
       const drawRef = react.useRef(new interaction.Draw({
         source: vectorSourceRef.current,
         type: "Circle",
@@ -936,9 +993,16 @@
         if (onClick) {
           onClick();
         }
+        if (onStart) {
+          onStart();
+        }
+        map.setProperties({
+          isDrawing: true
+        });
         map.addInteraction(drawRef.current);
       };
       const drawing = event => {
+        const geometry = event.feature.getGeometry();
         event.feature.setStyle(new Style__default["default"]({
           stroke: new Stroke__default["default"]({
             color: "rgb(2, 26, 255)",
@@ -959,12 +1023,16 @@
           shape: "Rectangle",
           isModifying: false,
           source: vectorSourceRef.current,
-          layer: vectorLayerRef.current
+          layer: vectorLayerRef.current,
+          positions: geometry.getCoordinates()
         });
         map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(event.feature);
         }
+        setTimeout(() => map.setProperties({
+          isDrawing: false
+        }), 100);
       };
       react.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -1032,7 +1100,9 @@
         props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
       const map = useMap();
       const vectorSourceRef = react.useRef(new VectorSource__default["default"]());
-      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]());
+      const vectorLayerRef = react.useRef(new VectorLayer__default["default"]({
+        zIndex: 1
+      }));
       const drawRef = react.useRef(new interaction.Draw({
         source: vectorSourceRef.current,
         type: "Point",
@@ -1057,10 +1127,14 @@
         if (onClick) {
           onClick();
         }
+        map.setProperties({
+          isDrawing: true
+        });
         map.addInteraction(drawRef.current);
       };
       const drawing = event => {
         const feature = event.feature;
+        const geometry = feature.getGeometry();
         feature.setStyle(new Style__default["default"]({
           text: new Text__default["default"]({
             text: "unknown",
@@ -1081,12 +1155,16 @@
           shape: "TextMarker",
           isModifying: false,
           source: vectorSourceRef.current,
-          layer: vectorLayerRef.current
+          layer: vectorLayerRef.current,
+          positions: geometry.getCoordinates()
         });
         map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(feature);
         }
+        setTimeout(() => map.setProperties({
+          isDrawing: false
+        }), 100);
       };
       react.useEffect(() => {
         const drawingInstance = drawRef.current;
@@ -19518,13 +19596,13 @@
         });
         annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
-        annotationRef.current.setProperties({
+        annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
           shape: "Circle",
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-        });
+        }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
@@ -19649,13 +19727,13 @@
         });
         annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
-        annotationRef.current.setProperties({
+        annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
           shape: "Marker",
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-        });
+        }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
@@ -19717,12 +19795,6 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
-        const newLayer = new VectorLayer__default["default"]({
-          source: new VectorSource__default["default"]({
-            features: [annotationRef.current]
-          })
-        });
-        annotationLayerRef.current = newLayer;
         const geometry = annotationRef.current.getGeometry();
         const vectorSource = annotationLayerRef.current.getSource();
         const points = geometry.getPoints().map((point, index) => {
@@ -19750,13 +19822,13 @@
           style$1.getText().setText(text.toString());
           const pointFeature = new Feature__default["default"](point);
           pointFeature.setStyle(style$1);
-          pointFeature.setProperties({
+          pointFeature.setProperties(Object.assign(Object.assign({}, properties), {
             shape: "MultiPoint",
             isModifying: false,
             source: annotationLayerRef.current.getSource(),
             layer: annotationLayerRef.current,
             hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-          });
+          }));
           return pointFeature;
         });
         if (vectorSource) {
@@ -19869,6 +19941,17 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
+        if (annotationLayerRef.current && children) {
+          annotationStyleRef.current.setText(makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true
+          }));
+        }
+      }, [children]);
+      react.useEffect(() => {
         const newLayer = new VectorLayer__default["default"]({
           source: new VectorSource__default["default"]({
             features: [annotationRef.current]
@@ -19876,13 +19959,13 @@
         });
         annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
-        annotationRef.current.setProperties({
+        annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
           shape: "Polygon",
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-        });
+        }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
@@ -20003,13 +20086,13 @@
         });
         annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
-        annotationRef.current.setProperties({
+        annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
           shape: "Polyline",
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-        });
+        }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
@@ -20113,6 +20196,17 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
+        if (annotationLayerRef.current && children) {
+          annotationStyleRef.current.setText(makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: true
+          }));
+        }
+      }, [children]);
+      react.useEffect(() => {
         annotationStyleRef.current.setFill(new Fill__default["default"]({
           color: ANNOTATION_COLOR[color].fill(opacity)
         }));
@@ -20126,13 +20220,13 @@
         });
         annotationLayerRef.current = newLayer;
         annotationRef.current.setStyle(annotationStyleRef.current);
-        annotationRef.current.setProperties({
+        annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
           shape: "Rectangle",
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
           hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
-        });
+        }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
         return () => {
@@ -20200,12 +20294,12 @@
           source: vectorSource
         });
         annotationLayerRef.current = vectorLayer;
-        annotationRef.current.setProperties({
+        annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
           shape: "TextMarker",
           isModifying: false,
           source: vectorSource,
           layer: vectorLayer
-        });
+        }));
         vectorLayer.setZIndex(zIndex);
         const clickSelect = new interaction.Select({
           condition: condition.click,
@@ -20345,6 +20439,9 @@
           zIndex
         });
         map.addLayer(customTmsLayer);
+        return () => {
+          map.removeLayer(customTmsLayer);
+        };
       }, [map, errorTileUrl]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     };
@@ -27695,6 +27792,7 @@
     function GeoJsonLayer({
       geoJson,
       zIndex = 1,
+      color = "blue",
       projectionCode = "EPSG:5186"
     }) {
       const map = useMap();
@@ -27707,7 +27805,9 @@
         }
       }, [zIndex]);
       react.useEffect(() => {
-        const geoJsonFormat = new GeoJSON__default["default"]();
+        const geoJsonFormat = new GeoJSON__default["default"]({
+          extractGeometryName: true
+        });
         const features = geoJsonFormat.readFeatures(geoJson);
         features.forEach(feature => {
           const geoMetry = feature.getGeometry();
@@ -27719,10 +27819,39 @@
           features
         });
         const vectorLayer = new VectorLayer__default["default"]({
-          source: vectorSource
+          zIndex,
+          source: vectorSource,
+          style: function (feature) {
+            const properties = feature.getProperties();
+            const title = properties["Text"];
+            if (title) {
+              return new style.Style({
+                text: new style.Text({
+                  text: title,
+                  font: "12px Calibri,sans-serif",
+                  fill: new style.Fill({
+                    color: "#000"
+                  }),
+                  stroke: new style.Stroke({
+                    color: "#fff",
+                    width: 3
+                  })
+                })
+              });
+            } else {
+              return new style.Style({
+                stroke: new style.Stroke({
+                  color
+                })
+              });
+            }
+          }
         });
         geoJsonLayer.current = vectorLayer;
         map.addLayer(vectorLayer);
+        return () => {
+          map.removeLayer(vectorLayer);
+        };
       }, [map, geoJson]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});
     }
@@ -45280,6 +45409,10 @@
       const selectedFeatureStyleRef = react.useRef(new SelectStyle());
       react.useEffect(() => {
         const onClick = e => {
+          const mapProperties = map.getProperties();
+          if (mapProperties["isDrawing"] === true) {
+            return;
+          }
           const pixel = e.pixel;
           // 겹쳐있는 마커 위에서부터 선택되도록 리버스
           const reversedFeture = map.getFeaturesAtPixel(pixel).reverse();
@@ -45303,7 +45436,8 @@
               } else if (feature.getProperties().source && isMultiPoint) {
                 const multiPointSource = feature.getProperties().source;
                 const multiPointFeatures = multiPointSource.getFeatures();
-                // selectedFeatureStyleRef.current.makeUnSelectingsStyle();
+                selectedFeatureStyleRef.current.makeUnSelectingStyle();
+                selectedFeatureStyleRef.current.makeUnSelectingsStyle();
                 selectedFeatureStyleRef.current.makeSelectingsStyle(multiPointFeatures);
                 selectFeature(feature);
               }
@@ -45349,16 +45483,20 @@
           source: new source.OSM({
             crossOrigin: "anonymous"
           })
-        })] : undefined,
-        // 하위 요소 중 id 가 map 인 element가 있어야함.
-        view: new View$1({
-          center: proj.fromLonLat(center),
-          zoom: zoomLevel,
-          maxZoom: !isZoomAbled ? zoomLevel : maxZoom,
-          minZoom: !isZoomAbled ? zoomLevel : minZoom,
-          constrainResolution: true
-        })
+        })] : undefined
       }));
+      react.useEffect(() => {
+        if (mapObj.current) {
+          const view = mapObj.current.getView();
+          view.setMinZoom(!isZoomAbled ? zoomLevel : minZoom);
+        }
+      }, [isZoomAbled, minZoom, zoomLevel]);
+      react.useEffect(() => {
+        if (mapObj.current) {
+          const view = mapObj.current.getView();
+          view.setMaxZoom(!isZoomAbled ? zoomLevel : maxZoom);
+        }
+      }, [maxZoom, isZoomAbled, zoomLevel]);
       react.useEffect(() => {
         if (mapObj.current) {
           const view = mapObj.current.getView();
@@ -45366,7 +45504,7 @@
         }
       }, [zoomLevel]);
       react.useEffect(() => {
-        if (mapObj.current) {
+        if (mapObj.current && center) {
           const view = mapObj.current.getView();
           view.setCenter(proj.fromLonLat(center));
         }

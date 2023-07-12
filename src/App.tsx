@@ -13,6 +13,7 @@ import { ZoomFeature } from "./lib/Map/control/ZoomFeature";
 import { CompassWheel } from "./lib/Map/control/CompassWheel";
 import {
   CaptureMap,
+  GeoJsonLayer,
   ImageOverlay,
   ImageOverlayProps,
   ImageOverlayRef,
@@ -37,8 +38,10 @@ function App() {
     [126.841235, 35.189381],
   ] as unknown as [Location, Location]);
 
+  const [mapSize, setMapSize] = useState({ width: "1000px", height: "100vh" });
+
   function off() {
-    setIsShown((prev) => !prev);
+    setMapSize({ width: "1000px", height: "100vh" });
   }
 
   const ref = useRef<Map>(null);
@@ -53,7 +56,12 @@ function App() {
       >
         off
       </button>
-      <MapContainer ref={ref} isAbledSelection>
+      <MapContainer
+        height={mapSize.height}
+        width={mapSize.width}
+        ref={ref}
+        isAbledSelection
+      >
         <TileLayer
           maxZoom={23}
           crossOrigin={"anonymous"}
@@ -91,13 +99,22 @@ function App() {
           >
             <InnerText>Circle2</InnerText>
           </CustomCircle>
+          <CustomPolyLine
+            positions={[
+              [126.840684, 35.190816],
+              [126.840476, 35.190419],
+              [126.840604, 35.190333],
+              [126.840868, 35.190581],
+            ]}
+          ></CustomPolyLine>
         </LayerGroup>
 
         {isShown && (
           <CustomMultiPoint
-            onClick={(event) =>
-              console.log("event", getProfileFromFeature(event.annotation))
-            }
+            onClick={(event) => {
+              console.log("raw event ", event);
+              console.log("event", getProfileFromFeature(event.annotation));
+            }}
             positions={[
               [126.843684, 35.190616],
               [126.840476, 35.190219],
@@ -158,11 +175,6 @@ function App() {
           <FullScreenFeature />
           <DrawingTools onCanvas />
         </ControlSection>
-        {/* <CaptureMap
-          onCaptured={(img) => {
-            console.log("img", img);
-          }}
-        /> */}
       </MapContainer>
     </div>
   );

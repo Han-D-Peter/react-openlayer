@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks";
 import VectorLayer from "ol/layer/Vector";
@@ -15,10 +16,11 @@ export interface SelectedFeatureProps {
 
 export function SelectedFeature({ feature }: SelectedFeatureProps) {
   const map = useMap();
+  const markerSourceRef = useRef(new VectorSource());
   const markerLayerRef = useRef<VectorLayer<VectorSource<Geometry>>>(
     new VectorLayer({
       zIndex: 1000,
-      source: new VectorSource(),
+      source: markerSourceRef.current,
       // Add your desired style for the markers here
     })
   );
@@ -33,10 +35,12 @@ export function SelectedFeature({ feature }: SelectedFeatureProps) {
       map.addLayer(markerLayer);
     }
     if (!feature) {
+      markerSourceRef.current.clear();
       map.removeLayer(markerLayer);
     }
     return () => {
       if (feature) {
+        markerSourceRef.current.clear();
         map.removeLayer(markerLayer);
       }
     };
