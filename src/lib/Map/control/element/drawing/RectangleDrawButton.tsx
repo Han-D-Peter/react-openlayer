@@ -77,6 +77,10 @@ export function RectangleDrawButton({
 
   const drawing = (event: DrawEvent) => {
     const geometry = event.feature.getGeometry() as Polygon;
+    // openlayers 가 사각형을 그릴때 4점이 아니라 5점을 그리는 부분 있어서 수정
+    const coord = geometry.getCoordinates()[0];
+    coord.pop();
+    geometry.setCoordinates([coord]);
 
     event.feature.setStyle(
       new Style({

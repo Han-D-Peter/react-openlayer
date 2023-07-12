@@ -107,6 +107,16 @@ function App() {
               [126.840868, 35.190581],
             ]}
           ></CustomPolyLine>
+          <CustomRectangle
+            positions={[
+              [
+                [126.840684, 35.190219],
+                [126.840476, 35.190219],
+                [126.840476, 35.190133],
+                [126.840684, 35.190133],
+              ],
+            ]}
+          ></CustomRectangle>
         </LayerGroup>
 
         {isShown && (
