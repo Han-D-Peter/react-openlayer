@@ -16,6 +16,7 @@ import { useHoverCursor } from "./hooks/incontext/useHoverCursor";
 import { FeatureStore } from "./FeatureStore";
 import { boundingExtent } from "ol/extent";
 import "ol/ol.css";
+import { DoubleClickZoom } from "ol/interaction";
 
 export type Lng = number;
 export type Lat = number;
@@ -172,6 +173,11 @@ export const MapContainer = memo(
 
       useLayoutEffect(() => {
         const mapRef = mapObj.current;
+        mapRef.getInteractions().forEach((interaction) => {
+          if (interaction instanceof DoubleClickZoom) {
+            interaction.setActive(false);
+          }
+        });
         const defaultZoomControl = mapRef
           .getControls()
           .getArray()
