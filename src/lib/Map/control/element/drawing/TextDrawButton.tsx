@@ -39,7 +39,7 @@ export function TextDrawButton({
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
-      source: vectorSourceRef.current,
+      source: onCanvas ? vectorSourceRef.current : undefined,
       type: "Point",
       style: new Style({
         text: new Text({
@@ -59,6 +59,30 @@ export function TextDrawButton({
       }),
     })
   );
+
+  useEffect(() => {
+    drawRef.current = new Draw({
+      source: onCanvas ? vectorSourceRef.current : undefined,
+      type: "Point",
+      style: new Style({
+        text: new Text({
+          text: "unknown",
+          font: "15px Arial",
+          fill: new Fill({
+            color: "black",
+          }),
+          overflow: true,
+          offsetX: 0,
+          offsetY: -15,
+          stroke: new Stroke({
+            color: "white",
+            width: 3,
+          }),
+        }),
+      }),
+    });
+  }, [onCanvas]);
+
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -99,7 +123,9 @@ export function TextDrawButton({
     if (onEnd) {
       onEnd(feature);
     }
-    selectFeature(feature);
+    if (onCanvas) {
+      selectFeature(feature);
+    }
     setTimeout(() => map.setProperties({ isDrawing: false }), 100);
   };
 

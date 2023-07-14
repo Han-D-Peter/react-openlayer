@@ -46,7 +46,7 @@ export function PolygonDrawButton({
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
-      source: vectorSourceRef.current,
+      source: onCanvas ? vectorSourceRef.current : undefined,
       type: "Polygon",
       style: new Style({
         stroke: new Stroke({
@@ -63,6 +63,26 @@ export function PolygonDrawButton({
       }),
     })
   );
+
+  useEffect(() => {
+    drawRef.current = new Draw({
+      source: onCanvas ? vectorSourceRef.current : undefined,
+      type: "Polygon",
+      style: new Style({
+        stroke: new Stroke({
+          color: "rgb(2, 26, 255)",
+          width: 2,
+        }),
+        fill: new Fill({
+          color: "rgba(2, 26, 255, 0.3)",
+        }),
+        image: new Icon({
+          src: "/images/polygon.svg", // 마커 이미지 경로
+          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+        }),
+      }),
+    });
+  }, [onCanvas]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -106,7 +126,9 @@ export function PolygonDrawButton({
     if (onEnd) {
       onEnd(feature);
     }
-    selectFeature(feature);
+    if (onCanvas) {
+      selectFeature(feature);
+    }
     setTimeout(() => map.setProperties({ isDrawing: false }), 100);
   };
 

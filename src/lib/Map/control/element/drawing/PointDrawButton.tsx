@@ -44,7 +44,7 @@ export function PointDrawButton({
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
-      source: vectorSourceRef.current,
+      source: onCanvas ? vectorSourceRef.current : undefined,
       type: "Point",
       style: new Style({
         text: makeText({
@@ -62,6 +62,27 @@ export function PointDrawButton({
       }),
     })
   );
+
+  useEffect(() => {
+    drawRef.current = new Draw({
+      source: onCanvas ? vectorSourceRef.current : undefined,
+      type: "Point",
+      style: new Style({
+        text: makeText({
+          text: "unknown",
+          size: 15,
+          color: "black",
+          outline: true,
+          isMarker: true,
+        }),
+        image: new Icon({
+          scale: 0.07,
+          src: icon.marker, // 마커 이미지 경로
+          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+        }),
+      }),
+    });
+  }, [onCanvas]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -104,7 +125,9 @@ export function PointDrawButton({
     if (onEnd) {
       onEnd(feature);
     }
-    selectFeature(feature);
+    if (onCanvas) {
+      selectFeature(feature);
+    }
     setTimeout(() => map.setProperties({ isDrawing: false }), 100);
   };
 

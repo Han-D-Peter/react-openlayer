@@ -87,6 +87,9 @@ export function MultiPointDrawButton({
     if (onEnd) {
       onEnd(features);
     }
+    if (!onCanvas) {
+      vectorSourceRef.current.clear();
+    }
     setFeatures([]);
     map.removeInteraction(drawRef.current);
     setTimeout(() => map.setProperties({ isDrawing: false }), 100);
@@ -110,12 +113,8 @@ export function MultiPointDrawButton({
   }, [props.isActive, map]);
 
   useEffect(() => {
-    if (onCanvas) {
-      map.addLayer(vectorLayerRef.current);
-    } else {
-      map.removeLayer(vectorLayerRef.current);
-    }
-  }, [onCanvas, map]);
+    map.addLayer(vectorLayerRef.current);
+  }, [map]);
 
   useEffect(() => {
     features.forEach((feature, index) => {
