@@ -561,6 +561,9 @@ function PointDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
+  const {
+    selectFeature
+  } = useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({
     zIndex: 1
@@ -625,6 +628,7 @@ function PointDrawButton(_a) {
     if (onEnd) {
       onEnd(feature);
     }
+    selectFeature(feature);
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -707,7 +711,9 @@ function PolygonDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onStart", "onClick", "onCanvas"]);
   const map = useMap();
-  useFeatureStore();
+  const {
+    selectFeature
+  } = useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({
     zIndex: 1
@@ -772,6 +778,7 @@ function PolygonDrawButton(_a) {
     if (onEnd) {
       onEnd(feature);
     }
+    selectFeature(feature);
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -841,6 +848,9 @@ function PolylineDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
+  const {
+    selectFeature
+  } = useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({
     zIndex: 1
@@ -905,6 +915,7 @@ function PolylineDrawButton(_a) {
     if (onEnd) {
       onEnd(feature);
     }
+    selectFeature(feature);
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -973,6 +984,9 @@ function RectangleDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
+  const {
+    selectFeature
+  } = useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({
     zIndex: 1
@@ -1010,6 +1024,10 @@ function RectangleDrawButton(_a) {
   };
   const drawing = event => {
     const geometry = event.feature.getGeometry();
+    // openlayers 가 사각형을 그릴때 4점이 아니라 5점을 그리는 부분 있어서 수정
+    const coord = geometry.getCoordinates()[0];
+    coord.pop();
+    geometry.setCoordinates([coord]);
     event.feature.setStyle(new Style({
       stroke: new Stroke$1({
         color: "rgb(2, 26, 255)",
@@ -1037,6 +1055,7 @@ function RectangleDrawButton(_a) {
     if (onEnd) {
       onEnd(event.feature);
     }
+    selectFeature(event.feature);
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -1106,6 +1125,9 @@ function TextDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
   const map = useMap();
+  const {
+    selectFeature
+  } = useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({
     zIndex: 1
@@ -1169,6 +1191,7 @@ function TextDrawButton(_a) {
     if (onEnd) {
       onEnd(feature);
     }
+    selectFeature(feature);
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -45179,9 +45202,10 @@ function SelectedFeature({
   feature
 }) {
   const map = useMap();
+  const markerSourceRef = useRef(new VectorSource());
   const markerLayerRef = useRef(new VectorLayer({
     zIndex: 1000,
-    source: new VectorSource()
+    source: markerSourceRef.current
     // Add your desired style for the markers here
   }));
 
@@ -45193,10 +45217,12 @@ function SelectedFeature({
       map.addLayer(markerLayer);
     }
     if (!feature) {
+      markerSourceRef.current.clear();
       map.removeLayer(markerLayer);
     }
     return () => {
       if (feature) {
+        markerSourceRef.current.clear();
         map.removeLayer(markerLayer);
       }
     };
@@ -45425,29 +45451,11 @@ function FeatureStore({
       const reversedFeture = map.getFeaturesAtPixel(pixel).reverse();
       reversedFeture.forEach(feature => {
         if (!feature.getProperties().shape) return;
-        const isMultiPoint = feature.getProperties().source.getFeatures().length > 1;
         // 이미 선택한 마커 또 선택하면 해제
         if (selectedFeature === feature) {
-          if (!isMultiPoint) {
-            selectedFeatureStyleRef.current.makeUnSelectingStyle(selectedFeature === feature);
-            unSelectFeature();
-          } else {
-            selectedFeatureStyleRef.current.makeUnSelectingsStyle();
-            unSelectFeature();
-          }
-          // 처음 선택이라면 셀렉트
+          unSelectFeature();
         } else {
-          if (feature.getProperties().source && !isMultiPoint) {
-            selectedFeatureStyleRef.current.makeSelectingStyle(feature);
-            selectFeature(feature);
-          } else if (feature.getProperties().source && isMultiPoint) {
-            const multiPointSource = feature.getProperties().source;
-            const multiPointFeatures = multiPointSource.getFeatures();
-            selectedFeatureStyleRef.current.makeUnSelectingStyle();
-            selectedFeatureStyleRef.current.makeUnSelectingsStyle();
-            selectedFeatureStyleRef.current.makeSelectingsStyle(multiPointFeatures);
-            selectFeature(feature);
-          }
+          selectFeature(feature);
         }
       });
     };
@@ -45455,7 +45463,26 @@ function FeatureStore({
     return () => {
       map.un("click", onClick);
     };
-  }, [selectedFeature, map]);
+  }, [map, selectedFeature]);
+  useEffect(() => {
+    const feature = selectedFeature;
+    // 선택 해제
+    if (!feature) {
+      if (lodashExports.isArray(selectedFeatureStyleRef.current.currentFeature)) {
+        selectedFeatureStyleRef.current.makeUnSelectingsStyle();
+      } else {
+        selectedFeatureStyleRef.current.makeUnSelectingStyle();
+      }
+      return;
+    }
+    if (feature.getProperties()["shape"] !== "MultiPoint") {
+      selectedFeatureStyleRef.current.makeSelectingStyle(feature);
+    } else {
+      const multiPointSource = feature.getProperties().source;
+      const multiPointFeatures = multiPointSource.getFeatures();
+      selectedFeatureStyleRef.current.makeSelectingsStyle(multiPointFeatures);
+    }
+  }, [selectedFeature]);
   return jsxs(FeatureContext.Provider, Object.assign({
     value: providerValue
   }, {
