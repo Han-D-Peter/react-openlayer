@@ -23,14 +23,14 @@ export function DeleteAnnotation(props: DeleteAnnotationProps) {
       const selectedFeatures = event.selected;
       selectFeature(null);
 
-      selectedFeatures.forEach((selectedFeature) => {
-        if (selectedFeature.getGeometry()) {
-          const vectorSource = selectedFeature.getProperties()
-            .source as VectorSource;
+      const target = selectedFeatures.find((selectedFeature) =>
+        selectedFeature.getGeometry()
+      );
 
-          vectorSource.clear();
-        }
-      });
+      if (target) {
+        const vectorSource = target.getProperties().source as VectorSource;
+        vectorSource.removeFeature(target);
+      }
     },
     [selectFeature]
   );
