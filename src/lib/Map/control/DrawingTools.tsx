@@ -12,6 +12,9 @@ import { DeleteAnnotation } from "./element/function/DeleteAnnotation";
 import { MultiPointDrawButton } from "./element/drawing/MultiPointDrawButton";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+import { SelectEvent } from "ol/interaction/Select";
+import { TranslateEvent } from "ol/interaction/Translate";
+import { ModifyEvent } from "ol/interaction/Modify";
 
 export interface DrawingToolsProps {
   multiMarker?: boolean;
@@ -24,6 +27,9 @@ export interface DrawingToolsProps {
   edit?: boolean;
   movement?: boolean;
   remove?: boolean;
+  onDelete?: (event: SelectEvent) => void;
+  onMove?: (event: TranslateEvent) => void;
+  onModify?: (event: ModifyEvent) => void;
   onDrawEnd?: (event: Feature<Geometry> | Feature<Geometry>[]) => void;
   onCanvas?: boolean;
 }
@@ -40,6 +46,9 @@ export function DrawingTools({
   remove = true,
   onCanvas = false,
   onDrawEnd,
+  onDelete,
+  onMove,
+  onModify,
 }: DrawingToolsProps) {
   const [isSelected, setIsSelected] = useState<number | null>(null);
 
@@ -129,6 +138,7 @@ export function DrawingTools({
             onClick={() => {
               switchControl(6);
             }}
+            onChange={onModify}
           />
         )}
         {movement && (
@@ -137,6 +147,7 @@ export function DrawingTools({
             onClick={() => {
               switchControl(7);
             }}
+            onChange={onMove}
           />
         )}
         {remove && (
@@ -145,6 +156,7 @@ export function DrawingTools({
             onClick={() => {
               switchControl(8);
             }}
+            onChange={onDelete}
           />
         )}
       </ControlGroup>
