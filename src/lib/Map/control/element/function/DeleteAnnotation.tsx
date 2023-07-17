@@ -30,9 +30,12 @@ export function DeleteAnnotation(props: DeleteAnnotationProps) {
       if (target) {
         const vectorSource = target.getProperties().source as VectorSource;
         vectorSource.removeFeature(target);
+        if (props.onChange) {
+          props.onChange(event);
+        }
       }
     },
-    [selectFeature]
+    [props.onChange, selectFeature]
   );
 
   useEffect(() => {
