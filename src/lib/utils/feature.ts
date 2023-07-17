@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import { Coordinate } from "ol/coordinate";
-import { Geometry, MultiPoint } from "ol/geom";
+import { Geometry, LineString, MultiPoint, Point, Polygon } from "ol/geom";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { ANNOTATION_COLOR } from "../Map/constants";
 import { makeText } from "../Map";
@@ -40,4 +40,26 @@ export const makeSelectedFeature = (nomalizedCoordinates: Coordinate[]) => {
     });
 
   return features;
+};
+
+export const positionsFromFeature = (feature: Feature<Geometry>) => {
+  const geometry = feature.getGeometry();
+  if (geometry instanceof Polygon) {
+    return geometry.getCoordinates();
+  }
+  if (geometry instanceof LineString) {
+    return geometry.getCoordinates();
+  }
+  if (geometry instanceof Point) {
+    return geometry.getFirstCoordinate();
+  }
+  if (geometry instanceof MultiPoint) {
+    return geometry.getFirstCoordinate();
+  }
+};
+
+export const positionsFromMultiPointFeatures = (
+  features: Feature<Geometry>[]
+) => {
+  return features.map((feat) => positionsFromFeature(feat));
 };
