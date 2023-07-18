@@ -36,6 +36,7 @@ export function MultiPointDrawButton({
   onClick,
   onCanvas = false,
   onStart,
+  isActive,
   ...props
 }: MultiPointDrawButtonProps) {
   const map = useMap();
@@ -107,10 +108,10 @@ export function MultiPointDrawButton({
   }, [features]);
 
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
 
   useEffect(() => {
     map.addLayer(vectorLayerRef.current);

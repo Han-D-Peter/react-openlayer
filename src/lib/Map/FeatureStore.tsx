@@ -40,30 +40,31 @@ export function FeatureStore({
 
   const selectedFeatureStyleRef = useRef<SelectStyle>(new SelectStyle());
 
-  useEffect(() => {
-    const onClick = (e: MapBrowserEvent<any>) => {
-      const mapProperties = map.getProperties();
-      if (mapProperties["isDrawing"] === true) {
-        return;
+  const onClick = (e: MapBrowserEvent<any>) => {
+    const mapProperties = map.getProperties();
+
+    if (mapProperties["isDrawing"] === true) {
+      return;
+    }
+
+    const pixel = e.pixel;
+
+    // 겹쳐있는 마커 위에서부터 선택되도록 리버스
+    const reversedFeture: FeatureLike[] = map
+      .getFeaturesAtPixel(pixel)
+      .reverse();
+
+    reversedFeture.forEach((feature) => {
+      if (!feature.getProperties().shape) return;
+      // 이미 선택한 마커 또 선택하면 해제
+      if (selectedFeature === feature) {
+        unSelectFeature();
+      } else {
+        selectFeature(feature as Feature<Geometry>);
       }
-
-      const pixel = e.pixel;
-
-      // 겹쳐있는 마커 위에서부터 선택되도록 리버스
-      const reversedFeture: FeatureLike[] = map
-        .getFeaturesAtPixel(pixel)
-        .reverse();
-
-      reversedFeture.forEach((feature) => {
-        if (!feature.getProperties().shape) return;
-        // 이미 선택한 마커 또 선택하면 해제
-        if (selectedFeature === feature) {
-          unSelectFeature();
-        } else {
-          selectFeature(feature as Feature<Geometry>);
-        }
-      });
-    };
+    });
+  };
+  useEffect(() => {
     map.on("click", onClick);
     return () => {
       map.un("click", onClick);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ControlGroup } from "./layout/ControlGroup";
 import { useState } from "react";
 import { PointDrawButton } from "./element/drawing/PointDrawButton";
@@ -15,6 +15,7 @@ import { Feature } from "ol";
 import { SelectEvent } from "ol/interaction/Select";
 import { TranslateEvent } from "ol/interaction/Translate";
 import { ModifyEvent } from "ol/interaction/Modify";
+import { useMap } from "../hooks";
 
 export interface DrawingToolsProps {
   multiMarker?: boolean;
@@ -53,10 +54,12 @@ export function DrawingTools({
   onDrawStart,
 }: DrawingToolsProps) {
   const [isSelected, setIsSelected] = useState<number | null>(null);
+  const map = useMap();
 
   const switchControl = (key: number) => {
     if (isSelected === key) {
       setIsSelected(null);
+      map.setProperties({ isDrawing: false });
     }
     if (isSelected !== key) {
       if (onDrawStart) onDrawStart();
@@ -70,6 +73,13 @@ export function DrawingTools({
     }
     setIsSelected(null);
   };
+
+  useEffect(() => {
+    if (!isSelected) {
+      map.setProperties({ isDrawing: false });
+    }
+  }, [isSelected, map]);
+
   return (
     <>
       <ControlGroup>
