@@ -57,9 +57,9 @@ export function DrawingTools({
   const switchControl = (key: number) => {
     if (isSelected === key) {
       setIsSelected(null);
-      if (onDrawStart) onDrawStart();
     }
     if (isSelected !== key) {
+      if (onDrawStart) onDrawStart();
       setIsSelected(key);
     }
   };
