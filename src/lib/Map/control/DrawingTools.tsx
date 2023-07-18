@@ -27,6 +27,7 @@ export interface DrawingToolsProps {
   edit?: boolean;
   movement?: boolean;
   remove?: boolean;
+  onDrawStart?: () => void;
   onDelete?: (event: SelectEvent) => void;
   onMove?: (event: TranslateEvent) => void;
   onModify?: (event: ModifyEvent) => void;
@@ -49,12 +50,14 @@ export function DrawingTools({
   onDelete,
   onMove,
   onModify,
+  onDrawStart,
 }: DrawingToolsProps) {
   const [isSelected, setIsSelected] = useState<number | null>(null);
 
   const switchControl = (key: number) => {
     if (isSelected === key) {
       setIsSelected(null);
+      if (onDrawStart) onDrawStart();
     }
     if (isSelected !== key) {
       setIsSelected(key);

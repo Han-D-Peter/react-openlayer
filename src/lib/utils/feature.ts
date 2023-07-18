@@ -3,7 +3,7 @@ import { Coordinate } from "ol/coordinate";
 import { Geometry, LineString, MultiPoint, Point, Polygon } from "ol/geom";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { ANNOTATION_COLOR } from "../Map/constants";
-import { makeText } from "../Map";
+import { makeText, toLonLat } from "../Map";
 
 export const makeSelectedFeature = (nomalizedCoordinates: Coordinate[]) => {
   const multiPointGeometry = new MultiPoint(nomalizedCoordinates);
@@ -42,18 +42,33 @@ export const makeSelectedFeature = (nomalizedCoordinates: Coordinate[]) => {
   return features;
 };
 
-export const positionsFromFeature = (feature: Feature<Geometry>) => {
+export const positionsFromFeature = (
+  feature: Feature<Geometry>,
+  lonlat?: boolean
+) => {
   const geometry = feature.getGeometry();
   if (geometry instanceof Polygon) {
+    if (lonlat) {
+      return [geometry.getCoordinates()[0].map((coord) => toLonLat(coord))];
+    }
     return geometry.getCoordinates();
   }
   if (geometry instanceof LineString) {
+    if (lonlat) {
+      return geometry.getCoordinates().map((coord) => toLonLat(coord));
+    }
     return geometry.getCoordinates();
   }
   if (geometry instanceof Point) {
+    if (lonlat) {
+      return toLonLat(geometry.getFirstCoordinate());
+    }
     return geometry.getFirstCoordinate();
   }
   if (geometry instanceof MultiPoint) {
+    if (lonlat) {
+      return toLonLat(geometry.getFirstCoordinate());
+    }
     return geometry.getFirstCoordinate();
   }
 };
