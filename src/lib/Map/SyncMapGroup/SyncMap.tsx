@@ -27,11 +27,13 @@ export interface SyncMapProps {
 
   /**
    * @default "1000px"
+   * @description This value set height css value of style. (ex. 100%, 100px, 100vh)
    */
   height?: string;
 
   /**
    * @default "1000px"
+   * @description This value set width css value of style. (ex. 100%, 100px, 100vw)
    */
   width?: string;
   children?: ReactNode;
