@@ -72,6 +72,12 @@ export const CustomPolyLine = ({
     annotationStyleRef.current.setFill(
       new Fill({ color: ANNOTATION_COLOR[color].fill(opacity) })
     );
+    annotationStyleRef.current.setStroke(
+      new Stroke({
+        color: ANNOTATION_COLOR[color].stroke(opacity),
+        width: 2,
+      })
+    );
   }, [color]);
 
   const onHoverHandler = useCallback((event: SelectEvent) => {

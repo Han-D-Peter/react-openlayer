@@ -75,6 +75,12 @@ export const CustomCircle = ({
         color: ANNOTATION_COLOR[color].fill(opacity),
       })
     );
+    annotationStyleRef.current.setStroke(
+      new Stroke({
+        color: ANNOTATION_COLOR[color].stroke(opacity),
+        width: 2,
+      })
+    );
   }, [opacity, color]);
 
   const onHoverHandler = useCallback(
