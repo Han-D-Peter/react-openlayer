@@ -1,13 +1,17 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 import { ReactNode, useEffect, useRef } from "react";
 import { useMap } from "../../hooks";
 import { Control } from "ol/control";
 
 export interface ControlSectionProps {
   children?: ReactNode;
+  style?: CSSProperties;
 }
 
-export const ControlSection = ({ children }: ControlSectionProps) => {
+export const ControlSection = ({
+  children,
+  style = { position: "absolute", left: "10px" },
+}: ControlSectionProps) => {
   const map = useMap();
   const ref = useRef<HTMLDivElement>(null);
 
@@ -23,7 +27,7 @@ export const ControlSection = ({ children }: ControlSectionProps) => {
   }, [map]);
 
   return (
-    <div ref={ref} style={{ position: "absolute", left: "10px" }}>
+    <div ref={ref} style={style}>
       {children}
     </div>
   );
