@@ -16,10 +16,10 @@ export const makeSelectedFeature = (nomalizedCoordinates: Coordinate[]) => {
         image: new Circle({
           radius: 10,
           fill: new Fill({
-            color: ANNOTATION_COLOR["SELECT"].stroke, // 원의 색상
+            color: ANNOTATION_COLOR["SELECT"].stroke(), // 원의 색상
           }),
           stroke: new Stroke({
-            color: ANNOTATION_COLOR["SELECT"].stroke, // 테두리 선의 색상
+            color: ANNOTATION_COLOR["SELECT"].stroke(), // 테두리 선의 색상
             width: 2,
           }),
         }),

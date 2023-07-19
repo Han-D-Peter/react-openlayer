@@ -29,7 +29,7 @@ export class SelectStyle implements SelectStyleImpl {
     const currentStyle = (feature.getStyle() as Style).clone();
     currentStyle.setStroke(
       new Stroke({
-        color: ANNOTATION_COLOR["SELECT"].stroke,
+        color: ANNOTATION_COLOR["SELECT"].stroke(),
         width: 2,
       })
     );
@@ -61,7 +61,7 @@ export class SelectStyle implements SelectStyleImpl {
 
       imageStyle.setStroke(
         new Stroke({
-          color: ANNOTATION_COLOR["SELECT"].stroke,
+          color: ANNOTATION_COLOR["SELECT"].stroke(),
           width: 2,
         })
       );

@@ -96,7 +96,7 @@ export function CustomMultiPoint({
             color: ANNOTATION_COLOR[color].fill(opacity), // 원의 색상
           }),
           stroke: new Stroke({
-            color: ANNOTATION_COLOR[color].stroke, // 테두리 선의 색상
+            color: ANNOTATION_COLOR[color].stroke(opacity), // 테두리 선의 색상
             width: 2,
           }),
         }),

@@ -126,7 +126,7 @@ export function MultiPointDrawButton({
             color: ANNOTATION_COLOR.BLUE.fill(1), // 원의 색상
           }),
           stroke: new Stroke({
-            color: ANNOTATION_COLOR.BLUE.stroke, // 테두리 선의 색상
+            color: ANNOTATION_COLOR.BLUE.stroke(1), // 테두리 선의 색상
             width: 2,
           }),
         }),

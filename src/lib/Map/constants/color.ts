@@ -1,30 +1,30 @@
 export const ANNOTATION_COLOR = {
   RED: {
-    fill: (opcity: number) => `rgba(248, 7, 1, ${0.3 * opcity})`,
-    stroke: "rgb(248, 7, 1)",
+    fill: (opacity: number) => `rgba(248, 7, 1, ${0.3 * opacity})`,
+    stroke: (opacity: number) => `rgba(248, 7, 1, ${opacity})`,
   },
   YELLOW: {
-    fill: (opcity: number) => `rgba(255, 254, 0, ${0.3 * opcity})`,
-    stroke: "rgb(255, 254, 0)",
+    fill: (opacity: number) => `rgba(255, 254, 0, ${0.3 * opacity})`,
+    stroke: (opacity: number) => `rgba(255, 254, 0, ${opacity})`,
   },
   GREEN: {
-    fill: (opcity: number) => `rgba(30, 128, 0, ${0.3 * opcity})`,
-    stroke: "rgb(30, 128, 0)",
+    fill: (opacity: number) => `rgba(30, 128, 0, ${0.3 * opacity})`,
+    stroke: (opacity: number) => `rgba(30, 128, 0, ${opacity})`,
   },
   SKYBLUE: {
-    fill: (opcity: number) => `rgba(135, 206, 235, ${0.3 * opcity})`,
-    stroke: "rgb(135, 206, 235)",
+    fill: (opacity: number) => `rgba(135, 206, 235, ${0.3 * opacity})`,
+    stroke: (opacity: number) => `rgba(135, 206, 235, ${opacity})`,
   },
   BLUE: {
-    fill: (opcity: number) => `rgba(2, 26, 255, ${0.3 * opcity})`,
-    stroke: "rgb(2, 26, 255)",
+    fill: (opacity: number) => `rgba(2, 26, 255, ${0.3 * opacity})`,
+    stroke: (opacity: number) => `rgba(2, 26, 255, ${opacity})`,
   },
   BROWN: {
-    fill: (opcity: number) => `rgba(165, 42, 42, ${0.3 * opcity})`,
-    stroke: "rgb(165, 42, 42)",
+    fill: (opacity: number) => `rgba(165, 42, 42, ${0.3 * opacity})`,
+    stroke: (opacity: number) => `rgba(165, 42, 42, ${opacity})`,
   },
   SELECT: {
     fill: () => "rgba(1, 1, 1, 0.5)",
-    stroke: "rgb(1, 1, 1)",
+    stroke: () => "rgb(1, 1, 1)",
   },
 };

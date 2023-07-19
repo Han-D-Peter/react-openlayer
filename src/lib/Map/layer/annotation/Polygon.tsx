@@ -49,7 +49,7 @@ export const CustomPolygon = ({
   const annotationStyleRef = useRef(
     new Style({
       stroke: new Stroke({
-        color: ANNOTATION_COLOR[color].stroke,
+        color: ANNOTATION_COLOR[color].stroke(opacity),
         width: 2,
       }),
       fill: new Fill({
