@@ -27,6 +27,7 @@ export const TextMarker = ({
   onClick,
   onHover,
   children,
+  opacity,
   zIndex = 0,
 }: TextMarkerProps) => {
   const map = useMap();
@@ -69,7 +70,7 @@ export const TextMarker = ({
           offsetY: -15,
           stroke: children?.props.outline
             ? new Stroke({
-                color: "white",
+                color: `rgba(255,255,255,${opacity})`,
                 width: 3,
               })
             : undefined,
@@ -145,6 +146,6 @@ export const TextMarker = ({
       map.removeInteraction(clickSelect);
       map.removeLayer(vectorLayer);
     };
-  }, [color, children, map, onHover, properties, onClick]);
+  }, [color, children, map, onHover, properties, onClick, opacity]);
   return <></>;
 };

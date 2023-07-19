@@ -29,6 +29,7 @@ export const CustomMarker = ({
   onHover,
   zIndex = 0,
   selected = false,
+  opacity = 1,
   children,
 }: CustomMarkerProps) => {
   const map = useMap();
@@ -151,6 +152,20 @@ export const CustomMarker = ({
     }
     annotationRef.current.setStyle(annotationStyleRef.current);
   }, [selected]);
+
+  useEffect(() => {
+    if (opacity) {
+      annotationStyleRef.current.setImage(
+        new Icon({
+          opacity,
+          src: icon.selected, // 마커 이미지 경로
+          scale: 0.07,
+          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+        })
+      );
+      annotationRef.current.setStyle(annotationStyleRef.current);
+    }
+  }, [opacity]);
 
   useEffect(() => {
     const newLayer = new VectorLayer({
