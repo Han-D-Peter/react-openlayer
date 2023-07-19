@@ -2,7 +2,6 @@ import { ReactNode, useCallback, useEffect, useId, useRef } from "react";
 import { defaults as defaultControls } from "ol/control";
 import { Location } from "../MapContainer";
 import { Map } from "ol";
-import BaseEvent from "ol/events/Event";
 import { fromLonLat, toLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -44,8 +43,8 @@ export const SyncMap = ({
   center = [127.9745613, 37.3236563],
   zoomLevel = 15,
   children,
-  height,
-  width,
+  height = "500px",
+  width = "500px",
 }: SyncMapProps) => {
   const id = useId();
   const mapId = `react-openlayers-map-${id}`;
@@ -65,7 +64,7 @@ export const SyncMap = ({
     })
   );
 
-  const { adjustCenter, adjustZoomLevel } = useSyncMapContext();
+  const { adjustCenter, onWheelHandler } = useSyncMapContext();
 
   const onMouseUpOnMap = useCallback(() => {
     if (!isDecoupled) {
@@ -84,18 +83,10 @@ export const SyncMap = ({
 
   useEffect(() => {
     const mapRef = mapObj.current;
-    const onZoomChange = (event: BaseEvent) => {
-      if (!isDecoupled) {
-        const zoomLevelFromEvent = event.target.getView().getZoom();
-        adjustZoomLevel(zoomLevelFromEvent as number);
-      }
-    };
 
     mapRef.setTarget(mapId);
-    mapRef.on("moveend", onZoomChange);
 
     return () => {
-      mapRef.un("moveend", onZoomChange);
       mapRef.setTarget(undefined);
       mapRef.setLayers([]);
     };
@@ -105,6 +96,7 @@ export const SyncMap = ({
     <MapContext.Provider value={mapObj.current}>
       <div
         id={mapId}
+        onWheel={(e) => onWheelHandler(e, mapObj.current)}
         onMouseUp={onMouseUpOnMap}
         className="react-openlayers-map-container"
         style={{ width, height }}
