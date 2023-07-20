@@ -44,7 +44,7 @@ const StyledButton = styled.button<{
   ${({ active }) =>
     active &&
     css`
-      box-shadow: inset 0 0 5px;
+      box-shadow: inset 0 0 5px black;
     `}
   width: 30px;
   height: 30px;
