@@ -85,7 +85,7 @@ export function MultiPointDrawButton({
   };
 
   const completeDrawing = () => {
-    if (onEnd) {
+    if (onEnd && features.length > 0) {
       onEnd(features);
     }
     if (!onCanvas) {
