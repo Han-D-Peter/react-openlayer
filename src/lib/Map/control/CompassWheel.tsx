@@ -123,6 +123,7 @@ export const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
             border: "1px solid #858484",
             borderRadius: "3px",
             paddingBottom: "3px",
+            color: "black",
           }}
           onClick={resetValue}
         >
@@ -150,7 +151,7 @@ export const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
             }}
             type="number"
             name="degree"
-            style={{ width: "53px" }}
+            style={{ width: "53px", color: "black" }}
           />
         </form>
       </div>
