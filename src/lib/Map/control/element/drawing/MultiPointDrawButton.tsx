@@ -157,6 +157,7 @@ export function MultiPointDrawButton({
           completeDrawing();
         }
       }}
+      isActive={isActive}
       {...props}
     >
       <MultiPointIcon />
