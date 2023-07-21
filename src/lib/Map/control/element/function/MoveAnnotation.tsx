@@ -12,7 +12,10 @@ export interface MoveAnnotationProps extends ButtonProps {
   onMoveChange?: (e: TranslateEvent) => void;
 }
 
-export function MoveAnnotation(props: MoveAnnotationProps) {
+export function MoveAnnotation({
+  onMoveChange,
+  ...props
+}: MoveAnnotationProps) {
   const translateInteractionRef = useRef<Translate | null>(null);
   const clickedAnnotation = useSelectAnnotation();
   const map = useMap();
@@ -22,8 +25,8 @@ export function MoveAnnotation(props: MoveAnnotationProps) {
   const isActive = buttonId === selectedButtonId;
 
   const onMoveEnd = useCallback((event: TranslateEvent) => {
-    if (props.onMoveChange) {
-      props.onMoveChange(event);
+    if (onMoveChange) {
+      onMoveChange(event);
     }
   }, []);
 

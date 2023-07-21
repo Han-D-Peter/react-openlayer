@@ -13,7 +13,10 @@ export interface DeleteAnnotationProps extends ButtonProps {
   onDeleteChange?: (e: SelectEvent) => void;
 }
 
-export function DeleteAnnotation(props: DeleteAnnotationProps) {
+export function DeleteAnnotation({
+  onDeleteChange,
+  ...props
+}: DeleteAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
   const { selectFeature } = useFeatureStore();
   const map = useMap();
@@ -35,13 +38,13 @@ export function DeleteAnnotation(props: DeleteAnnotationProps) {
       if (target) {
         const vectorSource = target.getProperties().source as VectorSource;
         vectorSource.removeFeature(target);
-        if (props.onDeleteChange) {
-          props.onDeleteChange(event);
+        if (onDeleteChange) {
+          onDeleteChange(event);
         }
         selectButton("");
       }
     },
-    [props.onDeleteChange, selectFeature]
+    [onDeleteChange, selectFeature]
   );
 
   useEffect(() => {

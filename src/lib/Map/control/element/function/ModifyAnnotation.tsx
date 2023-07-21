@@ -13,7 +13,10 @@ export interface ModifyAnnotationProps extends ButtonProps {
   onModifyChange?: (e: ModifyEvent) => void;
 }
 
-export function ModifyAnnotation(props: ModifyAnnotationProps) {
+export function ModifyAnnotation({
+  onModifyChange,
+  ...props
+}: ModifyAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
 
   const modifyInteractionRef = useRef<Modify | null>(null);
@@ -38,8 +41,8 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
 
   const onModifyEnd = useCallback(
     (event: ModifyEvent) => {
-      if (props.onModifyChange) {
-        props.onModifyChange(event);
+      if (onModifyChange) {
+        onModifyChange(event);
       }
       const existProperties = clickedAnnotation.getProperties();
       clickedAnnotation.setProperties({
@@ -47,7 +50,7 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
         isModifying: true,
       });
     },
-    [clickedAnnotation, props.onModifyChange]
+    [clickedAnnotation, onModifyChange]
   );
 
   // 수정중임을 map 에 명시
