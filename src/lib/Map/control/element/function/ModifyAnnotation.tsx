@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useCallback, useEffect, useRef } from "react";
 import { Modify } from "ol/interaction";
@@ -7,9 +7,10 @@ import { Collection } from "ol";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { ModifyIcon } from "../../../constants/icons/ModifyIcon";
 import { useMap, useSelectAnnotation } from "../../../hooks";
+import { useControlSection } from "../../layout";
 
 export interface ModifyAnnotationProps extends ButtonProps {
-  onChange?: (e: ModifyEvent) => void;
+  onModifyChange?: (e: ModifyEvent) => void;
 }
 
 export function ModifyAnnotation(props: ModifyAnnotationProps) {
@@ -18,7 +19,10 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
   const modifyInteractionRef = useRef<Modify | null>(null);
 
   const map = useMap();
-
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const { selectButton, selectedButtonId } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const onModifyStart = useCallback(() => {
     if (clickedAnnotation) {
       const existProperties = clickedAnnotation.getProperties();
@@ -34,8 +38,8 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
 
   const onModifyEnd = useCallback(
     (event: ModifyEvent) => {
-      if (props.onChange) {
-        props.onChange(event);
+      if (props.onModifyChange) {
+        props.onModifyChange(event);
       }
       const existProperties = clickedAnnotation.getProperties();
       clickedAnnotation.setProperties({
@@ -43,17 +47,17 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
         isModifying: true,
       });
     },
-    [clickedAnnotation, props.onChange]
+    [clickedAnnotation, props.onModifyChange]
   );
 
   // 수정중임을 map 에 명시
   useEffect(() => {
     const existMapProperties = map.getProperties();
-    map.setProperties({ ...existMapProperties, isModifying: props.isActive });
-  }, [props.isActive]);
+    map.setProperties({ ...existMapProperties, isModifying: isActive });
+  }, [isActive]);
 
   useEffect(() => {
-    if (clickedAnnotation && props.isActive) {
+    if (clickedAnnotation && isActive) {
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
           features: new Collection([clickedAnnotation]),
@@ -61,6 +65,7 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
         });
         modifyInteractionRef.current.on("modifystart", onModifyStart);
         modifyInteractionRef.current.on("modifyend", onModifyEnd);
+
         map.addInteraction(modifyInteractionRef.current);
       }
     } else {
@@ -80,10 +85,21 @@ export function ModifyAnnotation(props: ModifyAnnotationProps) {
         modifyInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, props.isActive]);
+  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive]);
 
   return (
-    <Button {...props}>
+    <Button
+      id={buttonId}
+      onClick={() => {
+        if (isActive) {
+          selectButton("");
+        } else {
+          selectButton(buttonId);
+        }
+      }}
+      isActive={isActive}
+      {...props}
+    >
       <ModifyIcon />
     </Button>
   );

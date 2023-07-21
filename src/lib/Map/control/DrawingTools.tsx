@@ -72,7 +72,7 @@ export function DrawingTools({
     if (onDrawEnd) {
       onDrawEnd(event);
     }
-    setIsSelected(null);
+    // setIsSelected(null);
   };
 
   useEffect(() => {
@@ -86,60 +86,60 @@ export function DrawingTools({
       <ControlGroup>
         {multiMarker && (
           <MultiPointDrawButton
-            isActive={isSelected === "0"}
+            // isActive={isSelected === "0"}
             onEnd={endDrawing}
-            onClick={() => {
-              switchControl("0");
-            }}
+            // onClick={() => {
+            //   switchControl("0");
+            // }}
             onCanvas={onCanvas}
           />
         )}
         {marker && (
           <PointDrawButton
-            isActive={isSelected === "1"}
+            // isActive={isSelected === "1"}
             onEnd={endDrawing}
-            onClick={() => {
-              switchControl("1");
-            }}
+            // onClick={() => {
+            //   switchControl("1");
+            // }}
             onCanvas={onCanvas}
           />
         )}
         {polyline && (
           <PolylineDrawButton
-            isActive={isSelected === "2"}
-            onClick={() => {
-              switchControl("2");
-            }}
+            // isActive={isSelected === "2"}
+            // onClick={() => {
+            //   switchControl("2");
+            // }}
             onEnd={endDrawing}
             onCanvas={onCanvas}
           />
         )}
         {rectangle && (
           <RectangleDrawButton
-            isActive={isSelected === "3"}
-            onClick={() => {
-              switchControl("3");
-            }}
+            // isActive={isSelected === "3"}
+            // onClick={() => {
+            //   switchControl("3");
+            // }}
             onEnd={endDrawing}
             onCanvas={onCanvas}
           />
         )}
         {polygon && (
           <PolygonDrawButton
-            isActive={isSelected === "4"}
-            onClick={() => {
-              switchControl("4");
-            }}
+            // isActive={isSelected === "4"}
+            // onClick={() => {
+            //   switchControl("4");
+            // }}
             onEnd={endDrawing}
             onCanvas={onCanvas}
           />
         )}
         {text && (
           <TextDrawButton
-            isActive={isSelected === "5"}
-            onClick={() => {
-              switchControl("5");
-            }}
+            // isActive={isSelected === "5"}
+            // onClick={() => {
+            //   switchControl("5");
+            // }}
             onEnd={endDrawing}
             onCanvas={onCanvas}
           />
@@ -148,29 +148,29 @@ export function DrawingTools({
       <ControlGroup>
         {edit && (
           <ModifyAnnotation
-            isActive={isSelected === "6"}
-            onClick={() => {
-              switchControl("6");
-            }}
-            onChange={onModify}
+            // isActive={isSelected === "6"}
+            // onClick={() => {
+            //   switchControl("6");
+            // }}
+            onModifyChange={onModify}
           />
         )}
         {movement && (
           <MoveAnnotation
-            isActive={isSelected === "7"}
-            onClick={() => {
-              switchControl("7");
-            }}
-            onChange={onMove}
+            // isActive={isSelected === "7"}
+            // onClick={() => {
+            //   switchControl("7");
+            // }}
+            onMoveChange={onMove}
           />
         )}
         {remove && (
           <DeleteAnnotation
-            isActive={isSelected === "8"}
-            onClick={() => {
-              switchControl("8");
-            }}
-            onChange={onDelete}
+            // isActive={isSelected === "8"}
+            // onClick={() => {
+            //   switchControl("8");
+            // }}
+            onDeleteChange={onDelete}
           />
         )}
       </ControlGroup>

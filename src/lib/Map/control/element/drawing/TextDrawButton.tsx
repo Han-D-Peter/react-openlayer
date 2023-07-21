@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
@@ -13,6 +13,7 @@ import Stroke from "ol/style/Stroke";
 import { Geometry, Point } from "ol/geom";
 import { Feature } from "ol";
 import { TextIcon } from "../../../constants/icons/TextIcon";
+import { useControlSection } from "../../layout";
 
 export interface TextDrawButtonProps extends ButtonProps {
   /**
@@ -34,6 +35,10 @@ export function TextDrawButton({
   ...props
 }: TextDrawButtonProps) {
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const { selectButton, selectedButtonId } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
@@ -119,6 +124,7 @@ export function TextDrawButton({
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
+    selectButton("");
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
@@ -139,10 +145,10 @@ export function TextDrawButton({
   }, []);
 
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
 
   useEffect(() => {
     vectorLayerRef.current.setSource(vectorSourceRef.current);
@@ -154,7 +160,19 @@ export function TextDrawButton({
   }, [onCanvas, map]);
 
   return (
-    <Button onClick={startDrawing} {...props}>
+    <Button
+      id={buttonId}
+      onClick={() => {
+        if (isActive) {
+          selectButton("");
+        } else {
+          selectButton(buttonId);
+          startDrawing();
+        }
+      }}
+      isActive={isActive}
+      {...props}
+    >
       <TextIcon />
     </Button>
   );

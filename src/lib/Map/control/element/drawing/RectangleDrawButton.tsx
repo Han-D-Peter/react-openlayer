@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
@@ -14,6 +14,7 @@ import Icon from "ol/style/Icon";
 import { Geometry, Polygon } from "ol/geom";
 import { Feature } from "ol";
 import { RectangleIcon } from "../../../constants/icons/RectangleIcon";
+import { useControlSection } from "../../layout";
 
 export interface RectangleDrawButtonProps extends ButtonProps {
   /**
@@ -40,7 +41,11 @@ export function RectangleDrawButton({
   ...props
 }: RectangleDrawButtonProps) {
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const { selectButton, selectedButtonId } = useControlSection();
   const { selectFeature } = useFeatureStore();
+  const isActive = buttonId === selectedButtonId;
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
@@ -129,6 +134,8 @@ export function RectangleDrawButton({
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
+    selectButton("");
+
     map.removeInteraction(drawRef.current);
 
     if (onEnd) {
@@ -150,10 +157,10 @@ export function RectangleDrawButton({
   }, []);
 
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
 
   useEffect(() => {
     vectorLayerRef.current.setSource(vectorSourceRef.current);
@@ -165,7 +172,19 @@ export function RectangleDrawButton({
   }, [onCanvas, map]);
 
   return (
-    <Button onClick={startDrawing} {...props}>
+    <Button
+      id={buttonId}
+      onClick={() => {
+        if (isActive) {
+          selectButton("");
+        } else {
+          selectButton(buttonId);
+          startDrawing();
+        }
+      }}
+      isActive={isActive}
+      {...props}
+    >
       <RectangleIcon />
     </Button>
   );

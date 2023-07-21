@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Select } from "ol/interaction";
@@ -7,15 +7,20 @@ import VectorSource from "ol/source/Vector";
 import { EraserIcon } from "../../../constants/icons/EraserIcon";
 import { useMap, useSelectAnnotation } from "../../../hooks";
 import { useFeatureStore } from "src/lib/Map/hooks/incontext/useFeatureStore";
+import { useControlSection } from "../../layout";
 
 export interface DeleteAnnotationProps extends ButtonProps {
-  onChange?: (e: SelectEvent) => void;
+  onDeleteChange?: (e: SelectEvent) => void;
 }
 
 export function DeleteAnnotation(props: DeleteAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
   const { selectFeature } = useFeatureStore();
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const { selectButton, selectedButtonId } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const selectInteractionRef = useRef<Select | null>(null);
 
   const removeSelectedFeatures = useCallback(
@@ -30,19 +35,21 @@ export function DeleteAnnotation(props: DeleteAnnotationProps) {
       if (target) {
         const vectorSource = target.getProperties().source as VectorSource;
         vectorSource.removeFeature(target);
-        if (props.onChange) {
-          props.onChange(event);
+        if (props.onDeleteChange) {
+          props.onDeleteChange(event);
         }
+        selectButton("");
       }
     },
-    [props.onChange, selectFeature]
+    [props.onDeleteChange, selectFeature]
   );
 
   useEffect(() => {
-    if (props.isActive) {
+    if (isActive) {
       if (!selectInteractionRef.current) {
         selectInteractionRef.current = new Select();
         selectInteractionRef.current.on("select", removeSelectedFeatures);
+        selectButton(buttonId);
         map.addInteraction(selectInteractionRef.current);
       }
     } else {
@@ -52,7 +59,7 @@ export function DeleteAnnotation(props: DeleteAnnotationProps) {
         selectInteractionRef.current = null;
       }
     }
-  }, [map, props.isActive, removeSelectedFeatures]);
+  }, [map, isActive, removeSelectedFeatures]);
 
   useEffect(() => {
     if (selectInteractionRef.current && clickedAnnotation) {
@@ -62,7 +69,18 @@ export function DeleteAnnotation(props: DeleteAnnotationProps) {
   }, [clickedAnnotation]);
 
   return (
-    <Button {...props}>
+    <Button
+      id={buttonId}
+      onClick={() => {
+        if (!isActive) {
+          selectButton(buttonId);
+        } else {
+          selectButton("");
+        }
+      }}
+      isActive={isActive}
+      {...props}
+    >
       <EraserIcon />
     </Button>
   );

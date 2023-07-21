@@ -1,9 +1,9 @@
-import React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { ReactNode, forwardRef } from "react";
 
-export interface ButtonProps {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
   isDisabled?: boolean;
   onClick?: () => void;
@@ -64,6 +64,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       side = "middle",
       isDisabled = false,
       isActive = false,
+      ...props
     }: ButtonProps,
     ref
   ) => {
@@ -80,6 +81,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         side={side}
         isDisabled={isDisabled}
         active={isActive}
+        {...props}
       >
         {children}
       </StyledButton>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Draw } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
@@ -12,6 +12,7 @@ import { ANNOTATION_COLOR } from "../../../constants/color";
 import { useMap } from "../../../hooks";
 import { Button, ButtonProps } from "../Button";
 import { MultiPointIcon } from "../../../constants/icons/MultiPointIcon";
+import { useControlSection } from "../../layout";
 
 export interface MultiPointDrawButtonProps extends ButtonProps {
   /**
@@ -36,10 +37,14 @@ export function MultiPointDrawButton({
   onClick,
   onCanvas = false,
   onStart,
-  isActive,
   ...props
 }: MultiPointDrawButtonProps) {
   const map = useMap();
+
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const { selectButton, selectedButtonId } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(
     new VectorLayer({
@@ -55,11 +60,9 @@ export function MultiPointDrawButton({
   );
 
   const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
-  const [isDrawing, setIsDrawing] = useState(false);
-  // const [pointCount, setPointCount] = useState(1);
+  // const [isDrawing, setIsDrawing] = useState(false);
 
   const startDrawing = () => {
-    setIsDrawing(true);
     if (onClick) {
       onClick();
     }
@@ -94,7 +97,6 @@ export function MultiPointDrawButton({
     setFeatures([]);
     map.removeInteraction(drawRef.current);
     setTimeout(() => map.setProperties({ isDrawing: false }), 100);
-    setIsDrawing(false);
   };
 
   useEffect(() => {
@@ -150,14 +152,18 @@ export function MultiPointDrawButton({
 
   return (
     <Button
+      id={buttonId}
       onClick={() => {
-        if (!isDrawing) {
+        if (!isActive) {
           startDrawing();
+          selectButton(buttonId);
         } else {
           completeDrawing();
+          selectButton("");
         }
       }}
-      isActive={isActive}
+      // isActive={isActive}
+      isActive={selectedButtonId === buttonId}
       {...props}
     >
       <MultiPointIcon />

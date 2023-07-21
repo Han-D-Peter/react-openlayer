@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
@@ -14,6 +14,7 @@ import Icon from "ol/style/Icon";
 import { Feature } from "ol";
 import { Geometry, Polygon } from "ol/geom";
 import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
+import { useControlSection } from "../../layout";
 
 export interface PolygonDrawButtonProps extends ButtonProps {
   /**
@@ -41,6 +42,11 @@ export function PolygonDrawButton({
   ...props
 }: PolygonDrawButtonProps) {
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const { selectButton, selectedButtonId } = useControlSection();
+
+  const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
@@ -122,6 +128,7 @@ export function PolygonDrawButton({
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
+    selectButton("");
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
@@ -145,10 +152,10 @@ export function PolygonDrawButton({
   }, []);
 
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
 
   useEffect(() => {
     vectorLayerRef.current.setSource(vectorSourceRef.current);
@@ -160,7 +167,19 @@ export function PolygonDrawButton({
   }, [onCanvas, map]);
 
   return (
-    <Button onClick={startDrawing} {...props}>
+    <Button
+      id={buttonId}
+      onClick={() => {
+        if (isActive) {
+          selectButton("");
+        } else {
+          selectButton(buttonId);
+          startDrawing();
+        }
+      }}
+      isActive={isActive}
+      {...props}
+    >
       <PolygonIcon />
     </Button>
   );

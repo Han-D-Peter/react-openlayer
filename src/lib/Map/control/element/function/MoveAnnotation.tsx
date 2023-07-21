@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { useCallback, useEffect, useRef } from "react";
 import { Collection } from "ol";
 import { Translate } from "ol/interaction";
@@ -6,28 +6,34 @@ import { TranslateEvent } from "ol/interaction/Translate";
 import { Button, ButtonProps } from "../Button";
 import { useMap, useSelectAnnotation } from "../../../hooks";
 import { MovementIcon } from "../../../constants/icons/MovementIcon";
+import { useControlSection } from "../../layout";
 
 export interface MoveAnnotationProps extends ButtonProps {
-  onChange?: (e: TranslateEvent) => void;
+  onMoveChange?: (e: TranslateEvent) => void;
 }
 
 export function MoveAnnotation(props: MoveAnnotationProps) {
   const translateInteractionRef = useRef<Translate | null>(null);
   const clickedAnnotation = useSelectAnnotation();
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const { selectButton, selectedButtonId } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
 
   const onMoveEnd = useCallback((event: TranslateEvent) => {
-    if (props.onChange) {
-      props.onChange(event);
+    if (props.onMoveChange) {
+      props.onMoveChange(event);
     }
   }, []);
 
   useEffect(() => {
-    if (clickedAnnotation && props.isActive) {
+    if (clickedAnnotation && isActive) {
       translateInteractionRef.current = new Translate({
         features: new Collection([clickedAnnotation]),
       });
       translateInteractionRef.current.on("translateend", onMoveEnd);
+      selectButton(buttonId);
       map.addInteraction(translateInteractionRef.current);
     }
 
@@ -38,10 +44,21 @@ export function MoveAnnotation(props: MoveAnnotationProps) {
         translateInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, onMoveEnd, props.isActive]);
+  }, [buttonId, clickedAnnotation, map, onMoveEnd, isActive, selectButton]);
 
   return (
-    <Button {...props}>
+    <Button
+      id={buttonId}
+      onClick={() => {
+        if (isActive) {
+          selectButton("");
+        } else {
+          selectButton(buttonId);
+        }
+      }}
+      isActive={isActive}
+      {...props}
+    >
       <MovementIcon />
     </Button>
   );
