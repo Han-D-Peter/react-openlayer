@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks";
-import { FullScreen } from "ol/control";
+import { Control, FullScreen } from "ol/control";
 import { ControlGroup } from "./layout/ControlGroup";
 import { Button } from "./element/Button";
 import { useEffectIfMounted } from "../hooks/useEffectIfMounted";
@@ -23,20 +23,24 @@ const InnerButton = styled.div`
 
 export const FullScreenFeature = ({ onChange }: FullScreenFeatureProps) => {
   const map = useMap();
+
   const ref = useRef<HTMLButtonElement>(null);
   const onBtnRef = useRef<HTMLButtonElement | null>(null);
   const offBtnRef = useRef<HTMLButtonElement | null>(null);
   const [isFull, setIsFull] = useState(false);
 
   useEffectIfMounted(() => {
+    if (!map) return;
+    const targetMapId = map.getTargetElement().getAttribute("id") as string;
+
     onBtnRef.current = document.querySelector<HTMLButtonElement>(
-      ".ol-full-screen-false"
+      `#${CSS.escape(targetMapId)} .ol-full-screen-false`
     );
 
     offBtnRef.current = document.querySelector<HTMLButtonElement>(
-      ".ol-full-screen-true"
+      `#${CSS.escape(targetMapId)} .ol-full-screen-true`
     );
-  }, [isFull]);
+  }, [isFull, map]);
 
   const toggleFullScreen = () => {
     if (isFull) {
