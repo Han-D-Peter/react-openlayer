@@ -133,39 +133,17 @@ export const CustomMarker = ({
   }, [zIndex]);
 
   useEffect(() => {
-    if (selected) {
-      annotationStyleRef.current.setImage(
-        new Icon({
-          src: icon.selected, // 마커 이미지 경로
-          scale: 0.07,
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        })
-      );
-    } else {
-      annotationStyleRef.current.setImage(
-        new Icon({
-          src: icon.marker, // 마커 이미지 경로
-          scale: 0.07,
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        })
-      );
-    }
-    annotationRef.current.setStyle(annotationStyleRef.current);
-  }, [selected]);
+    annotationStyleRef.current.setImage(
+      new Icon({
+        opacity,
+        src: selected ? icon.selected : icon.marker, // 마커 이미지 경로
+        scale: 0.07,
+        anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+      })
+    );
 
-  useEffect(() => {
-    if (opacity) {
-      annotationStyleRef.current.setImage(
-        new Icon({
-          opacity,
-          src: icon.selected, // 마커 이미지 경로
-          scale: 0.07,
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        })
-      );
-      annotationRef.current.setStyle(annotationStyleRef.current);
-    }
-  }, [opacity]);
+    annotationRef.current.setStyle(annotationStyleRef.current);
+  }, [selected, opacity]);
 
   useEffect(() => {
     const newLayer = new VectorLayer({
