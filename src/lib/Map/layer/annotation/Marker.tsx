@@ -146,13 +146,16 @@ export const CustomMarker = ({
   }, [selected, opacity]);
 
   useEffect(() => {
-    const newLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
-    });
-    annotationLayerRef.current = newLayer;
+    if (!children?.props.color) return;
+    annotationStyleRef.current
+      .getText()
+      .getFill()
+      .setColor(children.props.color);
+
     annotationRef.current.setStyle(annotationStyleRef.current);
+  }, [color]);
+
+  useEffect(() => {
     annotationRef.current.setProperties({
       ...properties,
       shape: "Marker",
@@ -161,16 +164,15 @@ export const CustomMarker = ({
       layer: annotationLayerRef.current,
       hasPopup: children?.props.isPopup,
     });
+  }, [properties]);
 
-    annotationLayerRef.current.setZIndex(zIndex);
-
+  useEffect(() => {
     map.addLayer(annotationLayerRef.current);
-
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
       map.removeLayer(annotationLayerRef.current);
-      annotationLayerRef.current.getSource()?.clear();
+      // annotationLayerRef.current.getSource()?.clear();
     };
-  }, [color, children, map, onHover, properties, onClick]);
+  }, [map]);
   return <></>;
 };
