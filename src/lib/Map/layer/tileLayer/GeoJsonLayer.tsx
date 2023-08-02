@@ -131,6 +131,6 @@ export function GeoJsonLayer({
     return () => {
       map.removeLayer(vectorLayer);
     };
-  }, [map, geoJson]);
+  }, [map, geoJson, color]);
   return <></>;
 }
