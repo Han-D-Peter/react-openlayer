@@ -100,6 +100,11 @@ export function PolylineDrawButton({
     map.addInteraction(drawRef.current);
   };
 
+  const finishDrawingByRightClick = (e: MouseEvent) => {
+    e.preventDefault();
+    drawRef.current.finishDrawing();
+  };
+
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
     const geometry = feature.getGeometry() as LineString;
@@ -151,8 +156,14 @@ export function PolylineDrawButton({
   useEffect(() => {
     const drawingInstance = drawRef.current;
     drawingInstance.on("drawend", drawing);
+    map
+      .getViewport()
+      .addEventListener("contextmenu", finishDrawingByRightClick);
     return () => {
       drawingInstance.un("drawend", drawing);
+      map
+        .getViewport()
+        .removeEventListener("contextmenu", finishDrawingByRightClick);
     };
   }, []);
 
