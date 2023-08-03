@@ -108,6 +108,13 @@ export const MapContainer = memo(
     ) => {
       const id = useId();
       const mapId = `react-openlayers-map-${id}`;
+      const osmRef = useRef<TileLayer<OSM>>(
+        new TileLayer({
+          source: new OSM({
+            crossOrigin: "anonymous",
+          }),
+        })
+      );
       const mapObj = useRef<Map>(
         new Map({
           controls: defaultControls({
@@ -125,6 +132,14 @@ export const MapContainer = memo(
             : undefined,
         })
       );
+
+      useEffect(() => {
+        if (isShownOsm) {
+          mapObj.current.addLayer(osmRef.current);
+        } else {
+          mapObj.current.removeLayer(osmRef.current);
+        }
+      }, [isShownOsm]);
 
       useEffect(() => {
         if (mapObj.current) {
