@@ -113,6 +113,7 @@ export const MapContainer = memo(
           source: new OSM({
             crossOrigin: "anonymous",
           }),
+          zIndex: -1000,
         })
       );
       const mapObj = useRef<Map>(
@@ -121,15 +122,6 @@ export const MapContainer = memo(
             zoom: isZoomAbled,
             rotate: isRotateAbled,
           }).extend([]),
-          layers: isShownOsm
-            ? [
-                new TileLayer({
-                  source: new OSM({
-                    crossOrigin: "anonymous",
-                  }),
-                }),
-              ]
-            : undefined,
         })
       );
 
