@@ -8,9 +8,12 @@ export interface ControlGroupProps {
     | (boolean | ReactElement<typeof Button>)[];
 }
 export const ControlGroup = ({ children }: ControlGroupProps) => {
+  const onlyChildren = Children.toArray(children).filter((child) => child) as
+    | ReactElement<typeof Button>
+    | (boolean | ReactElement<typeof Button>)[];
   return (
     <div style={{ margin: "10px 0 10px 0 " }}>
-      {Children.map(children, (child, index) => {
+      {Children.map(onlyChildren, (child, index) => {
         if (typeof child === "boolean" || child === null) {
           return null;
         }
