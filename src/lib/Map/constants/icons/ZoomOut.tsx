@@ -2,7 +2,13 @@ import { SVGProps } from ".";
 
 export function ZoomOut({ color = "black", size = 18 }: SVGProps) {
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <svg
         stroke="currentColor"
         fill="currentColor"
