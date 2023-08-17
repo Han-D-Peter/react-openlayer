@@ -10,9 +10,14 @@ export type Size = "sm" | "md" | "lg";
 export interface CompassWheelProps {
   size?: Size;
   onWheel?: (degree: number) => void;
+  resetable?: boolean;
 }
 
-export const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
+export const CompassWheel = ({
+  size = "sm",
+  onWheel,
+  resetable = false,
+}: CompassWheelProps) => {
   const [rotationDegree, setRotate, resetRotation] = useMapRotation();
   const [mouseDown, setMouseDown] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -108,28 +113,30 @@ export const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
           />
         </div>
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "10px",
-        }}
-      >
-        <button
+      {resetable && (
+        <div
           style={{
-            width: "60px",
-            height: "20px",
-            background: "white",
-            border: "1px solid #858484",
-            borderRadius: "3px",
-            paddingBottom: "3px",
-            color: "black",
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "10px",
           }}
-          onClick={resetValue}
         >
-          reset
-        </button>
-      </div>
+          <button
+            style={{
+              width: "60px",
+              height: "20px",
+              background: "white",
+              border: "1px solid #858484",
+              borderRadius: "3px",
+              paddingBottom: "3px",
+              color: "black",
+            }}
+            onClick={resetValue}
+          >
+            reset
+          </button>
+        </div>
+      )}
       <div
         style={{
           marginTop: "px",
@@ -148,6 +155,7 @@ export const CompassWheel = ({ size = "sm", onWheel }: CompassWheelProps) => {
             value={rotation.toFixed(0)}
             onChange={(e) => {
               setRotation(Number(e.target.value));
+              setRotate(Number(e.target.value));
             }}
             type="number"
             name="degree"
