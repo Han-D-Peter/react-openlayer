@@ -68,6 +68,6 @@ export const TileLayer = ({
     return () => {
       map.removeLayer(customTmsLayer);
     };
-  }, [map, errorTileUrl]);
+  }, [map, errorTileUrl, zIndex, maxZoom, minZoom, crossOrigin, url]);
   return <></>;
 };
