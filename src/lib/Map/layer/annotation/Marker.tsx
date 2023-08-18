@@ -153,7 +153,21 @@ export const CustomMarker = ({
       .setColor(children.props.color);
 
     annotationRef.current.setStyle(annotationStyleRef.current);
-  }, [color]);
+  }, [color, children]);
+
+  useEffect(() => {
+    if (annotationLayerRef.current && children) {
+      annotationStyleRef.current.setText(
+        makeText({
+          text: children.props.children || "",
+          size: children.props.size || 15,
+          color: children.props.color ? children.props.color : "black",
+          outline: children.props.outline,
+          isMarker: true,
+        })
+      );
+    }
+  }, [children]);
 
   useEffect(() => {
     annotationRef.current.setProperties({
