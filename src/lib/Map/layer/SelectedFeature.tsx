@@ -54,7 +54,6 @@ export function SelectedFeature({ feature }: SelectedFeatureProps) {
 
       if (targetFeature?.getProperties().shape === "Polygon") {
         const coordinates = (targetGeometry as Polygon).getCoordinates();
-        coordinates[0].pop();
         nomalizedCoordinates = coordinates[0];
         setCoordinates(nomalizedCoordinates);
       }
