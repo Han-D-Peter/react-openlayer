@@ -94,6 +94,7 @@ export function SelectedFeature({ feature }: SelectedFeatureProps) {
 
       if (feature?.getProperties().shape === "Rectangle") {
         const coordinates = (geometry as Polygon).getCoordinates();
+        coordinates[0].pop();
         nomalizedCoordinates = coordinates[0];
         setCoordinates(nomalizedCoordinates);
       }
