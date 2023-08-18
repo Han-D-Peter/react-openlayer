@@ -11,12 +11,14 @@ export interface CompassWheelProps {
   size?: Size;
   onWheel?: (degree: number) => void;
   resetable?: boolean;
+  controller?: boolean;
 }
 
 export const CompassWheel = ({
   size = "sm",
   onWheel,
   resetable = false,
+  controller = false,
 }: CompassWheelProps) => {
   const [rotationDegree, setRotate, resetRotation] = useMapRotation();
   const [mouseDown, setMouseDown] = useState(false);
@@ -93,6 +95,7 @@ export const CompassWheel = ({
   return (
     <div ref={ref} style={{ position: "absolute", top: "10px", right: "10px" }}>
       <div
+        onClick={resetValue}
         onMouseDown={handleMouseDown}
         style={{
           zIndex: 1,
@@ -137,32 +140,34 @@ export const CompassWheel = ({
           </button>
         </div>
       )}
-      <div
-        style={{
-          marginTop: "px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            setRotate(rotation);
+      {controller && (
+        <div
+          style={{
+            marginTop: "px",
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
           }}
         >
-          <input
-            value={rotation.toFixed(0)}
-            onChange={(e) => {
-              setRotation(Number(e.target.value));
-              setRotate(Number(e.target.value));
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              setRotate(rotation);
             }}
-            type="number"
-            name="degree"
-            style={{ width: "53px", color: "black" }}
-          />
-        </form>
-      </div>
+          >
+            <input
+              value={rotation.toFixed(0)}
+              onChange={(e) => {
+                setRotation(Number(e.target.value));
+                setRotate(Number(e.target.value));
+              }}
+              type="number"
+              name="degree"
+              style={{ width: "53px", color: "black" }}
+            />
+          </form>
+        </div>
+      )}
     </div>
   );
 };
