@@ -70,7 +70,7 @@ export const TextMarker = ({
           offsetY: -15,
           stroke: children?.props.outline
             ? new Stroke({
-                color: `rgba(255,255,255,${opacity})`,
+                color: `white`,
                 width: 3,
               })
             : undefined,
