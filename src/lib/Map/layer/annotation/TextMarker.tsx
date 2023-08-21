@@ -63,7 +63,7 @@ export const TextMarker = ({
           text: children ? children.props.children : "",
           font: `${children?.props.size || 15}px Arial`, // 텍스트의 폰트 및 크기
           fill: new Fill({
-            color: children?.props.color ? children.props.color : "black", // 텍스트의 색상
+            color: children?.props.color ? children.props.color : "white", // 텍스트의 색상
           }),
           overflow: true,
           offsetX: 0,
