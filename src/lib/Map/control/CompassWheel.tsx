@@ -95,7 +95,7 @@ export const CompassWheel = ({
   return (
     <div ref={ref} style={{ position: "absolute", top: "10px", right: "10px" }}>
       <div
-        onClick={resetValue}
+        onDoubleClick={resetValue}
         onMouseDown={handleMouseDown}
         style={{
           zIndex: 1,
