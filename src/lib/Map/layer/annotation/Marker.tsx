@@ -156,7 +156,7 @@ export const CustomMarker = ({
   }, [color, children]);
 
   useEffect(() => {
-    if (annotationLayerRef.current && children) {
+    if (annotationLayerRef.current && children && !children.props.isPopup) {
       annotationStyleRef.current.setText(
         makeText({
           text: children.props.children || "",
