@@ -65,7 +65,7 @@ const ButtonPopup = styled.div`
   background-color: #3c3c3c;
   height: 27px;
   color: #d7d7d7;
-  white-space: normal;
+  white-space: nowrap;
   /* width: 100px; */
   padding: 0 10px 0 10px;
   top: 6px;

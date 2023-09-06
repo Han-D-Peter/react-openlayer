@@ -327,6 +327,7 @@
   background-color: #3c3c3c;
   height: 27px;
   color: #d7d7d7;
+  white-space: normal;
   /* width: 100px; */
   padding: 0 10px 0 10px;
   top: 6px;
@@ -46437,6 +46438,7 @@
     exports.FullScreenFeature = FullScreenFeature;
     exports.GeoJsonLayer = GeoJsonLayer;
     exports.ImageOverlay = ImageOverlay;
+    exports.InnerButton = InnerButton$1;
     exports.InnerText = InnerText;
     exports.LayerGroup = LayerGroup;
     exports.MapContainer = MapContainer;

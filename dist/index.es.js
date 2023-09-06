@@ -333,6 +333,7 @@ const ButtonPopup = styled.div`
   background-color: #3c3c3c;
   height: 27px;
   color: #d7d7d7;
+  white-space: normal;
   /* width: 100px; */
   padding: 0 10px 0 10px;
   top: 6px;
@@ -46418,5 +46419,5 @@ const SyncMapGroup = ({
   }));
 };
 
-export { Button, CaptureMap, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FeatureStore, FullScreenFeature, GeoJsonLayer, ImageOverlay, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, SelectedFeature, SyncMap, SyncMapContext, SyncMapGroup, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeSelectedFeature, makeText, positionsFromFeature, positionsFromMultiPointFeatures, useControlSection, useDidUpdate, useEffectIfMounted, useFeatureStore, useHoverCursor, useInteractionEvent, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
+export { Button, CaptureMap, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FeatureStore, FullScreenFeature, GeoJsonLayer, ImageOverlay, InnerButton$1 as InnerButton, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, SelectedFeature, SyncMap, SyncMapContext, SyncMapGroup, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeSelectedFeature, makeText, positionsFromFeature, positionsFromMultiPointFeatures, useControlSection, useDidUpdate, useEffectIfMounted, useFeatureStore, useHoverCursor, useInteractionEvent, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
 //# sourceMappingURL=index.es.js.map
