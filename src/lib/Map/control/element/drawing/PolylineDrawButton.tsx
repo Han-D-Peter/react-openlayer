@@ -15,6 +15,8 @@ import { Geometry, LineString } from "ol/geom";
 import { Feature } from "ol";
 import { PolylineIcon } from "../../../constants/icons/PolylineIcon";
 import { useControlSection } from "../../layout";
+import { LineSegment } from "@phosphor-icons/react";
+import { InnerButton } from "../InnerButton";
 
 export interface PolylineDrawButtonProps extends ButtonProps {
   /**
@@ -185,6 +187,8 @@ export function PolylineDrawButton({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Polyline"
       onClick={() => {
         if (isActive) {
           selectButton("");
@@ -196,7 +200,9 @@ export function PolylineDrawButton({
       isActive={isActive}
       {...props}
     >
-      <PolylineIcon />
+      <InnerButton isActive={isActive}>
+        <LineSegment size={26} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }

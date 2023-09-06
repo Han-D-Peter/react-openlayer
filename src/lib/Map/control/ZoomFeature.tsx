@@ -5,6 +5,7 @@ import { useMap } from "../hooks";
 import { useEffect, useState } from "react";
 import { ZoomIn } from "../constants/icons/ZoomIn";
 import { ZoomOut } from "../constants/icons/ZoomOut";
+import { InnerButton } from "./element/InnerButton";
 
 export const ZoomFeature = () => {
   const map = useMap();
@@ -49,10 +50,14 @@ export const ZoomFeature = () => {
   return (
     <ControlGroup>
       <Button onClick={zoomIn} isDisabled={!isAbledZoomIn}>
-        <ZoomIn size={18} color={isAbledZoomIn ? "black" : "#e2e2e2"} />
+        <InnerButton>
+          <ZoomIn size={26} color={isAbledZoomIn ? "black" : "#e2e2e2"} />
+        </InnerButton>
       </Button>
       <Button onClick={zoomOut} isDisabled={!isAbledZoomOut}>
-        <ZoomOut size={18} color={isAbledZoomOut ? "black" : "#e2e2e2"} />
+        <InnerButton>
+          <ZoomOut size={24} color={isAbledZoomOut ? "black" : "#e2e2e2"} />
+        </InnerButton>
       </Button>
     </ControlGroup>
   );

@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes } from "react";
+import React, { ButtonHTMLAttributes, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { ReactNode, forwardRef } from "react";
@@ -14,6 +14,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    */
   side?: "top" | "bottom" | "middle" | "solo";
   isActive?: boolean;
+  hasPopup?: boolean;
+  popupText?: string;
 }
 
 const getborderRadiusBySide = (side: "top" | "bottom" | "middle" | "solo") => {
@@ -41,24 +43,40 @@ const StyledButton = styled.button<{
   display: flex;
   justify-content: center;
   align-items: center;
-  ${({ active }) =>
-    active &&
-    css`
-      box-shadow: inset 0 0 5px black;
-    `}
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   background: white;
-  border: 1px solid #d9d9d9;
+  border: 0;
   border-radius: ${(props) => getborderRadiusBySide(props.side)};
-  &:hover {
-    border: 1px solid ${(props) => (props.isDisabled ? "#d9d9d9" : "#000000")};
-  }
+  box-shadow: 0px 3px 4px 0px #959595;
+`;
+
+const ButtonContainer = styled.div`
+  position: relative;
+`;
+const ButtonPopup = styled.div`
+  opacity: 0.7;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  position: absolute;
+  background-color: #3c3c3c;
+  height: 27px;
+  color: #d7d7d7;
+  /* width: 100px; */
+  padding: 0 10px 0 10px;
+  top: 6px;
+  left: 50px;
+  /* box-shadow: 0px 3px 4px 0px #959595; */
 `;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
+      hasPopup = false,
+      popupText,
       children,
       onClick,
       side = "middle",
@@ -68,6 +86,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     }: ButtonProps,
     ref
   ) => {
+    const [isHover, setIsHover] = useState(false);
     const onClickBtn = () => {
       if (onClick) {
         onClick();
@@ -75,16 +94,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     return (
-      <StyledButton
-        ref={ref}
-        onClick={onClickBtn}
-        side={side}
-        isDisabled={isDisabled}
-        active={isActive}
-        {...props}
-      >
-        {children}
-      </StyledButton>
+      <ButtonContainer>
+        <StyledButton
+          ref={ref}
+          onClick={onClickBtn}
+          onMouseMove={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
+          side={side}
+          isDisabled={isDisabled}
+          active={isActive}
+          {...props}
+        >
+          {children}
+        </StyledButton>
+        {hasPopup && isHover && <ButtonPopup>{popupText}</ButtonPopup>}
+      </ButtonContainer>
     );
   }
 );

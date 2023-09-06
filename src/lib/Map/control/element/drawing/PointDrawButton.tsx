@@ -13,6 +13,7 @@ import { Geometry, Point } from "ol/geom";
 import { Feature } from "ol";
 import { PointIcon } from "../../../constants/icons/PointIcon";
 import { useControlSection } from "../../layout";
+import { InnerButton } from "../InnerButton";
 
 export interface PointDrawButtonProps extends ButtonProps {
   /**
@@ -165,6 +166,8 @@ export function PointDrawButton({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Point"
       onClick={() => {
         if (isActive) {
           selectButton("");
@@ -176,7 +179,9 @@ export function PointDrawButton({
       isActive={isActive}
       {...props}
     >
-      <PointIcon />
+      <InnerButton isActive={isActive}>
+        <PointIcon size={22} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }

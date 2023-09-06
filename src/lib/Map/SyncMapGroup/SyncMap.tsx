@@ -35,6 +35,12 @@ export interface SyncMapProps {
    * @description This value set width css value of style. (ex. 100%, 100px, 100vw)
    */
   width?: string;
+
+  /**
+   * @default 0
+   */
+  rotate?: number;
+
   children?: ReactNode;
 }
 
@@ -42,6 +48,7 @@ export const SyncMap = ({
   isDecoupled = false,
   center = [127.9745613, 37.3236563],
   zoomLevel = 15,
+  rotate = 0,
   children,
   height = "500px",
   width = "500px",
@@ -80,6 +87,10 @@ export const SyncMap = ({
   useEffect(() => {
     mapObj.current?.getView().setZoom(zoomLevel);
   }, [zoomLevel]);
+
+  useEffect(() => {
+    mapObj.current?.getView().setRotation(rotate);
+  }, [rotate]);
 
   useEffect(() => {
     const mapRef = mapObj.current;

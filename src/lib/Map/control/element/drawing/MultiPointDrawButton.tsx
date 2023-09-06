@@ -13,6 +13,7 @@ import { useMap } from "../../../hooks";
 import { Button, ButtonProps } from "../Button";
 import { MultiPointIcon } from "../../../constants/icons/MultiPointIcon";
 import { useControlSection } from "../../layout";
+import { InnerButton } from "../InnerButton";
 
 export interface MultiPointDrawButtonProps extends ButtonProps {
   /**
@@ -153,6 +154,8 @@ export function MultiPointDrawButton({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Multi Point"
       onClick={() => {
         if (!isActive) {
           startDrawing();
@@ -166,7 +169,9 @@ export function MultiPointDrawButton({
       isActive={selectedButtonId === buttonId}
       {...props}
     >
-      <MultiPointIcon />
+      <InnerButton isActive={isActive}>
+        <MultiPointIcon size={26} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }

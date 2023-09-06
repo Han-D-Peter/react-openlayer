@@ -14,11 +14,14 @@ interface FullScreenFeatureProps {
 }
 
 const InnerButton = styled.div`
-  width: 100%;
-  height: 100%;
+  min-width: 30px;
+  min-height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
+  &:hover {
+    background-color: "#eeeeee";
+  }
 `;
 
 export const FullScreenFeature = ({ onChange }: FullScreenFeatureProps) => {

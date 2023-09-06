@@ -15,6 +15,7 @@ import { Geometry, Polygon } from "ol/geom";
 import { Feature } from "ol";
 import { RectangleIcon } from "../../../constants/icons/RectangleIcon";
 import { useControlSection } from "../../layout";
+import { InnerButton } from "../InnerButton";
 
 export interface RectangleDrawButtonProps extends ButtonProps {
   /**
@@ -174,6 +175,8 @@ export function RectangleDrawButton({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Rectangle"
       onClick={() => {
         if (isActive) {
           selectButton("");
@@ -185,7 +188,9 @@ export function RectangleDrawButton({
       isActive={isActive}
       {...props}
     >
-      <RectangleIcon />
+      <InnerButton isActive={isActive}>
+        <RectangleIcon size={26} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }

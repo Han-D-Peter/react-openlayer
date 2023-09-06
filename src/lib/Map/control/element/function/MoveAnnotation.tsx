@@ -7,6 +7,7 @@ import { Button, ButtonProps } from "../Button";
 import { useMap, useSelectAnnotation } from "../../../hooks";
 import { MovementIcon } from "../../../constants/icons/MovementIcon";
 import { useControlSection } from "../../layout";
+import { InnerButton } from "../InnerButton";
 
 export interface MoveAnnotationProps extends ButtonProps {
   onMoveChange?: (e: TranslateEvent) => void;
@@ -52,6 +53,8 @@ export function MoveAnnotation({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Move"
       onClick={() => {
         if (isActive) {
           selectButton("");
@@ -62,7 +65,9 @@ export function MoveAnnotation({
       isActive={isActive}
       {...props}
     >
-      <MovementIcon />
+      <InnerButton isActive={isActive}>
+        <MovementIcon size={26} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }

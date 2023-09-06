@@ -5,9 +5,10 @@ import { Modify } from "ol/interaction";
 import { doubleClick } from "ol/events/condition";
 import { Collection } from "ol";
 import { ModifyEvent } from "ol/interaction/Modify";
-import { ModifyIcon } from "../../../constants/icons/ModifyIcon";
+import { BiSolidPencil } from "react-icons/bi";
 import { useMap, useSelectAnnotation } from "../../../hooks";
 import { useControlSection } from "../../layout";
+import { InnerButton } from "../InnerButton";
 
 export interface ModifyAnnotationProps extends ButtonProps {
   onModifyChange?: (e: ModifyEvent) => void;
@@ -93,6 +94,8 @@ export function ModifyAnnotation({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Modify"
       onClick={() => {
         if (isActive) {
           selectButton("");
@@ -103,7 +106,9 @@ export function ModifyAnnotation({
       isActive={isActive}
       {...props}
     >
-      <ModifyIcon />
+      <InnerButton isActive={isActive}>
+        <BiSolidPencil size={24} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }

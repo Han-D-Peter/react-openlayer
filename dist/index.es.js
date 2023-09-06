@@ -1,6 +1,6 @@
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
-import { createContext, useContext, useCallback, useEffect, useState, useMemo, useRef, forwardRef, Children, cloneElement, useImperativeHandle, memo, useId, useLayoutEffect } from 'react';
-import { Draw, Select as Select$1, Modify, Translate } from 'ol/interaction';
+import { createContext, useContext, useCallback, useEffect, useState, useMemo, useRef, forwardRef, Children, cloneElement, useId, useImperativeHandle, memo, useLayoutEffect, createElement } from 'react';
+import { Draw, Select as Select$1, Modify, Translate, DoubleClickZoom as DoubleClickZoom$2 } from 'ol/interaction';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Style from 'ol/style/Style';
@@ -12,12 +12,12 @@ import { click, pointerMove, doubleClick } from 'ol/events/condition';
 import Select from 'ol/interaction/Select';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
+import { Control as Control$2, FullScreen, defaults as defaults$2, Zoom as Zoom$2 } from 'ol/control';
 import Fill$1 from 'ol/style/Fill';
 import Stroke$1 from 'ol/style/Stroke';
 import Text$1 from 'ol/style/Text';
 import Icon from 'ol/style/Icon';
 import { createBox } from 'ol/interaction/Draw';
-import { Control as Control$2, FullScreen, defaults as defaults$2, Zoom as Zoom$2 } from 'ol/control';
 import Circle$2 from 'ol/geom/Circle';
 import Feature$2 from 'ol/Feature';
 import OlTileLayer from 'ol/layer/Tile';
@@ -57,32 +57,32 @@ function __rest(s, e) {
 
 const ANNOTATION_COLOR = {
   RED: {
-    fill: opcity => `rgba(248, 7, 1, ${0.3 * opcity})`,
-    stroke: "rgb(248, 7, 1)"
+    fill: opacity => `rgba(248, 7, 1, ${0.3 * opacity})`,
+    stroke: opacity => `rgba(248, 7, 1, ${opacity})`
   },
   YELLOW: {
-    fill: opcity => `rgba(255, 254, 0, ${0.3 * opcity})`,
-    stroke: "rgb(255, 254, 0)"
+    fill: opacity => `rgba(255, 254, 0, ${0.3 * opacity})`,
+    stroke: opacity => `rgba(255, 254, 0, ${opacity})`
   },
   GREEN: {
-    fill: opcity => `rgba(30, 128, 0, ${0.3 * opcity})`,
-    stroke: "rgb(30, 128, 0)"
+    fill: opacity => `rgba(30, 128, 0, ${0.3 * opacity})`,
+    stroke: opacity => `rgba(30, 128, 0, ${opacity})`
   },
   SKYBLUE: {
-    fill: opcity => `rgba(135, 206, 235, ${0.3 * opcity})`,
-    stroke: "rgb(135, 206, 235)"
+    fill: opacity => `rgba(135, 206, 235, ${0.3 * opacity})`,
+    stroke: opacity => `rgba(135, 206, 235, ${opacity})`
   },
   BLUE: {
-    fill: opcity => `rgba(2, 26, 255, ${0.3 * opcity})`,
-    stroke: "rgb(2, 26, 255)"
+    fill: opacity => `rgba(2, 26, 255, ${0.3 * opacity})`,
+    stroke: opacity => `rgba(2, 26, 255, ${opacity})`
   },
   BROWN: {
-    fill: opcity => `rgba(165, 42, 42, ${0.3 * opcity})`,
-    stroke: "rgb(165, 42, 42)"
+    fill: opacity => `rgba(165, 42, 42, ${0.3 * opacity})`,
+    stroke: opacity => `rgba(165, 42, 42, ${opacity})`
   },
   SELECT: {
     fill: () => "rgba(1, 1, 1, 0.5)",
-    stroke: "rgb(1, 1, 1)"
+    stroke: () => "rgb(1, 1, 1)"
   }
 };
 
@@ -315,7 +315,7 @@ const StyledButton = styled.button`
   ${({
   active
 }) => active && css`
-      box-shadow: inset 0 0 5px;
+      box-shadow: inset 0 0 5px black;
     `}
   width: 30px;
   height: 30px;
@@ -326,13 +326,15 @@ const StyledButton = styled.button`
     border: 1px solid ${props => props.isDisabled ? "#d9d9d9" : "#000000"};
   }
 `;
-const Button = /*#__PURE__*/forwardRef(({
-  children,
-  onClick,
-  side = "middle",
-  isDisabled = false,
-  isActive = false
-}, ref) => {
+const Button = /*#__PURE__*/forwardRef((_a, ref) => {
+  var {
+      children,
+      onClick,
+      side = "middle",
+      isDisabled = false,
+      isActive = false
+    } = _a,
+    props = __rest(_a, ["children", "onClick", "side", "isDisabled", "isActive"]);
   const onClickBtn = () => {
     if (onClick) {
       onClick();
@@ -344,7 +346,7 @@ const Button = /*#__PURE__*/forwardRef(({
     side: side,
     isDisabled: isDisabled,
     active: isActive
-  }, {
+  }, props, {
     children: children
   }));
 });
@@ -353,7 +355,13 @@ function MultiPointIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "none",
@@ -380,8 +388,87 @@ function MultiPointIcon({
         d: "M16 15l0 .01"
       })]
     }))
-  });
+  }));
 }
+
+const ControlGroup = ({
+  children
+}) => {
+  const onlyChildren = Children.toArray(children).filter(child => child);
+  return jsx("div", Object.assign({
+    style: {
+      margin: "10px 0 10px 0 "
+    }
+  }, {
+    children: Children.map(onlyChildren, (child, index) => {
+      if (typeof child === "boolean" || child === null) {
+        return null;
+      }
+      if (Children.count(children) === 1) {
+        const props = Object.assign(Object.assign({}, child.props), {
+          side: "solo"
+        });
+        return /*#__PURE__*/cloneElement(child, props);
+      }
+      if (index === 0) {
+        const props = Object.assign(Object.assign({}, child.props), {
+          side: "top"
+        });
+        return /*#__PURE__*/cloneElement(child, props);
+      }
+      if (index === Children.toArray(children).length - 1) {
+        const props = Object.assign(Object.assign({}, child.props), {
+          side: "bottom"
+        });
+        return /*#__PURE__*/cloneElement(child, props);
+      }
+      return child;
+    })
+  }));
+};
+
+const ControlSectionContext = /*#__PURE__*/createContext(null);
+const useControlSection = () => {
+  return useContext(ControlSectionContext);
+};
+const ControlSection = ({
+  children,
+  style = {
+    position: "absolute",
+    left: "10px"
+  }
+}) => {
+  const map = useMap();
+  const ref = useRef(null);
+  const [selectedButtonId, setSelectedButtonId] = useState("");
+  const selectButton = useCallback(id => {
+    setSelectedButtonId(id);
+  }, []);
+  const contextValue = useMemo(() => ({
+    selectedButtonId,
+    selectButton
+  }), [selectedButtonId, selectButton]);
+  useEffect(() => {
+    if (!map) return;
+    const controlSection = new Control$2({
+      element: ref.current ? ref.current : undefined
+    });
+    map.addControl(controlSection);
+    return () => {
+      map.removeControl(controlSection);
+    };
+  }, [map]);
+  return jsx(ControlSectionContext.Provider, Object.assign({
+    value: contextValue
+  }, {
+    children: jsx("div", Object.assign({
+      ref: ref,
+      style: style
+    }, {
+      children: children
+    }))
+  }));
+};
 
 function MultiPointDrawButton(_a) {
   var {
@@ -392,6 +479,13 @@ function MultiPointDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({
     zIndex: 1,
@@ -402,10 +496,8 @@ function MultiPointDrawButton(_a) {
     type: "MultiPoint"
   }));
   const [features, setFeatures] = useState([]);
-  const [isDrawing, setIsDrawing] = useState(false);
-  // const [pointCount, setPointCount] = useState(1);
+  // const [isDrawing, setIsDrawing] = useState(false);
   const startDrawing = () => {
-    setIsDrawing(true);
     if (onClick) {
       onClick();
     }
@@ -430,15 +522,17 @@ function MultiPointDrawButton(_a) {
     setFeatures([...features, feature]);
   };
   const completeDrawing = () => {
-    if (onEnd) {
+    if (onEnd && features.length > 0) {
       onEnd(features);
+    }
+    if (!onCanvas) {
+      vectorSourceRef.current.clear();
     }
     setFeatures([]);
     map.removeInteraction(drawRef.current);
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
-    setIsDrawing(false);
   };
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -448,17 +542,13 @@ function MultiPointDrawButton(_a) {
     };
   }, [features]);
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
   useEffect(() => {
-    if (onCanvas) {
-      map.addLayer(vectorLayerRef.current);
-    } else {
-      map.removeLayer(vectorLayerRef.current);
-    }
-  }, [onCanvas, map]);
+    map.addLayer(vectorLayerRef.current);
+  }, [map]);
   useEffect(() => {
     features.forEach((feature, index) => {
       const style = new Style({
@@ -469,7 +559,7 @@ function MultiPointDrawButton(_a) {
           }),
 
           stroke: new Stroke({
-            color: ANNOTATION_COLOR.BLUE.stroke,
+            color: ANNOTATION_COLOR.BLUE.stroke(1),
             width: 2
           })
         }),
@@ -490,13 +580,18 @@ function MultiPointDrawButton(_a) {
     });
   }, [features]);
   return jsx(Button, Object.assign({
+    id: buttonId,
     onClick: () => {
-      if (!isDrawing) {
+      if (!isActive) {
         startDrawing();
+        selectButton(buttonId);
       } else {
         completeDrawing();
+        selectButton("");
       }
-    }
+    },
+    // isActive={isActive}
+    isActive: selectedButtonId === buttonId
   }, props, {
     children: jsx(MultiPointIcon, {})
   }));
@@ -534,7 +629,13 @@ function PointIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
@@ -549,7 +650,7 @@ function PointIcon({
         d: "M172.268 501.67C26.97 291.031 0 269.413 0 192 0 85.961 85.961 0 192 0s192 85.961 192 192c0 77.413-26.97 99.031-172.268 309.67-9.535 13.774-29.93 13.773-39.464 0zM192 272c44.183 0 80-35.817 80-80s-35.817-80-80-80-80 35.817-80 80 35.817 80 80 80z"
       })
     }))
-  });
+  }));
 }
 
 function PointDrawButton(_a) {
@@ -561,6 +662,13 @@ function PointDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const {
     selectFeature
   } = useFeatureStore();
@@ -569,7 +677,7 @@ function PointDrawButton(_a) {
     zIndex: 1
   }));
   const drawRef = useRef(new Draw({
-    source: vectorSourceRef.current,
+    source: onCanvas ? vectorSourceRef.current : undefined,
     type: "Point",
     style: new Style({
       text: makeText({
@@ -587,6 +695,26 @@ function PointDrawButton(_a) {
     })
   }));
 
+  useEffect(() => {
+    drawRef.current = new Draw({
+      source: onCanvas ? vectorSourceRef.current : undefined,
+      type: "Point",
+      style: new Style({
+        text: makeText({
+          text: "unknown",
+          size: 15,
+          color: "black",
+          outline: true,
+          isMarker: true
+        }),
+        image: new Icon({
+          scale: 0.07,
+          src: icon.marker,
+          anchor: [0.5, 1] // 마커 이미지의 앵커 위치
+        })
+      })
+    });
+  }, [onCanvas]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -624,11 +752,14 @@ function PointDrawButton(_a) {
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates()
     });
+    selectButton("");
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
-    selectFeature(feature);
+    if (onCanvas) {
+      selectFeature(feature);
+    }
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -641,10 +772,10 @@ function PointDrawButton(_a) {
     };
   }, []);
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
   useEffect(() => {
     vectorLayerRef.current.setSource(vectorSourceRef.current);
     if (onCanvas) {
@@ -654,7 +785,16 @@ function PointDrawButton(_a) {
     }
   }, [onCanvas, map]);
   return jsx(Button, Object.assign({
-    onClick: startDrawing
+    id: buttonId,
+    onClick: () => {
+      if (isActive) {
+        selectButton("");
+      } else {
+        selectButton(buttonId);
+        startDrawing();
+      }
+    },
+    isActive: isActive
   }, props, {
     children: jsx(PointIcon, {})
   }));
@@ -664,7 +804,13 @@ function PolygonIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "none",
@@ -699,7 +845,7 @@ function PolygonIcon({
         d: "M13.5 17.5l-7 -5"
       })]
     }))
-  });
+  }));
 }
 
 function PolygonDrawButton(_a) {
@@ -711,6 +857,13 @@ function PolygonDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onStart", "onClick", "onCanvas"]);
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const {
     selectFeature
   } = useFeatureStore();
@@ -719,7 +872,7 @@ function PolygonDrawButton(_a) {
     zIndex: 1
   }));
   const drawRef = useRef(new Draw({
-    source: vectorSourceRef.current,
+    source: onCanvas ? vectorSourceRef.current : undefined,
     type: "Polygon",
     style: new Style({
       stroke: new Stroke$1({
@@ -736,6 +889,25 @@ function PolygonDrawButton(_a) {
     })
   }));
 
+  useEffect(() => {
+    drawRef.current = new Draw({
+      source: onCanvas ? vectorSourceRef.current : undefined,
+      type: "Polygon",
+      style: new Style({
+        stroke: new Stroke$1({
+          color: "rgb(2, 26, 255)",
+          width: 2
+        }),
+        fill: new Fill$1({
+          color: "rgba(2, 26, 255, 0.3)"
+        }),
+        image: new Icon({
+          src: "/images/polygon.svg",
+          anchor: [0.5, 1] // 마커 이미지의 앵커 위치
+        })
+      })
+    });
+  }, [onCanvas]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -747,6 +919,10 @@ function PolygonDrawButton(_a) {
       isDrawing: true
     });
     map.addInteraction(drawRef.current);
+  };
+  const finishDrawingByRightClick = e => {
+    e.preventDefault();
+    drawRef.current.finishDrawing();
   };
   const drawing = event => {
     const feature = event.feature;
@@ -774,11 +950,14 @@ function PolygonDrawButton(_a) {
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates()
     });
+    selectButton("");
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
-    selectFeature(feature);
+    if (onCanvas) {
+      selectFeature(feature);
+    }
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -790,15 +969,17 @@ function PolygonDrawButton(_a) {
     map.addLayer(vectorLayer);
     const drawingInstance = drawRef.current;
     drawingInstance.on("drawend", drawing);
+    map.getViewport().addEventListener("contextmenu", finishDrawingByRightClick);
     return () => {
       drawingInstance.un("drawend", drawing);
+      map.getViewport().removeEventListener("contextmenu", finishDrawingByRightClick);
     };
   }, []);
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
   useEffect(() => {
     vectorLayerRef.current.setSource(vectorSourceRef.current);
     if (onCanvas) {
@@ -808,7 +989,16 @@ function PolygonDrawButton(_a) {
     }
   }, [onCanvas, map]);
   return jsx(Button, Object.assign({
-    onClick: startDrawing
+    id: buttonId,
+    onClick: () => {
+      if (isActive) {
+        selectButton("");
+      } else {
+        selectButton(buttonId);
+        startDrawing();
+      }
+    },
+    isActive: isActive
   }, props, {
     children: jsx(PolygonIcon, {})
   }));
@@ -818,7 +1008,13 @@ function PolylineIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
@@ -836,7 +1032,7 @@ function PolylineIcon({
         d: "M15 16v1.26l-6-3v-3.17L11.7 8H16V2h-6v4.9L7.3 10H3v6h5l7 3.5V22h6v-6z"
       })]
     }))
-  });
+  }));
 }
 
 function PolylineDrawButton(_a) {
@@ -848,6 +1044,13 @@ function PolylineDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const {
     selectFeature
   } = useFeatureStore();
@@ -856,7 +1059,7 @@ function PolylineDrawButton(_a) {
     zIndex: 1
   }));
   const drawRef = useRef(new Draw({
-    source: vectorSourceRef.current,
+    source: onCanvas ? vectorSourceRef.current : undefined,
     type: "LineString",
     style: new Style({
       stroke: new Stroke$1({
@@ -873,6 +1076,25 @@ function PolylineDrawButton(_a) {
     })
   }));
 
+  useEffect(() => {
+    drawRef.current = new Draw({
+      source: onCanvas ? vectorSourceRef.current : undefined,
+      type: "LineString",
+      style: new Style({
+        stroke: new Stroke$1({
+          color: "rgb(2, 26, 255)",
+          width: 2
+        }),
+        fill: new Fill$1({
+          color: "rgba(2, 26, 255, 0.3)"
+        }),
+        image: new Icon({
+          src: "/images/polyline.svg",
+          anchor: [0.5, 1] // 마커 이미지의 앵커 위치
+        })
+      })
+    });
+  }, [onCanvas]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -884,6 +1106,10 @@ function PolylineDrawButton(_a) {
       isDrawing: true
     });
     map.addInteraction(drawRef.current);
+  };
+  const finishDrawingByRightClick = e => {
+    e.preventDefault();
+    drawRef.current.finishDrawing();
   };
   const drawing = event => {
     const feature = event.feature;
@@ -911,27 +1137,37 @@ function PolylineDrawButton(_a) {
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates()
     });
+    selectButton("");
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
-    selectFeature(feature);
+    if (onCanvas) {
+      selectFeature(feature);
+    }
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
   };
   useEffect(() => {
+    if (selectedButtonId !== buttonId) {
+      map.removeInteraction(drawRef.current);
+    }
+  }, [map, selectedButtonId, buttonId]);
+  useEffect(() => {
     const drawingInstance = drawRef.current;
     drawingInstance.on("drawend", drawing);
+    map.getViewport().addEventListener("contextmenu", finishDrawingByRightClick);
     return () => {
       drawingInstance.un("drawend", drawing);
+      map.getViewport().removeEventListener("contextmenu", finishDrawingByRightClick);
     };
   }, []);
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
   useEffect(() => {
     vectorLayerRef.current.setSource(vectorSourceRef.current);
     if (onCanvas) {
@@ -941,7 +1177,16 @@ function PolylineDrawButton(_a) {
     }
   }, [onCanvas, map]);
   return jsx(Button, Object.assign({
-    onClick: startDrawing
+    id: buttonId,
+    onClick: () => {
+      if (isActive) {
+        selectButton("");
+      } else {
+        selectButton(buttonId);
+        startDrawing();
+      }
+    },
+    isActive: isActive
   }, props, {
     children: jsx(PolylineIcon, {})
   }));
@@ -951,7 +1196,13 @@ function RectangleIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "none",
@@ -972,7 +1223,7 @@ function RectangleIcon({
         d: "M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"
       })]
     }))
-  });
+  }));
 }
 
 function RectangleDrawButton(_a) {
@@ -984,15 +1235,22 @@ function RectangleDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas", "onStart"]);
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
   const {
     selectFeature
   } = useFeatureStore();
+  const isActive = buttonId === selectedButtonId;
   const vectorSourceRef = useRef(new VectorSource());
   const vectorLayerRef = useRef(new VectorLayer({
     zIndex: 1
   }));
   const drawRef = useRef(new Draw({
-    source: vectorSourceRef.current,
+    source: onCanvas ? vectorSourceRef.current : undefined,
     type: "Circle",
     geometryFunction: createBox(),
     style: new Style({
@@ -1010,6 +1268,26 @@ function RectangleDrawButton(_a) {
     })
   }));
 
+  useEffect(() => {
+    drawRef.current = new Draw({
+      source: onCanvas ? vectorSourceRef.current : undefined,
+      type: "Circle",
+      geometryFunction: createBox(),
+      style: new Style({
+        stroke: new Stroke$1({
+          color: "rgb(2, 26, 255)",
+          width: 2
+        }),
+        fill: new Fill$1({
+          color: "rgba(2, 26, 255, 0.3)"
+        }),
+        image: new Icon({
+          src: "/images/Rectangle.svg",
+          anchor: [0.5, 1] // 마커 이미지의 앵커 위치
+        })
+      })
+    });
+  }, [onCanvas]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -1026,7 +1304,7 @@ function RectangleDrawButton(_a) {
     const geometry = event.feature.getGeometry();
     // openlayers 가 사각형을 그릴때 4점이 아니라 5점을 그리는 부분 있어서 수정
     const coord = geometry.getCoordinates()[0];
-    coord.pop();
+    // coord.pop();
     geometry.setCoordinates([coord]);
     event.feature.setStyle(new Style({
       stroke: new Stroke$1({
@@ -1051,11 +1329,14 @@ function RectangleDrawButton(_a) {
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates()
     });
+    selectButton("");
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(event.feature);
     }
-    selectFeature(event.feature);
+    if (onCanvas) {
+      selectFeature(event.feature);
+    }
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -1068,10 +1349,10 @@ function RectangleDrawButton(_a) {
     };
   }, []);
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
   useEffect(() => {
     vectorLayerRef.current.setSource(vectorSourceRef.current);
     if (onCanvas) {
@@ -1081,7 +1362,16 @@ function RectangleDrawButton(_a) {
     }
   }, [onCanvas, map]);
   return jsx(Button, Object.assign({
-    onClick: startDrawing
+    id: buttonId,
+    onClick: () => {
+      if (isActive) {
+        selectButton("");
+      } else {
+        selectButton(buttonId);
+        startDrawing();
+      }
+    },
+    isActive: isActive
   }, props, {
     children: jsx(RectangleIcon, {})
   }));
@@ -1091,7 +1381,13 @@ function TextIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsxs("svg", Object.assign({
       stroke: "currentColor",
       fill: "none",
@@ -1114,7 +1410,7 @@ function TextIcon({
         d: "M12 4l0 16"
       })]
     }))
-  });
+  }));
 }
 
 function TextDrawButton(_a) {
@@ -1125,6 +1421,13 @@ function TextDrawButton(_a) {
     } = _a,
     props = __rest(_a, ["onEnd", "onClick", "onCanvas"]);
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const {
     selectFeature
   } = useFeatureStore();
@@ -1133,7 +1436,7 @@ function TextDrawButton(_a) {
     zIndex: 1
   }));
   const drawRef = useRef(new Draw({
-    source: vectorSourceRef.current,
+    source: onCanvas ? vectorSourceRef.current : undefined,
     type: "Point",
     style: new Style({
       text: new Text$1({
@@ -1152,6 +1455,28 @@ function TextDrawButton(_a) {
       })
     })
   }));
+  useEffect(() => {
+    drawRef.current = new Draw({
+      source: onCanvas ? vectorSourceRef.current : undefined,
+      type: "Point",
+      style: new Style({
+        text: new Text$1({
+          text: "unknown",
+          font: "15px Arial",
+          fill: new Fill$1({
+            color: "black"
+          }),
+          overflow: true,
+          offsetX: 0,
+          offsetY: -15,
+          stroke: new Stroke$1({
+            color: "white",
+            width: 3
+          })
+        })
+      })
+    });
+  }, [onCanvas]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -1187,11 +1512,14 @@ function TextDrawButton(_a) {
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates()
     });
+    selectButton("");
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
-    selectFeature(feature);
+    if (onCanvas) {
+      selectFeature(feature);
+    }
     setTimeout(() => map.setProperties({
       isDrawing: false
     }), 100);
@@ -1204,10 +1532,10 @@ function TextDrawButton(_a) {
     };
   }, []);
   useEffect(() => {
-    if (!props.isActive) {
+    if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-  }, [props.isActive, map]);
+  }, [isActive, map]);
   useEffect(() => {
     vectorLayerRef.current.setSource(vectorSourceRef.current);
     if (onCanvas) {
@@ -1217,7 +1545,16 @@ function TextDrawButton(_a) {
     }
   }, [onCanvas, map]);
   return jsx(Button, Object.assign({
-    onClick: startDrawing
+    id: buttonId,
+    onClick: () => {
+      if (isActive) {
+        selectButton("");
+      } else {
+        selectButton(buttonId);
+        startDrawing();
+      }
+    },
+    isActive: isActive
   }, props, {
     children: jsx(TextIcon, {})
   }));
@@ -1227,7 +1564,13 @@ function EraserIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
@@ -1242,31 +1585,46 @@ function EraserIcon({
         d: "M497.941 273.941c18.745-18.745 18.745-49.137 0-67.882l-160-160c-18.745-18.745-49.136-18.746-67.883 0l-256 256c-18.745 18.745-18.745 49.137 0 67.882l96 96A48.004 48.004 0 0 0 144 480h356c6.627 0 12-5.373 12-12v-40c0-6.627-5.373-12-12-12H355.883l142.058-142.059zm-302.627-62.627l137.373 137.373L265.373 416H150.628l-80-80 124.686-124.686z"
       })
     }))
-  });
+  }));
 }
 
-function DeleteAnnotation(props) {
+function DeleteAnnotation(_a) {
+  var {
+      onDeleteChange
+    } = _a,
+    props = __rest(_a, ["onDeleteChange"]);
   const clickedAnnotation = useSelectAnnotation();
   const {
     selectFeature
   } = useFeatureStore();
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const selectInteractionRef = useRef(null);
   const removeSelectedFeatures = useCallback(event => {
     const selectedFeatures = event.selected;
     selectFeature(null);
-    selectedFeatures.forEach(selectedFeature => {
-      if (selectedFeature.getGeometry()) {
-        const vectorSource = selectedFeature.getProperties().source;
-        vectorSource.clear();
+    const target = selectedFeatures.find(selectedFeature => selectedFeature.getGeometry());
+    if (target) {
+      const vectorSource = target.getProperties().source;
+      vectorSource.removeFeature(target);
+      if (onDeleteChange) {
+        onDeleteChange(event);
       }
-    });
-  }, [selectFeature]);
+      selectButton("");
+    }
+  }, [onDeleteChange, selectFeature]);
   useEffect(() => {
-    if (props.isActive) {
+    if (isActive) {
       if (!selectInteractionRef.current) {
         selectInteractionRef.current = new Select$1();
         selectInteractionRef.current.on("select", removeSelectedFeatures);
+        selectButton(buttonId);
         map.addInteraction(selectInteractionRef.current);
       }
     } else {
@@ -1276,14 +1634,24 @@ function DeleteAnnotation(props) {
         selectInteractionRef.current = null;
       }
     }
-  }, [map, props.isActive, removeSelectedFeatures]);
+  }, [map, isActive, removeSelectedFeatures]);
   useEffect(() => {
     if (selectInteractionRef.current && clickedAnnotation) {
       selectInteractionRef.current.getFeatures().clear();
       selectInteractionRef.current.getFeatures().push(clickedAnnotation);
     }
   }, [clickedAnnotation]);
-  return jsx(Button, Object.assign({}, props, {
+  return jsx(Button, Object.assign({
+    id: buttonId,
+    onClick: () => {
+      if (!isActive) {
+        selectButton(buttonId);
+      } else {
+        selectButton("");
+      }
+    },
+    isActive: isActive
+  }, props, {
     children: jsx(EraserIcon, {})
   }));
 }
@@ -18689,7 +19057,13 @@ function ModifyIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
@@ -18704,13 +19078,24 @@ function ModifyIcon({
         d: "M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 0 0 0-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 0 0 9.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
       })
     }))
-  });
+  }));
 }
 
-function ModifyAnnotation(props) {
+function ModifyAnnotation(_a) {
+  var {
+      onModifyChange
+    } = _a,
+    props = __rest(_a, ["onModifyChange"]);
   const clickedAnnotation = useSelectAnnotation();
   const modifyInteractionRef = useRef(null);
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const onModifyStart = useCallback(() => {
     if (clickedAnnotation) {
       const existProperties = clickedAnnotation.getProperties();
@@ -18724,23 +19109,23 @@ function ModifyAnnotation(props) {
     }
   }, [clickedAnnotation]);
   const onModifyEnd = useCallback(event => {
-    if (props.onChange) {
-      props.onChange(event);
+    if (onModifyChange) {
+      onModifyChange(event);
     }
     const existProperties = clickedAnnotation.getProperties();
     clickedAnnotation.setProperties(Object.assign(Object.assign({}, existProperties), {
       isModifying: true
     }));
-  }, [clickedAnnotation, props.onChange]);
+  }, [clickedAnnotation, onModifyChange]);
   // 수정중임을 map 에 명시
   useEffect(() => {
     const existMapProperties = map.getProperties();
     map.setProperties(Object.assign(Object.assign({}, existMapProperties), {
-      isModifying: props.isActive
+      isModifying: isActive
     }));
-  }, [props.isActive]);
+  }, [isActive]);
   useEffect(() => {
-    if (clickedAnnotation && props.isActive) {
+    if (clickedAnnotation && isActive) {
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
           features: new Collection$1([clickedAnnotation]),
@@ -18766,8 +19151,18 @@ function ModifyAnnotation(props) {
         modifyInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, props.isActive]);
-  return jsx(Button, Object.assign({}, props, {
+  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive]);
+  return jsx(Button, Object.assign({
+    id: buttonId,
+    onClick: () => {
+      if (isActive) {
+        selectButton("");
+      } else {
+        selectButton(buttonId);
+      }
+    },
+    isActive: isActive
+  }, props, {
     children: jsx(ModifyIcon, {})
   }));
 }
@@ -18776,7 +19171,13 @@ function MovementIcon({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
@@ -18791,24 +19192,36 @@ function MovementIcon({
         d: "M18 11h-5V6h3l-4-4-4 4h3v5H6V8l-4 4 4 4v-3h5v5H8l4 4 4-4h-3v-5h5v3l4-4-4-4z"
       })
     }))
-  });
+  }));
 }
 
-function MoveAnnotation(props) {
+function MoveAnnotation(_a) {
+  var {
+      onMoveChange
+    } = _a,
+    props = __rest(_a, ["onMoveChange"]);
   const translateInteractionRef = useRef(null);
   const clickedAnnotation = useSelectAnnotation();
   const map = useMap();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
+  const {
+    selectButton,
+    selectedButtonId
+  } = useControlSection();
+  const isActive = buttonId === selectedButtonId;
   const onMoveEnd = useCallback(event => {
-    if (props.onChange) {
-      props.onChange(event);
+    if (onMoveChange) {
+      onMoveChange(event);
     }
   }, []);
   useEffect(() => {
-    if (clickedAnnotation && props.isActive) {
+    if (clickedAnnotation && isActive) {
       translateInteractionRef.current = new Translate({
         features: new Collection$1([clickedAnnotation])
       });
       translateInteractionRef.current.on("translateend", onMoveEnd);
+      selectButton(buttonId);
       map.addInteraction(translateInteractionRef.current);
     }
     return () => {
@@ -18818,72 +19231,21 @@ function MoveAnnotation(props) {
         translateInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, onMoveEnd, props.isActive]);
-  return jsx(Button, Object.assign({}, props, {
+  }, [buttonId, clickedAnnotation, map, onMoveEnd, isActive, selectButton]);
+  return jsx(Button, Object.assign({
+    id: buttonId,
+    onClick: () => {
+      if (isActive) {
+        selectButton("");
+      } else {
+        selectButton(buttonId);
+      }
+    },
+    isActive: isActive
+  }, props, {
     children: jsx(MovementIcon, {})
   }));
 }
-
-const ControlGroup = ({
-  children
-}) => {
-  return jsx("div", Object.assign({
-    style: {
-      margin: "10px 0 10px 0 "
-    }
-  }, {
-    children: Children.map(children, (child, index) => {
-      if (typeof child === "boolean" || child === null) {
-        return null;
-      }
-      if (Children.count(children) === 1) {
-        const props = Object.assign(Object.assign({}, child.props), {
-          side: "solo"
-        });
-        return /*#__PURE__*/cloneElement(child, props);
-      }
-      if (index === 0) {
-        const props = Object.assign(Object.assign({}, child.props), {
-          side: "top"
-        });
-        return /*#__PURE__*/cloneElement(child, props);
-      }
-      if (index === Children.toArray(children).length - 1) {
-        const props = Object.assign(Object.assign({}, child.props), {
-          side: "bottom"
-        });
-        return /*#__PURE__*/cloneElement(child, props);
-      }
-      return child;
-    })
-  }));
-};
-
-const ControlSection = ({
-  children
-}) => {
-  const map = useMap();
-  const ref = useRef(null);
-  useEffect(() => {
-    if (!map) return;
-    const controlSection = new Control$2({
-      element: ref.current ? ref.current : undefined
-    });
-    map.addControl(controlSection);
-    return () => {
-      map.removeControl(controlSection);
-    };
-  }, [map]);
-  return jsx("div", Object.assign({
-    ref: ref,
-    style: {
-      position: "absolute",
-      left: "10px"
-    }
-  }, {
-    children: children
-  }));
-};
 
 function CompassIcon({
   width,
@@ -19066,7 +19428,9 @@ function CompassIcon({
 
 const CompassWheel = ({
   size = "sm",
-  onWheel
+  onWheel,
+  resetable = false,
+  controller = false
 }) => {
   const [rotationDegree, setRotate, resetRotation] = useMapRotation();
   const [mouseDown, setMouseDown] = useState(false);
@@ -19137,6 +19501,7 @@ const CompassWheel = ({
     }
   }, {
     children: [jsx("div", Object.assign({
+      onDoubleClick: resetValue,
       onMouseDown: handleMouseDown,
       style: {
         zIndex: 1,
@@ -19156,7 +19521,7 @@ const CompassWheel = ({
           width: compassSize(size)
         })
       }))
-    })), jsx("div", Object.assign({
+    })), resetable && jsx("div", Object.assign({
       style: {
         display: "flex",
         justifyContent: "center",
@@ -19170,13 +19535,14 @@ const CompassWheel = ({
           background: "white",
           border: "1px solid #858484",
           borderRadius: "3px",
-          paddingBottom: "3px"
+          paddingBottom: "3px",
+          color: "black"
         },
         onClick: resetValue
       }, {
         children: "reset"
       }))
-    })), jsx("div", Object.assign({
+    })), controller && jsx("div", Object.assign({
       style: {
         marginTop: "px",
         width: "100%",
@@ -19194,11 +19560,13 @@ const CompassWheel = ({
           value: rotation.toFixed(0),
           onChange: e => {
             setRotation(Number(e.target.value));
+            setRotate(Number(e.target.value));
           },
           type: "number",
           name: "degree",
           style: {
-            width: "53px"
+            width: "53px",
+            color: "black"
           }
         })
       }))
@@ -19217,84 +19585,131 @@ function DrawingTools({
   movement = true,
   remove = true,
   onCanvas = false,
-  onDrawEnd
+  onDrawEnd,
+  onDelete,
+  onMove,
+  onModify,
+  onDrawStart
 }) {
   const [isSelected, setIsSelected] = useState(null);
-  const switchControl = key => {
-    if (isSelected === key) {
-      setIsSelected(null);
-    }
-    if (isSelected !== key) {
-      setIsSelected(key);
-    }
-  };
+  const map = useMap();
   const endDrawing = event => {
     if (onDrawEnd) {
       onDrawEnd(event);
     }
-    setIsSelected(null);
+    // setIsSelected(null);
   };
+
+  useEffect(() => {
+    if (!isSelected) {
+      map.setProperties({
+        isDrawing: false
+      });
+    }
+  }, [isSelected, map]);
   return jsxs(Fragment, {
     children: [jsxs(ControlGroup, {
-      children: [multiMarker && jsx(MultiPointDrawButton, {
-        isActive: isSelected === 0,
+      children: [multiMarker && jsx(MultiPointDrawButton
+      // isActive={isSelected === "0"}
+      , {
+        // isActive={isSelected === "0"}
         onEnd: endDrawing,
-        onClick: () => {
-          switchControl(0);
-        },
+        // onClick={() => {
+        //   switchControl("0");
+        // }}
         onCanvas: onCanvas
-      }), marker && jsx(PointDrawButton, {
-        isActive: isSelected === 1,
+      }), marker && jsx(PointDrawButton
+      // isActive={isSelected === "1"}
+      , {
+        // isActive={isSelected === "1"}
         onEnd: endDrawing,
-        onClick: () => {
-          switchControl(1);
-        },
+        // onClick={() => {
+        //   switchControl("1");
+        // }}
         onCanvas: onCanvas
-      }), polyline && jsx(PolylineDrawButton, {
-        isActive: isSelected === 2,
-        onClick: () => {
-          switchControl(2);
-        },
-        onEnd: endDrawing,
-        onCanvas: onCanvas
-      }), rectangle && jsx(RectangleDrawButton, {
-        isActive: isSelected === 3,
-        onClick: () => {
-          switchControl(3);
-        },
-        onEnd: endDrawing,
-        onCanvas: onCanvas
-      }), polygon && jsx(PolygonDrawButton, {
-        isActive: isSelected === 4,
-        onClick: () => {
-          switchControl(4);
-        },
+      }), polyline && jsx(PolylineDrawButton
+      // isActive={isSelected === "2"}
+      // onClick={() => {
+      //   switchControl("2");
+      // }}
+      , {
+        // isActive={isSelected === "2"}
+        // onClick={() => {
+        //   switchControl("2");
+        // }}
         onEnd: endDrawing,
         onCanvas: onCanvas
-      }), text && jsx(TextDrawButton, {
-        isActive: isSelected === 5,
-        onClick: () => {
-          switchControl(5);
-        },
+      }), rectangle && jsx(RectangleDrawButton
+      // isActive={isSelected === "3"}
+      // onClick={() => {
+      //   switchControl("3");
+      // }}
+      , {
+        // isActive={isSelected === "3"}
+        // onClick={() => {
+        //   switchControl("3");
+        // }}
+        onEnd: endDrawing,
+        onCanvas: onCanvas
+      }), polygon && jsx(PolygonDrawButton
+      // isActive={isSelected === "4"}
+      // onClick={() => {
+      //   switchControl("4");
+      // }}
+      , {
+        // isActive={isSelected === "4"}
+        // onClick={() => {
+        //   switchControl("4");
+        // }}
+        onEnd: endDrawing,
+        onCanvas: onCanvas
+      }), text && jsx(TextDrawButton
+      // isActive={isSelected === "5"}
+      // onClick={() => {
+      //   switchControl("5");
+      // }}
+      , {
+        // isActive={isSelected === "5"}
+        // onClick={() => {
+        //   switchControl("5");
+        // }}
         onEnd: endDrawing,
         onCanvas: onCanvas
       })]
     }), jsxs(ControlGroup, {
-      children: [edit && jsx(ModifyAnnotation, {
-        isActive: isSelected === 6,
-        onClick: () => {
-          switchControl(6);
-        }
-      }), movement && jsx(MoveAnnotation, {
-        isActive: isSelected === 7,
-        onClick: () => {
-          switchControl(7);
-        }
-      }), remove && jsx(DeleteAnnotation, {
-        isActive: isSelected === 8,
-        onClick: () => {
-          switchControl(8);
-        }
+      children: [edit && jsx(ModifyAnnotation
+      // isActive={isSelected === "6"}
+      // onClick={() => {
+      //   switchControl("6");
+      // }}
+      , {
+        // isActive={isSelected === "6"}
+        // onClick={() => {
+        //   switchControl("6");
+        // }}
+        onModifyChange: onModify
+      }), movement && jsx(MoveAnnotation
+      // isActive={isSelected === "7"}
+      // onClick={() => {
+      //   switchControl("7");
+      // }}
+      , {
+        // isActive={isSelected === "7"}
+        // onClick={() => {
+        //   switchControl("7");
+        // }}
+        onMoveChange: onMove
+      }), remove && jsx(DeleteAnnotation
+      // isActive={isSelected === "8"}
+      // onClick={() => {
+      //   switchControl("8");
+      // }}
+      , {
+        // isActive={isSelected === "8"}
+        // onClick={() => {
+        //   switchControl("8");
+        // }}
+        onDeleteChange: onDelete
       })]
     })]
   });
@@ -19369,9 +19784,11 @@ const FullScreenFeature = ({
   const offBtnRef = useRef(null);
   const [isFull, setIsFull] = useState(false);
   useEffectIfMounted(() => {
-    onBtnRef.current = document.querySelector(".ol-full-screen-false");
-    offBtnRef.current = document.querySelector(".ol-full-screen-true");
-  }, [isFull]);
+    if (!map) return;
+    const targetMapId = map.getTargetElement().getAttribute("id");
+    onBtnRef.current = document.querySelector(`#${CSS.escape(targetMapId)} .ol-full-screen-false`);
+    offBtnRef.current = document.querySelector(`#${CSS.escape(targetMapId)} .ol-full-screen-true`);
+  }, [isFull, map]);
   const toggleFullScreen = () => {
     var _a, _b;
     if (isFull) {
@@ -19422,7 +19839,13 @@ function ZoomIn({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
@@ -19441,14 +19864,20 @@ function ZoomIn({
         d: "M256 112v288m144-144H112"
       })
     }))
-  });
+  }));
 }
 
 function ZoomOut({
   color = "black",
   size = 18
 }) {
-  return jsx("div", {
+  return jsx("div", Object.assign({
+    style: {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center"
+    }
+  }, {
     children: jsx("svg", Object.assign({
       stroke: "currentColor",
       fill: "currentColor",
@@ -19463,7 +19892,7 @@ function ZoomOut({
         d: "M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
       })
     }))
-  });
+  }));
 }
 
 const ZoomFeature = () => {
@@ -19541,7 +19970,7 @@ const CustomCircle = ({
   }));
   const annotationStyleRef = useRef(new Style({
     stroke: new Stroke$1({
-      color: ANNOTATION_COLOR[color].stroke,
+      color: ANNOTATION_COLOR[color].stroke(opacity),
       width: 2
     }),
     fill: new Fill$1({
@@ -19558,6 +19987,10 @@ const CustomCircle = ({
   useEffect(() => {
     annotationStyleRef.current.setFill(new Fill$1({
       color: ANNOTATION_COLOR[color].fill(opacity)
+    }));
+    annotationStyleRef.current.setStroke(new Stroke$1({
+      color: ANNOTATION_COLOR[color].stroke(opacity),
+      width: 2
     }));
   }, [opacity, color]);
   const onHoverHandler = useCallback(event => {
@@ -19652,6 +20085,7 @@ const CustomMarker = ({
   onHover,
   zIndex = 0,
   selected = false,
+  opacity = 1,
   children
 }) => {
   const map = useMap();
@@ -19733,30 +20167,32 @@ const CustomMarker = ({
     }
   }, [zIndex]);
   useEffect(() => {
-    if (selected) {
-      annotationStyleRef.current.setImage(new Icon({
-        src: icon.selected,
-        scale: 0.07,
-        anchor: [0.5, 1] // 마커 이미지의 앵커 위치
-      }));
-    } else {
-      annotationStyleRef.current.setImage(new Icon({
-        src: icon.marker,
-        scale: 0.07,
-        anchor: [0.5, 1] // 마커 이미지의 앵커 위치
-      }));
-    }
+    annotationStyleRef.current.setImage(new Icon({
+      opacity,
+      src: selected ? icon.selected : icon.marker,
+      scale: 0.07,
+      anchor: [0.5, 1] // 마커 이미지의 앵커 위치
+    }));
 
     annotationRef.current.setStyle(annotationStyleRef.current);
-  }, [selected]);
+  }, [selected, opacity]);
   useEffect(() => {
-    const newLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current]
-      })
-    });
-    annotationLayerRef.current = newLayer;
+    if (!(children === null || children === void 0 ? void 0 : children.props.color)) return;
+    annotationStyleRef.current.getText().getFill().setColor(children.props.color);
     annotationRef.current.setStyle(annotationStyleRef.current);
+  }, [color, children]);
+  useEffect(() => {
+    if (annotationLayerRef.current && children && !children.props.isPopup) {
+      annotationStyleRef.current.setText(makeText({
+        text: children.props.children || "",
+        size: children.props.size || 15,
+        color: children.props.color ? children.props.color : "black",
+        outline: children.props.outline,
+        isMarker: true
+      }));
+    }
+  }, [children]);
+  useEffect(() => {
     annotationRef.current.setProperties(Object.assign(Object.assign({}, properties), {
       shape: "Marker",
       isModifying: false,
@@ -19764,15 +20200,15 @@ const CustomMarker = ({
       layer: annotationLayerRef.current,
       hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
     }));
-    annotationLayerRef.current.setZIndex(zIndex);
+  }, [properties]);
+  useEffect(() => {
     map.addLayer(annotationLayerRef.current);
     return () => {
-      var _a;
       // eslint-disable-next-line react-hooks/exhaustive-deps
       map.removeLayer(annotationLayerRef.current);
-      (_a = annotationLayerRef.current.getSource()) === null || _a === void 0 ? void 0 : _a.clear();
+      // annotationLayerRef.current.getSource()?.clear();
     };
-  }, [color, children, map, onHover, properties, onClick]);
+  }, [map]);
   return jsx(Fragment, {});
 };
 
@@ -19837,7 +20273,7 @@ function CustomMultiPoint({
           }),
 
           stroke: new Stroke({
-            color: ANNOTATION_COLOR[color].stroke,
+            color: ANNOTATION_COLOR[color].stroke(opacity),
             width: 2
           })
         }),
@@ -19893,7 +20329,7 @@ const CustomPolygon = ({
   }));
   const annotationStyleRef = useRef(new Style({
     stroke: new Stroke$1({
-      color: ANNOTATION_COLOR[color].stroke,
+      color: ANNOTATION_COLOR[color].stroke(opacity),
       width: 2
     }),
     fill: new Fill$1({
@@ -19952,6 +20388,10 @@ const CustomPolygon = ({
   useEffect(() => {
     annotationStyleRef.current.setFill(new Fill$1({
       color: ANNOTATION_COLOR[color].fill(opacity)
+    }));
+    annotationStyleRef.current.setStroke(new Stroke$1({
+      color: ANNOTATION_COLOR[color].stroke(opacity),
+      width: 2
     }));
   }, [opacity, color]);
   useInteractionEvent({
@@ -20026,7 +20466,7 @@ const CustomPolyLine = ({
   }));
   const annotationStyleRef = useRef(new Style({
     stroke: new Stroke$1({
-      color: ANNOTATION_COLOR[color].stroke,
+      color: ANNOTATION_COLOR[color].stroke(opacity),
       width: 2
     }),
     fill: new Fill$1({
@@ -20043,6 +20483,10 @@ const CustomPolyLine = ({
   useEffect(() => {
     annotationStyleRef.current.setFill(new Fill$1({
       color: ANNOTATION_COLOR[color].fill(opacity)
+    }));
+    annotationStyleRef.current.setStroke(new Stroke$1({
+      color: ANNOTATION_COLOR[color].stroke(opacity),
+      width: 2
     }));
   }, [color]);
   const onHoverHandler = useCallback(event => {
@@ -20153,7 +20597,7 @@ const CustomRectangle = ({
   }));
   const annotationStyleRef = useRef(new Style({
     stroke: new Stroke$1({
-      color: ANNOTATION_COLOR[color].stroke,
+      color: ANNOTATION_COLOR[color].stroke(opacity),
       width: 2
     }),
     fill: new Fill$1({
@@ -20240,6 +20684,10 @@ const CustomRectangle = ({
     annotationStyleRef.current.setFill(new Fill$1({
       color: ANNOTATION_COLOR[color].fill(opacity)
     }));
+    annotationStyleRef.current.setStroke(new Stroke$1({
+      color: ANNOTATION_COLOR[color].stroke(opacity),
+      width: 2
+    }));
   }, [opacity, color]);
   useEffect(() => {
     if (!map) return;
@@ -20275,6 +20723,7 @@ const TextMarker = ({
   onClick,
   onHover,
   children,
+  opacity,
   zIndex = 0
 }) => {
   const map = useMap();
@@ -20305,14 +20754,14 @@ const TextMarker = ({
         text: children ? children.props.children : "",
         font: `${(children === null || children === void 0 ? void 0 : children.props.size) || 15}px Arial`,
         fill: new Fill$1({
-          color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "black" // 텍스트의 색상
+          color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "white" // 텍스트의 색상
         }),
 
         overflow: true,
         offsetX: 0,
         offsetY: -15,
         stroke: (children === null || children === void 0 ? void 0 : children.props.outline) ? new Stroke$1({
-          color: "white",
+          color: `white`,
           width: 3
         }) : undefined
       })
@@ -20377,7 +20826,7 @@ const TextMarker = ({
       map.removeInteraction(clickSelect);
       map.removeLayer(vectorLayer);
     };
-  }, [color, children, map, onHover, properties, onClick]);
+  }, [color, children, map, onHover, properties, onClick, opacity]);
   return jsx(Fragment, {});
 };
 
@@ -20472,7 +20921,7 @@ const TileLayer = ({
     return () => {
       map.removeLayer(customTmsLayer);
     };
-  }, [map, errorTileUrl]);
+  }, [map, errorTileUrl, zIndex, maxZoom, minZoom, crossOrigin, url]);
   return jsx(Fragment, {});
 };
 
@@ -27817,6 +28266,7 @@ proj4.defs("EPSG:5186", "+proj=tmerc +lat_0=38 +lon_0=127 +k=1 +x_0=200000 +y_0=
 proj4.defs("EPSG:5187", "+proj=tmerc +lat_0=38 +lon_0=129 +k=1 +x_0=200000 +y_0=600000 +ellps=GRS80 +units=m +no_defs");
 proj4.defs("EPSG:5188", "+proj=tmerc +lat_0=38 +lon_0=131 +k=1 +x_0=200000 +y_0=600000 +ellps=GRS80 +units=m +no_defs");
 proj4.defs("EPSG:3857", "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs");
+proj4.defs("EPSG:4326", "+proj=longlat +datum=WGS84 +no_defs");
 proj4.defs("WGS:84", "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs");
 register(proj4);
 function GeoJsonLayer({
@@ -27882,7 +28332,7 @@ function GeoJsonLayer({
     return () => {
       map.removeLayer(vectorLayer);
     };
-  }, [map, geoJson]);
+  }, [map, geoJson, color]);
   return jsx(Fragment, {});
 }
 
@@ -45173,11 +45623,11 @@ const makeSelectedFeature = nomalizedCoordinates => {
       image: new Circle$1({
         radius: 10,
         fill: new Fill({
-          color: ANNOTATION_COLOR["SELECT"].stroke // 원의 색상
+          color: ANNOTATION_COLOR["SELECT"].stroke() // 원의 색상
         }),
 
         stroke: new Stroke({
-          color: ANNOTATION_COLOR["SELECT"].stroke,
+          color: ANNOTATION_COLOR["SELECT"].stroke(),
           width: 2
         })
       }),
@@ -45196,6 +45646,36 @@ const makeSelectedFeature = nomalizedCoordinates => {
     return pointFeature;
   });
   return features;
+};
+const positionsFromFeature = (feature, lonlat) => {
+  const geometry = feature.getGeometry();
+  if (geometry instanceof Polygon$1) {
+    if (lonlat) {
+      return [geometry.getCoordinates()[0].map(coord => toLonLat(coord))];
+    }
+    return geometry.getCoordinates();
+  }
+  if (geometry instanceof LineString) {
+    if (lonlat) {
+      return geometry.getCoordinates().map(coord => toLonLat(coord));
+    }
+    return geometry.getCoordinates();
+  }
+  if (geometry instanceof Point$3) {
+    if (lonlat) {
+      return toLonLat(geometry.getFirstCoordinate());
+    }
+    return geometry.getFirstCoordinate();
+  }
+  if (geometry instanceof MultiPoint) {
+    if (lonlat) {
+      return toLonLat(geometry.getFirstCoordinate());
+    }
+    return geometry.getFirstCoordinate();
+  }
+};
+const positionsFromMultiPointFeatures = features => {
+  return features.map(feat => positionsFromFeature(feat));
 };
 
 function SelectedFeature({
@@ -45240,6 +45720,7 @@ function SelectedFeature({
       }
       if ((targetFeature === null || targetFeature === void 0 ? void 0 : targetFeature.getProperties().shape) === "Rectangle") {
         const coordinates = targetGeometry.getCoordinates();
+        coordinates[0].pop();
         nomalizedCoordinates = coordinates[0];
         setCoordinates(nomalizedCoordinates);
       }
@@ -45270,6 +45751,7 @@ function SelectedFeature({
       }
       if ((feature === null || feature === void 0 ? void 0 : feature.getProperties().shape) === "Rectangle") {
         const coordinates = geometry.getCoordinates();
+        coordinates[0].pop();
         nomalizedCoordinates = coordinates[0];
         setCoordinates(nomalizedCoordinates);
       }
@@ -45375,7 +45857,7 @@ class SelectStyle {
     this.beforeStyle = feature.getStyle();
     const currentStyle = feature.getStyle().clone();
     currentStyle.setStroke(new Stroke({
-      color: ANNOTATION_COLOR["SELECT"].stroke,
+      color: ANNOTATION_COLOR["SELECT"].stroke(),
       width: 2
     }));
     currentStyle.setFill(new Fill({
@@ -45399,7 +45881,7 @@ class SelectStyle {
     currentStyles.forEach((currentStyle, index) => {
       const imageStyle = currentStyle.getImage();
       imageStyle.setStroke(new Stroke({
-        color: ANNOTATION_COLOR["SELECT"].stroke,
+        color: ANNOTATION_COLOR["SELECT"].stroke(),
         width: 2
       }));
       imageStyle.setFill(new Fill({
@@ -45440,25 +45922,25 @@ function FeatureStore({
     unSelectFeature
   }), [selectedFeature, selectFeature, unSelectFeature]);
   const selectedFeatureStyleRef = useRef(new SelectStyle());
-  useEffect(() => {
-    const onClick = e => {
-      const mapProperties = map.getProperties();
-      if (mapProperties["isDrawing"] === true) {
-        return;
+  const onClick = e => {
+    const mapProperties = map.getProperties();
+    if (mapProperties["isDrawing"] === true) {
+      return;
+    }
+    const pixel = e.pixel;
+    // 겹쳐있는 마커 위에서부터 선택되도록 리버스
+    const reversedFeture = map.getFeaturesAtPixel(pixel).reverse();
+    reversedFeture.forEach(feature => {
+      if (!feature.getProperties().shape) return;
+      // 이미 선택한 마커 또 선택하면 해제
+      if (selectedFeature === feature) {
+        unSelectFeature();
+      } else {
+        selectFeature(feature);
       }
-      const pixel = e.pixel;
-      // 겹쳐있는 마커 위에서부터 선택되도록 리버스
-      const reversedFeture = map.getFeaturesAtPixel(pixel).reverse();
-      reversedFeture.forEach(feature => {
-        if (!feature.getProperties().shape) return;
-        // 이미 선택한 마커 또 선택하면 해제
-        if (selectedFeature === feature) {
-          unSelectFeature();
-        } else {
-          selectFeature(feature);
-        }
-      });
-    };
+    });
+  };
+  useEffect(() => {
     map.on("click", onClick);
     return () => {
       map.un("click", onClick);
@@ -45508,17 +45990,25 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
 }, ref) => {
   const id = useId();
   const mapId = `react-openlayers-map-${id}`;
+  const osmRef = useRef(new Tile({
+    source: new OSM({
+      crossOrigin: "anonymous"
+    }),
+    zIndex: -1000
+  }));
   const mapObj = useRef(new Map$1({
     controls: defaults$2({
       zoom: isZoomAbled,
       rotate: isRotateAbled
-    }).extend([]),
-    layers: isShownOsm ? [new Tile({
-      source: new OSM({
-        crossOrigin: "anonymous"
-      })
-    })] : undefined
+    }).extend([])
   }));
+  useEffect(() => {
+    if (isShownOsm) {
+      mapObj.current.addLayer(osmRef.current);
+    } else {
+      mapObj.current.removeLayer(osmRef.current);
+    }
+  }, [isShownOsm]);
   useEffect(() => {
     if (mapObj.current) {
       const view = mapObj.current.getView();
@@ -45555,6 +46045,11 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
   useImperativeHandle(ref, () => mapObj.current);
   useLayoutEffect(() => {
     const mapRef = mapObj.current;
+    mapRef.getInteractions().forEach(interaction => {
+      if (interaction instanceof DoubleClickZoom$2) {
+        interaction.setActive(false);
+      }
+    });
     const defaultZoomControl = mapRef.getControls().getArray().find(control => control instanceof Zoom$2);
     if (defaultZoomControl) {
       mapRef.removeControl(defaultZoomControl);
@@ -45596,5 +46091,121 @@ function InnerText({
   return jsx(Fragment, {});
 }
 
-export { Button, CaptureMap, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FeatureStore, FullScreenFeature, GeoJsonLayer, ImageOverlay, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, SelectedFeature, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeText, useDidUpdate, useEffectIfMounted, useFeatureStore, useHoverCursor, useInteractionEvent, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
+function useSyncMapContext() {
+  return useContext(SyncMapContext);
+}
+
+const SyncMap = ({
+  isDecoupled = false,
+  center = [127.9745613, 37.3236563],
+  zoomLevel = 15,
+  children,
+  height = "500px",
+  width = "500px"
+}) => {
+  const id = useId();
+  const mapId = `react-openlayers-map-${id}`;
+  const mapObj = useRef(new Map$1({
+    controls: defaults$2({
+      zoom: false,
+      rotate: true
+    }).extend([]),
+    layers: [new OlTileLayer({
+      source: new OSM({
+        crossOrigin: "anonymous"
+      })
+    })]
+  }));
+  const {
+    adjustCenter,
+    onWheelHandler
+  } = useSyncMapContext();
+  const onMouseUpOnMap = useCallback(() => {
+    if (!isDecoupled) {
+      const current = mapObj.current.getView().getCenter();
+      adjustCenter(toLonLat(current));
+    }
+  }, []);
+  useEffect(() => {
+    mapObj.current.getView().setCenter(fromLonLat(center));
+  }, [center]);
+  useEffect(() => {
+    var _a;
+    (_a = mapObj.current) === null || _a === void 0 ? void 0 : _a.getView().setZoom(zoomLevel);
+  }, [zoomLevel]);
+  useEffect(() => {
+    const mapRef = mapObj.current;
+    mapRef.setTarget(mapId);
+    return () => {
+      mapRef.setTarget(undefined);
+      mapRef.setLayers([]);
+    };
+  }, [mapId, isDecoupled]);
+  return jsx(MapContext.Provider, Object.assign({
+    value: mapObj.current
+  }, {
+    children: jsx("div", Object.assign({
+      id: mapId,
+      onWheel: e => onWheelHandler(e, mapObj.current),
+      onMouseUp: onMouseUpOnMap,
+      className: "react-openlayers-map-container",
+      style: {
+        width,
+        height
+      }
+    }, {
+      children: children
+    }))
+  }));
+};
+
+const SyncMapContext = /*#__PURE__*/createContext(null);
+const SyncMapGroup = ({
+  center = [127.9745613, 37.3236563],
+  zoomLevel = 15,
+  children
+}) => {
+  const [controlledCenter, setControlledCenter] = useState(center);
+  const [controlledZoomLevel, setControlledZoomLevel] = useState(zoomLevel);
+  const handleWheel = useRef(lodashExports.debounce((event, map) => {
+    setControlledZoomLevel(map.getView().getZoom());
+    setControlledCenter(toLonLat(map.getView().getCenter()));
+  }, 300));
+  const onWheelHandler = useCallback((event, map) => {
+    event.persist(); // Ensure the event is not nullified before the debounced function is called
+    handleWheel.current(event, map);
+  }, []);
+  const adjustCenter = useCallback(location => {
+    setControlledCenter(location);
+  }, []);
+  const adjustZoomLevel = useCallback(level => {
+    setControlledZoomLevel(level);
+  }, []);
+  const value = useMemo(() => ({
+    controlledCenter,
+    controlledZoomLevel,
+    adjustCenter,
+    adjustZoomLevel,
+    onWheelHandler
+  }), [controlledCenter, controlledZoomLevel, adjustCenter, adjustZoomLevel, onWheelHandler]);
+  const syncChildren = useMemo(() => {
+    return Children.map(children, child => {
+      if (child.props.isDecoupled) {
+        return child;
+      }
+      const adjustedChild = /*#__PURE__*/createElement(SyncMap, Object.assign(Object.assign({}, child.props), {
+        center: controlledCenter,
+        zoomLevel: controlledZoomLevel
+      }));
+      return adjustedChild;
+    });
+  }, [children, controlledCenter, controlledZoomLevel]);
+  return jsx(SyncMapContext.Provider, Object.assign({
+    value: value
+  }, {
+    children: syncChildren
+  }));
+};
+
+export { Button, CaptureMap, CompassWheel, ControlGroup, ControlSection, CustomCircle, CustomMarker, CustomMultiPoint, CustomPolyLine, CustomPolygon, CustomRectangle, DeleteAnnotation, DrawingTools, FeatureStore, FullScreenFeature, GeoJsonLayer, ImageOverlay, InnerText, LayerGroup, MapContainer, ModifyAnnotation, MoveAnnotation, MultiPointDrawButton, PointDrawButton, PolygonDrawButton, PolylineDrawButton, RectangleDrawButton, SelectedFeature, SyncMap, SyncMapContext, SyncMapGroup, TextDrawButton, TextMarker, TileLayer, TileUrl, ZoomFeature, getProfileFromFeature, getProfileFromMultiPoint, getProfileFromPoint, getProfileFromPolygon, getProfileFromPolyline, icon, makeSelectedFeature, makeText, positionsFromFeature, positionsFromMultiPointFeatures, useControlSection, useDidUpdate, useEffectIfMounted, useFeatureStore, useHoverCursor, useInteractionEvent, useMap, useMapEventHandler, useMapRotation, useSelectAnnotation };
 //# sourceMappingURL=index.es.js.map

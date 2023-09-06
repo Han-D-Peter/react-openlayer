@@ -4,10 +4,11 @@ import { useEffect, useRef } from "react";
 import { Select } from "ol/interaction";
 import { SelectEvent } from "ol/interaction/Select";
 import VectorSource from "ol/source/Vector";
-import { EraserIcon } from "../../../constants/icons/EraserIcon";
+import { BiSolidEraser } from "react-icons/bi";
 import { useMap, useSelectAnnotation } from "../../../hooks";
 import { useFeatureStore } from "src/lib/Map/hooks/incontext/useFeatureStore";
 import { useControlSection } from "../../layout";
+import { InnerButton } from "../InnerButton";
 
 export interface DeleteAnnotationProps extends ButtonProps {
   onDeleteChange?: (e: SelectEvent) => void;
@@ -74,6 +75,8 @@ export function DeleteAnnotation({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Delete"
       onClick={() => {
         if (!isActive) {
           selectButton(buttonId);
@@ -84,7 +87,9 @@ export function DeleteAnnotation({
       isActive={isActive}
       {...props}
     >
-      <EraserIcon />
+      <InnerButton isActive={isActive}>
+        <BiSolidEraser size={26} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }

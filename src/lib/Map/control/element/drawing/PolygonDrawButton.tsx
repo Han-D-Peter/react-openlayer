@@ -15,6 +15,8 @@ import { Feature } from "ol";
 import { Geometry, Polygon } from "ol/geom";
 import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
 import { useControlSection } from "../../layout";
+import { BoundingBox } from "@phosphor-icons/react";
+import { InnerButton } from "../InnerButton";
 
 export interface PolygonDrawButtonProps extends ButtonProps {
   /**
@@ -180,6 +182,8 @@ export function PolygonDrawButton({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Polygon"
       onClick={() => {
         if (isActive) {
           selectButton("");
@@ -191,7 +195,9 @@ export function PolygonDrawButton({
       isActive={isActive}
       {...props}
     >
-      <PolygonIcon />
+      <InnerButton isActive={isActive}>
+        <BoundingBox size={26} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }

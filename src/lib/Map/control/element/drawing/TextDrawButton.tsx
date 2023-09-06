@@ -14,6 +14,8 @@ import { Geometry, Point } from "ol/geom";
 import { Feature } from "ol";
 import { TextIcon } from "../../../constants/icons/TextIcon";
 import { useControlSection } from "../../layout";
+import { RxText } from "react-icons/rx";
+import { InnerButton } from "../InnerButton";
 
 export interface TextDrawButtonProps extends ButtonProps {
   /**
@@ -162,6 +164,8 @@ export function TextDrawButton({
   return (
     <Button
       id={buttonId}
+      hasPopup
+      popupText="Text"
       onClick={() => {
         if (isActive) {
           selectButton("");
@@ -173,7 +177,9 @@ export function TextDrawButton({
       isActive={isActive}
       {...props}
     >
-      <TextIcon />
+      <InnerButton isActive={isActive}>
+        <RxText size={24} color={isActive ? "white" : "black"} />
+      </InnerButton>
     </Button>
   );
 }
