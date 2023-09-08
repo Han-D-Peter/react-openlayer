@@ -6,7 +6,7 @@ import {
   useImperativeHandle,
   useRef,
 } from "react";
-import { Map } from "ol";
+import { Map, View } from "ol";
 import { Control, Zoom, defaults as defaultControls } from "ol/control";
 import { fromLonLat } from "ol/proj";
 import { Tile as TileLayer } from "ol/layer";
@@ -17,6 +17,7 @@ import { FeatureStore } from "./FeatureStore";
 import { boundingExtent } from "ol/extent";
 import "ol/ol.css";
 import { DoubleClickZoom } from "ol/interaction";
+import { ZoomFeature } from "./control/ZoomFeature";
 
 export type Lng = number;
 export type Lat = number;
@@ -118,6 +119,9 @@ export const MapContainer = memo(
       );
       const mapObj = useRef<Map>(
         new Map({
+          view: new View({
+            zoom: zoomLevel,
+          }),
           controls: defaultControls({
             zoom: isZoomAbled,
             rotate: isRotateAbled,
