@@ -36,6 +36,7 @@ import { SyncMapGroup } from "../src/lib/Map/SyncMapGroup";
 import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
 import TestField from "./TestField";
+import json from "./sample.json";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
@@ -79,6 +80,7 @@ function App() {
         isAbledSelection
         isShownOsm={isShown}
       >
+        <GeoJsonLayer geoJson={json} color="blue" />
         <TestField />
         <TileLayer
           maxZoom={23}
@@ -245,7 +247,7 @@ function App() {
           setRotate(Number(e.target.value));
         }}
       />
-      <SyncMapGroup rotate={rotate}>
+      <SyncMapGroup>
         <SyncMap>
           <ControlSection>
             <h1>hello</h1>

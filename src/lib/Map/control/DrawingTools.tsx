@@ -23,7 +23,6 @@ import { TranslateEvent } from "ol/interaction/Translate";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { useMap } from "../hooks";
 import VectorSource from "ol/source/Vector";
-import { GeoJsonLayer } from "../layer";
 
 export interface DrawingToolsProps {
   multiMarker?: boolean;
@@ -44,9 +43,6 @@ export interface DrawingToolsProps {
   onCanvas?: boolean;
   children?: ReactNode;
 }
-export const ControlContext = createContext<{
-  drawVectorSource: VectorSource;
-} | null>(null);
 
 export function DrawingTools({
   multiMarker = true,
@@ -66,7 +62,6 @@ export function DrawingTools({
   onDrawStart,
   children,
 }: DrawingToolsProps) {
-  const drawVectorSourceRef = useRef(new VectorSource());
   const [isSelected, setIsSelected] = useState<string | null>(null);
   const map = useMap();
 
@@ -96,10 +91,7 @@ export function DrawingTools({
   }, [isSelected, map]);
 
   return (
-    <ControlContext.Provider
-      value={{ drawVectorSource: drawVectorSourceRef.current }}
-    >
-      {children}
+    <>
       <ControlGroup>
         {multiMarker && (
           <MultiPointDrawButton
@@ -191,6 +183,6 @@ export function DrawingTools({
           />
         )}
       </ControlGroup>
-    </ControlContext.Provider>
+    </>
   );
 }

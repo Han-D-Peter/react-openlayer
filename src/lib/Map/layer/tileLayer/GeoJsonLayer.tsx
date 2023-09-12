@@ -94,14 +94,11 @@ export function GeoJsonLayer({
         geoMetry.transform(fromProjection, toProjection);
       }
     });
-    if (drawVectorSource) drawVectorSource.addFeatures(features);
-    const vectorSource = new VectorSource({
-      features,
-    });
+    drawVectorSource.addFeatures(features);
 
     const vectorLayer = new VectorLayer({
       zIndex,
-      source: drawVectorSource ?? vectorSource,
+      source: drawVectorSource,
       style: function (feature) {
         const properties = feature.getProperties();
 
@@ -134,7 +131,7 @@ export function GeoJsonLayer({
     geoJsonLayer.current = vectorLayer;
 
     const snap = new Snap({
-      source: drawVectorSource ?? vectorSource,
+      source: drawVectorSource,
     });
     map.addInteraction(snap);
     map.addLayer(vectorLayer);

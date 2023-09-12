@@ -1,4 +1,10 @@
-import React, { memo, useEffect, useId } from "react";
+import React, {
+  createContext,
+  memo,
+  useContext,
+  useEffect,
+  useId,
+} from "react";
 import {
   ReactNode,
   useLayoutEffect,
@@ -18,11 +24,16 @@ import { boundingExtent } from "ol/extent";
 import "ol/ol.css";
 import { DoubleClickZoom } from "ol/interaction";
 import { ZoomFeature } from "./control/ZoomFeature";
+import VectorSource from "ol/source/Vector";
 
 export type Lng = number;
 export type Lat = number;
 
 export type Location = [Lng, Lat];
+
+export const ControlContext = createContext<{
+  drawVectorSource: VectorSource;
+} | null>(null);
 
 export interface MapProps {
   scrollWheelZoom?: boolean;
@@ -129,6 +140,8 @@ export const MapContainer = memo(
         })
       );
 
+      const drawVectorSource = useRef<VectorSource>(new VectorSource());
+
       useEffect(() => {
         if (isShownOsm) {
           mapObj.current.addLayer(osmRef.current);
@@ -207,15 +220,19 @@ export const MapContainer = memo(
       // MapContext.Provider 에 객체 저장
       return (
         <MapContext.Provider value={mapObj.current}>
-          <FeatureStore isAbledSelection={isAbledSelection}>
-            <div
-              id={mapId}
-              className="react-openlayers-map-container"
-              style={{ width, height }}
-            >
-              {children}
-            </div>
-          </FeatureStore>
+          <ControlContext.Provider
+            value={{ drawVectorSource: drawVectorSource.current }}
+          >
+            <FeatureStore isAbledSelection={isAbledSelection}>
+              <div
+                id={mapId}
+                className="react-openlayers-map-container"
+                style={{ width, height }}
+              >
+                {children}
+              </div>
+            </FeatureStore>
+          </ControlContext.Provider>
         </MapContext.Provider>
       );
     }

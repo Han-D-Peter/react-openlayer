@@ -1,7 +1,7 @@
 import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
-import { Draw } from "ol/interaction";
+import { Draw, Snap } from "ol/interaction";
 import { useFeatureStore, useMap } from "../../../hooks";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -169,6 +169,14 @@ export function PolygonDrawButton({
     if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
+
+    const snap = new Snap({
+      source: drawVectorSource,
+    });
+    map.addInteraction(snap);
+    return () => {
+      map.removeInteraction(snap);
+    };
   }, [isActive, map]);
 
   useEffect(() => {
