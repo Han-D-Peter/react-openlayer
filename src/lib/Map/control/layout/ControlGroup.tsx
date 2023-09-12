@@ -1,4 +1,5 @@
-import React from "react";
+import VectorSource from "ol/source/Vector";
+import React, { createContext, useRef } from "react";
 import { Children, ReactElement, cloneElement } from "react";
 import { Button } from "../element/Button";
 
@@ -7,6 +8,7 @@ export interface ControlGroupProps {
     | ReactElement<typeof Button>
     | (boolean | ReactElement<typeof Button>)[];
 }
+
 export const ControlGroup = ({ children }: ControlGroupProps) => {
   const onlyChildren = Children.toArray(children).filter((child) => child) as
     | ReactElement<typeof Button>

@@ -16,6 +16,7 @@ import { Feature } from "ol";
 import { RectangleIcon } from "../../../constants/icons/RectangleIcon";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
+import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
 
 export interface RectangleDrawButtonProps extends ButtonProps {
   /**
@@ -47,11 +48,11 @@ export function RectangleDrawButton({
   const { selectButton, selectedButtonId } = useControlSection();
   const { selectFeature } = useFeatureStore();
   const isActive = buttonId === selectedButtonId;
-  const vectorSourceRef = useRef(new VectorSource());
+  const { drawVectorSource } = useDrawSource();
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "Circle",
       geometryFunction: createBox(),
       style: new Style({
@@ -72,7 +73,7 @@ export function RectangleDrawButton({
 
   useEffect(() => {
     drawRef.current = new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "Circle",
       geometryFunction: createBox(),
       style: new Style({
@@ -131,7 +132,7 @@ export function RectangleDrawButton({
     event.feature.setProperties({
       shape: "Rectangle",
       isModifying: false,
-      source: vectorSourceRef.current,
+      source: drawVectorSource,
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
@@ -164,7 +165,7 @@ export function RectangleDrawButton({
   }, [isActive, map]);
 
   useEffect(() => {
-    vectorLayerRef.current.setSource(vectorSourceRef.current);
+    vectorLayerRef.current.setSource(drawVectorSource);
     if (onCanvas) {
       map.addLayer(vectorLayerRef.current);
     } else {

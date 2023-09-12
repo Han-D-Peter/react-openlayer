@@ -28544,9 +28544,14 @@
           }
         });
         geoJsonLayer.current = vectorLayer;
+        const snap = new interaction.Snap({
+          source: vectorSource
+        });
+        map.addInteraction(snap);
         map.addLayer(vectorLayer);
         return () => {
           map.removeLayer(vectorLayer);
+          map.removeInteraction(snap);
         };
       }, [map, geoJson, color]);
       return jsxRuntime.jsx(jsxRuntime.Fragment, {});

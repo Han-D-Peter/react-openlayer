@@ -9,6 +9,7 @@ import { register } from "ol/proj/proj4";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import { Feature } from "ol";
 import { Snap } from "ol/interaction";
+import useDrawSource from "../../hooks/incontext/useDrawSource";
 
 proj4.defs(
   "EPSG:5185",
@@ -70,6 +71,7 @@ export function GeoJsonLayer({
   projectionCode = "EPSG:5186",
 }: GeoJsonLayerProps) {
   const map = useMap();
+  const { drawVectorSource } = useDrawSource();
   const geoJsonLayer = useRef<VectorLayer<VectorSource> | null>(null);
 
   const fromProjection = projectionCode;
@@ -92,14 +94,14 @@ export function GeoJsonLayer({
         geoMetry.transform(fromProjection, toProjection);
       }
     });
-
+    if (drawVectorSource) drawVectorSource.addFeatures(features);
     const vectorSource = new VectorSource({
       features,
     });
 
     const vectorLayer = new VectorLayer({
       zIndex,
-      source: vectorSource,
+      source: drawVectorSource ?? vectorSource,
       style: function (feature) {
         const properties = feature.getProperties();
 
@@ -132,7 +134,7 @@ export function GeoJsonLayer({
     geoJsonLayer.current = vectorLayer;
 
     const snap = new Snap({
-      source: vectorSource,
+      source: drawVectorSource ?? vectorSource,
     });
     map.addInteraction(snap);
     map.addLayer(vectorLayer);

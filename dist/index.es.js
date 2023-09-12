@@ -1,6 +1,6 @@
 import { jsxs, jsx, Fragment } from 'react/jsx-runtime';
 import a$1, { createContext, useContext, useCallback, useEffect, useState, useMemo, useRef, forwardRef, Children, cloneElement, useId, useImperativeHandle, memo, useLayoutEffect, createElement } from 'react';
-import { Draw, Select as Select$1, Modify, Translate, DoubleClickZoom as DoubleClickZoom$2 } from 'ol/interaction';
+import { Draw, Select as Select$1, Modify, Translate, Snap, DoubleClickZoom as DoubleClickZoom$2 } from 'ol/interaction';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Style from 'ol/style/Style';
@@ -28550,9 +28550,14 @@ function GeoJsonLayer({
       }
     });
     geoJsonLayer.current = vectorLayer;
+    const snap = new Snap({
+      source: vectorSource
+    });
+    map.addInteraction(snap);
     map.addLayer(vectorLayer);
     return () => {
       map.removeLayer(vectorLayer);
+      map.removeInteraction(snap);
     };
   }, [map, geoJson, color]);
   return jsx(Fragment, {});

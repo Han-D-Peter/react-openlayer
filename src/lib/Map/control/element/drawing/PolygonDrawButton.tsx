@@ -17,6 +17,7 @@ import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
 import { useControlSection } from "../../layout";
 import { BoundingBox } from "@phosphor-icons/react";
 import { InnerButton } from "../InnerButton";
+import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
 
 export interface PolygonDrawButtonProps extends ButtonProps {
   /**
@@ -50,11 +51,11 @@ export function PolygonDrawButton({
 
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
-  const vectorSourceRef = useRef(new VectorSource());
+  const { drawVectorSource } = useDrawSource();
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "Polygon",
       style: new Style({
         stroke: new Stroke({
@@ -74,7 +75,7 @@ export function PolygonDrawButton({
 
   useEffect(() => {
     drawRef.current = new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "Polygon",
       style: new Style({
         stroke: new Stroke({
@@ -131,7 +132,7 @@ export function PolygonDrawButton({
     feature.setProperties({
       shape: "Polygon",
       isModifying: false,
-      source: vectorSourceRef.current,
+      source: drawVectorSource,
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
@@ -148,7 +149,7 @@ export function PolygonDrawButton({
 
   useEffect(() => {
     const vectorLayer = new VectorLayer({
-      source: vectorSourceRef.current,
+      source: drawVectorSource,
     });
     map.addLayer(vectorLayer);
     const drawingInstance = drawRef.current;
@@ -171,7 +172,7 @@ export function PolygonDrawButton({
   }, [isActive, map]);
 
   useEffect(() => {
-    vectorLayerRef.current.setSource(vectorSourceRef.current);
+    vectorLayerRef.current.setSource(drawVectorSource);
     if (onCanvas) {
       map.addLayer(vectorLayerRef.current);
     } else {

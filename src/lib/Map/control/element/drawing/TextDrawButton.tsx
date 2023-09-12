@@ -16,6 +16,7 @@ import { TextIcon } from "../../../constants/icons/TextIcon";
 import { useControlSection } from "../../layout";
 import { RxText } from "react-icons/rx";
 import { InnerButton } from "../InnerButton";
+import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
 
 export interface TextDrawButtonProps extends ButtonProps {
   /**
@@ -42,11 +43,11 @@ export function TextDrawButton({
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
-  const vectorSourceRef = useRef(new VectorSource());
+  const { drawVectorSource } = useDrawSource();
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "Point",
       style: new Style({
         text: new Text({
@@ -69,7 +70,7 @@ export function TextDrawButton({
 
   useEffect(() => {
     drawRef.current = new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "Point",
       style: new Style({
         text: new Text({
@@ -122,7 +123,7 @@ export function TextDrawButton({
     feature.setProperties({
       shape: "TextMarker",
       isModifying: false,
-      source: vectorSourceRef.current,
+      source: drawVectorSource,
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
@@ -153,7 +154,7 @@ export function TextDrawButton({
   }, [isActive, map]);
 
   useEffect(() => {
-    vectorLayerRef.current.setSource(vectorSourceRef.current);
+    vectorLayerRef.current.setSource(drawVectorSource);
     if (onCanvas) {
       map.addLayer(vectorLayerRef.current);
     } else {

@@ -14,6 +14,7 @@ import { Feature } from "ol";
 import { PointIcon } from "../../../constants/icons/PointIcon";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
+import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
 
 export interface PointDrawButtonProps extends ButtonProps {
   /**
@@ -46,11 +47,11 @@ export function PointDrawButton({
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
-  const vectorSourceRef = useRef(new VectorSource());
+  const { drawVectorSource } = useDrawSource();
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "Point",
       style: new Style({
         text: makeText({
@@ -71,7 +72,7 @@ export function PointDrawButton({
 
   useEffect(() => {
     drawRef.current = new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "Point",
       style: new Style({
         text: makeText({
@@ -122,7 +123,7 @@ export function PointDrawButton({
     feature.setProperties({
       shape: "Point",
       isModifying: false,
-      source: vectorSourceRef.current,
+      source: drawVectorSource,
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
@@ -154,7 +155,7 @@ export function PointDrawButton({
   }, [isActive, map]);
 
   useEffect(() => {
-    vectorLayerRef.current.setSource(vectorSourceRef.current);
+    vectorLayerRef.current.setSource(drawVectorSource);
 
     if (onCanvas) {
       map.addLayer(vectorLayerRef.current);

@@ -17,6 +17,7 @@ import { PolylineIcon } from "../../../constants/icons/PolylineIcon";
 import { useControlSection } from "../../layout";
 import { LineSegment } from "@phosphor-icons/react";
 import { InnerButton } from "../InnerButton";
+import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
 
 export interface PolylineDrawButtonProps extends ButtonProps {
   /**
@@ -49,11 +50,11 @@ export function PolylineDrawButton({
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
-  const vectorSourceRef = useRef(new VectorSource());
+  const { drawVectorSource } = useDrawSource();
   const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
   const drawRef = useRef(
     new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "LineString",
       style: new Style({
         stroke: new Stroke({
@@ -73,7 +74,7 @@ export function PolylineDrawButton({
 
   useEffect(() => {
     drawRef.current = new Draw({
-      source: onCanvas ? vectorSourceRef.current : undefined,
+      source: onCanvas ? drawVectorSource : undefined,
       type: "LineString",
       style: new Style({
         stroke: new Stroke({
@@ -131,7 +132,7 @@ export function PolylineDrawButton({
     feature.setProperties({
       shape: "Polyline",
       isModifying: false,
-      source: vectorSourceRef.current,
+      source: drawVectorSource,
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
@@ -176,7 +177,7 @@ export function PolylineDrawButton({
   }, [isActive, map]);
 
   useEffect(() => {
-    vectorLayerRef.current.setSource(vectorSourceRef.current);
+    vectorLayerRef.current.setSource(drawVectorSource);
     if (onCanvas) {
       map.addLayer(vectorLayerRef.current);
     } else {
