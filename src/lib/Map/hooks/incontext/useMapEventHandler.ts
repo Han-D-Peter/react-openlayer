@@ -5,7 +5,6 @@ import { MapBrowserEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
 import RenderEvent from "ol/render/Event";
 import BaseEvent from "ol/events/Event";
-import debounce from "lodash";
 
 export interface useMapEventHandlerArgs {
   onDrag?: ({

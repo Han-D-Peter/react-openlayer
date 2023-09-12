@@ -26,13 +26,23 @@ import { DrawingTools } from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";
 import { CustomMultiPoint } from "./lib/Map/layer/annotation/MultiPoint";
 import { icon } from "./lib";
+import {
+  positionsFromFeature,
+  positionsFromMultiPointFeatures,
+} from "./lib/utils/feature";
+
 import { Map, View } from "ol";
+import { SyncMapGroup } from "../src/lib/Map/SyncMapGroup";
+import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
+import _ from "lodash";
+import TestField from "./TestField";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
 
 function App() {
   const [isShown, setIsShown] = useState(true);
+  const [rotate, setRotate] = useState(0);
   const [bounds, setBounds] = useState<[Location, Location]>([
     [126.841019, 35.189171],
     [126.841235, 35.189381],
@@ -41,7 +51,12 @@ function App() {
   const [mapSize, setMapSize] = useState({ width: "1000px", height: "100vh" });
 
   function off() {
-    setMapSize({ width: "1000px", height: "100vh" });
+    console.log(isShown);
+    if (isShown) {
+      setIsShown(false);
+    } else {
+      setIsShown(true);
+    }
   }
 
   const ref = useRef<Map>(null);
@@ -56,12 +71,15 @@ function App() {
       >
         off
       </button>
+
       <MapContainer
         height={mapSize.height}
         width={mapSize.width}
         ref={ref}
         isAbledSelection
+        isShownOsm={isShown}
       >
+        <TestField />
         <TileLayer
           maxZoom={23}
           crossOrigin={"anonymous"}
@@ -76,11 +94,20 @@ function App() {
           ]}
         />
         <LayerGroup zIndex={1}>
-          <CustomMarker selected center={[126.840492, 35.190337]}>
+          <CustomMarker
+            selected={isShown}
+            opacity={0.4}
+            center={[126.840492, 35.190337]}
+            onClick={() => {
+              console.log("click");
+            }}
+          >
             <InnerText outline>bottom left</InnerText>
           </CustomMarker>
-          <CustomMarker selected center={[126.840746, 35.190475]}>
-            <InnerText outline>top right</InnerText>
+          <CustomMarker center={[126.840746, 35.190475]}>
+            <InnerText isPopup outline>
+              top right
+            </InnerText>
           </CustomMarker>
 
           <CustomCircle
@@ -119,20 +146,33 @@ function App() {
           ></CustomRectangle>
         </LayerGroup>
 
-        {isShown && (
-          <CustomMultiPoint
-            onClick={(event) => {
-              console.log("raw event ", event);
-              console.log("event", getProfileFromFeature(event.annotation));
-            }}
-            positions={[
-              [126.843684, 35.190616],
-              [126.840476, 35.190219],
-              [126.840604, 35.190133],
-              [126.841268, 35.190381],
-            ]}
-          ></CustomMultiPoint>
-        )}
+        <CustomMultiPoint
+          onClick={(event) => {
+            console.log("raw event ", event);
+            console.log("event", getProfileFromFeature(event.annotation));
+          }}
+          positions={[
+            [126.843684, 35.190616],
+            [126.840476, 35.190219],
+            [126.840604, 35.190133],
+            [126.841268, 35.190381],
+          ]}
+        ></CustomMultiPoint>
+        <CustomPolygon
+          onClick={(event) =>
+            console.log("event", getProfileFromFeature(event.annotation))
+          }
+          positions={[
+            [
+              [126.840884, 35.190816],
+              [126.840676, 35.190419],
+              [126.840804, 35.190333],
+              [126.841068, 35.190581],
+            ],
+          ]}
+        >
+          <InnerText isPopup>hello2</InnerText>
+        </CustomPolygon>
 
         {/* {isShown && (
           <>
@@ -183,9 +223,40 @@ function App() {
         <ControlSection>
           <ZoomFeature />
           <FullScreenFeature />
-          <DrawingTools onCanvas />
+          <DrawingTools
+            multiMarker={false}
+            onCanvas
+            onDrawEnd={(e) => {
+              if (!_.isArray(e)) {
+                console.log(positionsFromFeature(e));
+              } else {
+                console.log(positionsFromMultiPointFeatures(e));
+              }
+            }}
+          />
         </ControlSection>
       </MapContainer>
+      <input
+        type="range"
+        min={0}
+        max={360}
+        onChange={(e) => {
+          console.log("degree", e.target.value);
+          setRotate(Number(e.target.value));
+        }}
+      />
+      <SyncMapGroup rotate={rotate}>
+        <SyncMap>
+          <ControlSection>
+            <h1>hello</h1>
+          </ControlSection>
+        </SyncMap>
+        <SyncMap>
+          <ControlSection>
+            <h1>hello</h1>
+          </ControlSection>
+        </SyncMap>
+      </SyncMapGroup>
     </div>
   );
 }

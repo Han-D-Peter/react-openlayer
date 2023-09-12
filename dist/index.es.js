@@ -120,6 +120,7 @@ function useMap() {
 }
 
 const useMapEventHandler = ({
+  onDrag,
   onClick,
   onHover,
   onMapLoaded,
@@ -135,6 +136,14 @@ const useMapEventHandler = ({
       });
     }
   }, [onClick]);
+  const dragEventHandler = useCallback(event => {
+    if (onDrag) {
+      onDrag({
+        event,
+        lonlat: toLonLat(event.coordinate)
+      });
+    }
+  }, [onDrag]);
   const hoverEventHandler = useCallback(event => {
     if (onHover) {
       onHover({
@@ -158,6 +167,12 @@ const useMapEventHandler = ({
       onTileLoadEnded(event);
     }
   }, [onTileLoadEnded]);
+  useEffect(() => {
+    map.on("pointerdrag", dragEventHandler);
+    return () => {
+      map.un("pointerdrag", dragEventHandler);
+    };
+  }, [dragEventHandler, map]);
   useEffect(() => {
     map.on("click", clickEventHandler);
     return () => {
@@ -333,7 +348,7 @@ const ButtonPopup = styled.div`
   background-color: #3c3c3c;
   height: 27px;
   color: #d7d7d7;
-  white-space: normal;
+  white-space: nowrap;
   /* width: 100px; */
   padding: 0 10px 0 10px;
   top: 6px;
@@ -46204,6 +46219,9 @@ const MapContainer = /*#__PURE__*/memo( /*#__PURE__*/forwardRef(({
     zIndex: -1000
   }));
   const mapObj = useRef(new Map$2({
+    view: new View$1({
+      zoom: zoomLevel
+    }),
     controls: defaults$2({
       zoom: isZoomAbled,
       rotate: isRotateAbled

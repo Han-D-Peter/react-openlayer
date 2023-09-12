@@ -8,6 +8,7 @@ import { useMap } from "../../hooks";
 import { register } from "ol/proj/proj4";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import { Feature } from "ol";
+import { Snap } from "ol/interaction";
 
 proj4.defs(
   "EPSG:5185",
@@ -130,9 +131,15 @@ export function GeoJsonLayer({
 
     geoJsonLayer.current = vectorLayer;
 
+    const snap = new Snap({
+      source: vectorSource,
+    });
+    map.addInteraction(snap);
     map.addLayer(vectorLayer);
+
     return () => {
       map.removeLayer(vectorLayer);
+      map.removeInteraction(snap);
     };
   }, [map, geoJson, color]);
   return <></>;
