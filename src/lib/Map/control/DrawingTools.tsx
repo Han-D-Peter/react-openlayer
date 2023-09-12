@@ -42,7 +42,7 @@ export interface DrawingToolsProps {
   onModify?: (event: ModifyEvent) => void;
   onDrawEnd?: (event: Feature<Geometry> | Feature<Geometry>[]) => void;
   onCanvas?: boolean;
-  children?: ReactElement<typeof GeoJsonLayer>;
+  children?: ReactNode;
 }
 export const ControlContext = createContext<{
   drawVectorSource: VectorSource;

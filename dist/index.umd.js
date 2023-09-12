@@ -1,14 +1,13 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/source/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('ol/control'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/layer/Tile'), require('ol/source'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('ol/extent')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/source/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', 'ol/control', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/geom/Circle', 'ol/Feature', 'ol/layer/Tile', 'ol/source', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'ol/extent'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.VectorSource, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.control, global.react, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.Circle, global.Feature$2, global.OlTileLayer, global.source, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.extent));
-})(this, (function (exports, jsxRuntime, a$1, interaction, VectorLayer, VectorSource, Style, style, geom, proj, condition, Select, styled, control, react, Fill, Stroke, Text, Icon, Draw, Circle, Feature$2, OlTileLayer, source, GeoJSON, proj4$1, ImageLayer, layer, extent) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react/jsx-runtime'), require('react'), require('ol/interaction'), require('ol/layer/Vector'), require('ol/style/Style'), require('ol/style'), require('ol/geom'), require('ol/proj'), require('ol/events/condition'), require('ol/interaction/Select'), require('@emotion/styled'), require('ol/control'), require('@emotion/react'), require('ol/style/Fill'), require('ol/style/Stroke'), require('ol/style/Text'), require('ol/style/Icon'), require('ol/interaction/Draw'), require('ol/source/Vector'), require('ol/geom/Circle'), require('ol/Feature'), require('ol/layer/Tile'), require('ol/source'), require('ol/format/GeoJSON'), require('ol/proj/proj4'), require('ol/layer/Image'), require('ol/layer'), require('ol/extent')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'react/jsx-runtime', 'react', 'ol/interaction', 'ol/layer/Vector', 'ol/style/Style', 'ol/style', 'ol/geom', 'ol/proj', 'ol/events/condition', 'ol/interaction/Select', '@emotion/styled', 'ol/control', '@emotion/react', 'ol/style/Fill', 'ol/style/Stroke', 'ol/style/Text', 'ol/style/Icon', 'ol/interaction/Draw', 'ol/source/Vector', 'ol/geom/Circle', 'ol/Feature', 'ol/layer/Tile', 'ol/source', 'ol/format/GeoJSON', 'ol/proj/proj4', 'ol/layer/Image', 'ol/layer', 'ol/extent'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global["react-openlayers7"] = {}, global.jsxRuntime, global.React, global.interaction, global.VectorLayer, global.Style, global.style, global.geom, global.proj, global.condition, global.Select, global.styled, global.control, global.react, global.Fill, global.Stroke, global.Text, global.Icon, global.Draw, global.VectorSource, global.Circle, global.Feature$2, global.OlTileLayer, global.source, global.GeoJSON, global.proj4$1, global.ImageLayer, global.layer, global.extent));
+})(this, (function (exports, jsxRuntime, a$1, interaction, VectorLayer, Style, style, geom, proj, condition, Select, styled, control, react, Fill, Stroke, Text, Icon, Draw, VectorSource, Circle, Feature$2, OlTileLayer, source, GeoJSON, proj4$1, ImageLayer, layer, extent) { 'use strict';
 
     function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
     var a__default = /*#__PURE__*/_interopDefaultLegacy(a$1);
     var VectorLayer__default = /*#__PURE__*/_interopDefaultLegacy(VectorLayer);
-    var VectorSource__default = /*#__PURE__*/_interopDefaultLegacy(VectorSource);
     var Style__default = /*#__PURE__*/_interopDefaultLegacy(Style);
     var Select__default = /*#__PURE__*/_interopDefaultLegacy(Select);
     var styled__default = /*#__PURE__*/_interopDefaultLegacy(styled);
@@ -16,6 +15,7 @@
     var Stroke__default = /*#__PURE__*/_interopDefaultLegacy(Stroke);
     var Text__default = /*#__PURE__*/_interopDefaultLegacy(Text);
     var Icon__default = /*#__PURE__*/_interopDefaultLegacy(Icon);
+    var VectorSource__default = /*#__PURE__*/_interopDefaultLegacy(VectorSource);
     var Circle__default = /*#__PURE__*/_interopDefaultLegacy(Circle);
     var Feature__default = /*#__PURE__*/_interopDefaultLegacy(Feature$2);
     var OlTileLayer__default = /*#__PURE__*/_interopDefaultLegacy(OlTileLayer);
@@ -521,6 +521,10 @@
   }
 `;
 
+    function useDrawSource() {
+      return a$1.useContext(ControlContext);
+    }
+
     function MultiPointDrawButton(_a) {
       var {
           onEnd,
@@ -537,13 +541,15 @@
         selectedButtonId
       } = useControlSection();
       const isActive = buttonId === selectedButtonId;
-      const vectorSourceRef = a$1.useRef(new VectorSource__default["default"]());
+      const {
+        drawVectorSource
+      } = useDrawSource();
       const vectorLayerRef = a$1.useRef(new VectorLayer__default["default"]({
         zIndex: 1,
-        source: vectorSourceRef.current
+        source: drawVectorSource
       }));
       const drawRef = a$1.useRef(new interaction.Draw({
-        source: vectorSourceRef.current,
+        source: drawVectorSource,
         type: "MultiPoint"
       }));
       const [features, setFeatures] = a$1.useState([]);
@@ -566,7 +572,7 @@
         feature.setProperties({
           shape: "MultiPoint",
           isModifying: false,
-          source: vectorSourceRef.current,
+          source: drawVectorSource,
           layer: vectorLayerRef.current,
           positions: geometry.getCoordinates()
         });
@@ -577,7 +583,7 @@
           onEnd(features);
         }
         if (!onCanvas) {
-          vectorSourceRef.current.clear();
+          drawVectorSource.clear();
         }
         setFeatures([]);
         map.removeInteraction(drawRef.current);
@@ -732,12 +738,14 @@
       const {
         selectFeature
       } = useFeatureStore();
-      const vectorSourceRef = a$1.useRef(new VectorSource__default["default"]());
+      const {
+        drawVectorSource
+      } = useDrawSource();
       const vectorLayerRef = a$1.useRef(new VectorLayer__default["default"]({
         zIndex: 1
       }));
       const drawRef = a$1.useRef(new interaction.Draw({
-        source: onCanvas ? vectorSourceRef.current : undefined,
+        source: onCanvas ? drawVectorSource : undefined,
         type: "Point",
         style: new Style__default["default"]({
           text: makeText({
@@ -757,7 +765,7 @@
 
       a$1.useEffect(() => {
         drawRef.current = new interaction.Draw({
-          source: onCanvas ? vectorSourceRef.current : undefined,
+          source: onCanvas ? drawVectorSource : undefined,
           type: "Point",
           style: new Style__default["default"]({
             text: makeText({
@@ -808,7 +816,7 @@
         feature.setProperties({
           shape: "Point",
           isModifying: false,
-          source: vectorSourceRef.current,
+          source: drawVectorSource,
           layer: vectorLayerRef.current,
           positions: geometry.getCoordinates()
         });
@@ -837,7 +845,7 @@
         }
       }, [isActive, map]);
       a$1.useEffect(() => {
-        vectorLayerRef.current.setSource(vectorSourceRef.current);
+        vectorLayerRef.current.setSource(drawVectorSource);
         if (onCanvas) {
           map.addLayer(vectorLayerRef.current);
         } else {
@@ -1053,12 +1061,14 @@
       const {
         selectFeature
       } = useFeatureStore();
-      const vectorSourceRef = a$1.useRef(new VectorSource__default["default"]());
+      const {
+        drawVectorSource
+      } = useDrawSource();
       const vectorLayerRef = a$1.useRef(new VectorLayer__default["default"]({
         zIndex: 1
       }));
       const drawRef = a$1.useRef(new interaction.Draw({
-        source: onCanvas ? vectorSourceRef.current : undefined,
+        source: onCanvas ? drawVectorSource : undefined,
         type: "Polygon",
         style: new Style__default["default"]({
           stroke: new Stroke__default["default"]({
@@ -1077,7 +1087,7 @@
 
       a$1.useEffect(() => {
         drawRef.current = new interaction.Draw({
-          source: onCanvas ? vectorSourceRef.current : undefined,
+          source: onCanvas ? drawVectorSource : undefined,
           type: "Polygon",
           style: new Style__default["default"]({
             stroke: new Stroke__default["default"]({
@@ -1132,7 +1142,7 @@
         feature.setProperties({
           shape: "Polygon",
           isModifying: false,
-          source: vectorSourceRef.current,
+          source: drawVectorSource,
           layer: vectorLayerRef.current,
           positions: geometry.getCoordinates()
         });
@@ -1150,7 +1160,7 @@
       };
       a$1.useEffect(() => {
         const vectorLayer = new VectorLayer__default["default"]({
-          source: vectorSourceRef.current
+          source: drawVectorSource
         });
         map.addLayer(vectorLayer);
         const drawingInstance = drawRef.current;
@@ -1167,7 +1177,7 @@
         }
       }, [isActive, map]);
       a$1.useEffect(() => {
-        vectorLayerRef.current.setSource(vectorSourceRef.current);
+        vectorLayerRef.current.setSource(drawVectorSource);
         if (onCanvas) {
           map.addLayer(vectorLayerRef.current);
         } else {
@@ -1218,12 +1228,14 @@
       const {
         selectFeature
       } = useFeatureStore();
-      const vectorSourceRef = a$1.useRef(new VectorSource__default["default"]());
+      const {
+        drawVectorSource
+      } = useDrawSource();
       const vectorLayerRef = a$1.useRef(new VectorLayer__default["default"]({
         zIndex: 1
       }));
       const drawRef = a$1.useRef(new interaction.Draw({
-        source: onCanvas ? vectorSourceRef.current : undefined,
+        source: onCanvas ? drawVectorSource : undefined,
         type: "LineString",
         style: new Style__default["default"]({
           stroke: new Stroke__default["default"]({
@@ -1242,7 +1254,7 @@
 
       a$1.useEffect(() => {
         drawRef.current = new interaction.Draw({
-          source: onCanvas ? vectorSourceRef.current : undefined,
+          source: onCanvas ? drawVectorSource : undefined,
           type: "LineString",
           style: new Style__default["default"]({
             stroke: new Stroke__default["default"]({
@@ -1297,7 +1309,7 @@
         feature.setProperties({
           shape: "Polyline",
           isModifying: false,
-          source: vectorSourceRef.current,
+          source: drawVectorSource,
           layer: vectorLayerRef.current,
           positions: geometry.getCoordinates()
         });
@@ -1333,7 +1345,7 @@
         }
       }, [isActive, map]);
       a$1.useEffect(() => {
-        vectorLayerRef.current.setSource(vectorSourceRef.current);
+        vectorLayerRef.current.setSource(drawVectorSource);
         if (onCanvas) {
           map.addLayer(vectorLayerRef.current);
         } else {
@@ -1418,12 +1430,14 @@
         selectFeature
       } = useFeatureStore();
       const isActive = buttonId === selectedButtonId;
-      const vectorSourceRef = a$1.useRef(new VectorSource__default["default"]());
+      const {
+        drawVectorSource
+      } = useDrawSource();
       const vectorLayerRef = a$1.useRef(new VectorLayer__default["default"]({
         zIndex: 1
       }));
       const drawRef = a$1.useRef(new interaction.Draw({
-        source: onCanvas ? vectorSourceRef.current : undefined,
+        source: onCanvas ? drawVectorSource : undefined,
         type: "Circle",
         geometryFunction: Draw.createBox(),
         style: new Style__default["default"]({
@@ -1443,7 +1457,7 @@
 
       a$1.useEffect(() => {
         drawRef.current = new interaction.Draw({
-          source: onCanvas ? vectorSourceRef.current : undefined,
+          source: onCanvas ? drawVectorSource : undefined,
           type: "Circle",
           geometryFunction: Draw.createBox(),
           style: new Style__default["default"]({
@@ -1498,7 +1512,7 @@
         event.feature.setProperties({
           shape: "Rectangle",
           isModifying: false,
-          source: vectorSourceRef.current,
+          source: drawVectorSource,
           layer: vectorLayerRef.current,
           positions: geometry.getCoordinates()
         });
@@ -1527,7 +1541,7 @@
         }
       }, [isActive, map]);
       a$1.useEffect(() => {
-        vectorLayerRef.current.setSource(vectorSourceRef.current);
+        vectorLayerRef.current.setSource(drawVectorSource);
         if (onCanvas) {
           map.addLayer(vectorLayerRef.current);
         } else {
@@ -1653,12 +1667,14 @@
       const {
         selectFeature
       } = useFeatureStore();
-      const vectorSourceRef = a$1.useRef(new VectorSource__default["default"]());
+      const {
+        drawVectorSource
+      } = useDrawSource();
       const vectorLayerRef = a$1.useRef(new VectorLayer__default["default"]({
         zIndex: 1
       }));
       const drawRef = a$1.useRef(new interaction.Draw({
-        source: onCanvas ? vectorSourceRef.current : undefined,
+        source: onCanvas ? drawVectorSource : undefined,
         type: "Point",
         style: new Style__default["default"]({
           text: new Text__default["default"]({
@@ -1679,7 +1695,7 @@
       }));
       a$1.useEffect(() => {
         drawRef.current = new interaction.Draw({
-          source: onCanvas ? vectorSourceRef.current : undefined,
+          source: onCanvas ? drawVectorSource : undefined,
           type: "Point",
           style: new Style__default["default"]({
             text: new Text__default["default"]({
@@ -1730,7 +1746,7 @@
         feature.setProperties({
           shape: "TextMarker",
           isModifying: false,
-          source: vectorSourceRef.current,
+          source: drawVectorSource,
           layer: vectorLayerRef.current,
           positions: geometry.getCoordinates()
         });
@@ -1759,7 +1775,7 @@
         }
       }, [isActive, map]);
       a$1.useEffect(() => {
-        vectorLayerRef.current.setSource(vectorSourceRef.current);
+        vectorLayerRef.current.setSource(drawVectorSource);
         if (onCanvas) {
           map.addLayer(vectorLayerRef.current);
         } else {
@@ -19783,6 +19799,7 @@
       }));
     };
 
+    const ControlContext = /*#__PURE__*/a$1.createContext(null);
     function DrawingTools({
       multiMarker = true,
       marker = true,
@@ -19798,8 +19815,10 @@
       onDelete,
       onMove,
       onModify,
-      onDrawStart
+      onDrawStart,
+      children
     }) {
+      const drawVectorSourceRef = a$1.useRef(new VectorSource__default["default"]());
       const [isSelected, setIsSelected] = a$1.useState(null);
       const map = useMap();
       const endDrawing = event => {
@@ -19816,8 +19835,12 @@
           });
         }
       }, [isSelected, map]);
-      return jsxRuntime.jsxs(jsxRuntime.Fragment, {
-        children: [jsxRuntime.jsxs(ControlGroup, {
+      return jsxRuntime.jsxs(ControlContext.Provider, Object.assign({
+        value: {
+          drawVectorSource: drawVectorSourceRef.current
+        }
+      }, {
+        children: [children, jsxRuntime.jsxs(ControlGroup, {
           children: [multiMarker && jsxRuntime.jsx(MultiPointDrawButton
           // isActive={isSelected === "0"}
           , {
@@ -19921,7 +19944,7 @@
             onDeleteChange: onDelete
           })]
         })]
-      });
+      }));
     }
 
     const IconContainer$1 = styled__default["default"].div`
@@ -28492,6 +28515,9 @@
       projectionCode = "EPSG:5186"
     }) {
       const map = useMap();
+      const {
+        drawVectorSource
+      } = useDrawSource();
       const geoJsonLayer = a$1.useRef(null);
       const fromProjection = projectionCode;
       const toProjection = "EPSG:3857";
@@ -28511,12 +28537,13 @@
             geoMetry.transform(fromProjection, toProjection);
           }
         });
+        if (drawVectorSource) drawVectorSource.addFeatures(features);
         const vectorSource = new VectorSource__default["default"]({
           features
         });
         const vectorLayer = new VectorLayer__default["default"]({
           zIndex,
-          source: vectorSource,
+          source: drawVectorSource !== null && drawVectorSource !== void 0 ? drawVectorSource : vectorSource,
           style: function (feature) {
             const properties = feature.getProperties();
             const title = properties["Text"];
@@ -28545,7 +28572,7 @@
         });
         geoJsonLayer.current = vectorLayer;
         const snap = new interaction.Snap({
-          source: vectorSource
+          source: drawVectorSource !== null && drawVectorSource !== void 0 ? drawVectorSource : vectorSource
         });
         map.addInteraction(snap);
         map.addLayer(vectorLayer);
@@ -46447,6 +46474,7 @@
     exports.Button = Button;
     exports.CaptureMap = CaptureMap;
     exports.CompassWheel = CompassWheel;
+    exports.ControlContext = ControlContext;
     exports.ControlGroup = ControlGroup;
     exports.ControlSection = ControlSection;
     exports.CustomCircle = CustomCircle;
