@@ -5,8 +5,16 @@ import { MapBrowserEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
 import RenderEvent from "ol/render/Event";
 import BaseEvent from "ol/events/Event";
+import debounce from "lodash";
 
 export interface useMapEventHandlerArgs {
+  onDrag?: ({
+    event,
+    lonlat,
+  }?: {
+    event: MapBrowserEvent<any>;
+    lonlat: Coordinate;
+  }) => void;
   onClick?: ({
     event,
     lonlat,
@@ -35,6 +43,7 @@ export interface useMapEventHandlerArgs {
 }
 
 export const useMapEventHandler = ({
+  onDrag,
   onClick,
   onHover,
   onMapLoaded,
@@ -52,6 +61,14 @@ export const useMapEventHandler = ({
     [onClick]
   );
 
+  const dragEventHandler = useCallback(
+    (event: MapBrowserEvent<any>) => {
+      if (onDrag) {
+        onDrag({ event, lonlat: toLonLat(event.coordinate) });
+      }
+    },
+    [onDrag]
+  );
   const hoverEventHandler = useCallback(
     (event: MapBrowserEvent<any>) => {
       if (onHover) {
@@ -87,6 +104,13 @@ export const useMapEventHandler = ({
     },
     [onTileLoadEnded]
   );
+
+  useEffect(() => {
+    map.on("pointerdrag", dragEventHandler);
+    return () => {
+      map.un("pointerdrag", dragEventHandler);
+    };
+  }, [dragEventHandler, map]);
 
   useEffect(() => {
     map.on("click", clickEventHandler);
