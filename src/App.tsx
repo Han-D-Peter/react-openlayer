@@ -247,7 +247,7 @@ function App() {
           setRotate(Number(e.target.value));
         }}
       />
-      <SyncMapGroup>
+      <SyncMapGroup rotate={rotate}>
         <SyncMap>
           <ControlSection>
             <h1>hello</h1>

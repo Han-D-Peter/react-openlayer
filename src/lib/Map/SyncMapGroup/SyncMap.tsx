@@ -89,7 +89,7 @@ export const SyncMap = ({
   }, [zoomLevel]);
 
   useEffect(() => {
-    mapObj.current?.getView().setRotation(rotate);
+    mapObj.current?.getView().setRotation((rotate * Math.PI) / 180);
   }, [rotate]);
 
   useEffect(() => {

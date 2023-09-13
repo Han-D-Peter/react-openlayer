@@ -31,6 +31,11 @@ export interface SyncMapGroupProps {
    */
   zoomLevel?: number;
 
+  /**
+   * @default 0
+   */
+  rotate?: number;
+
   children: ReactElement<SyncMapProps, typeof SyncMap>[];
 }
 
@@ -48,6 +53,7 @@ export const SyncMapGroup = ({
   center = [127.9745613, 37.3236563],
   zoomLevel = 15,
   children,
+  rotate = 0,
 }: SyncMapGroupProps) => {
   const [controlledCenter, setControlledCenter] = useState(center);
   const [controlledZoomLevel, setControlledZoomLevel] = useState(zoomLevel);
@@ -101,10 +107,11 @@ export const SyncMapGroup = ({
         ...child.props,
         center: controlledCenter,
         zoomLevel: controlledZoomLevel,
+        rotate: rotate,
       });
       return adjustedChild;
     });
-  }, [children, controlledCenter, controlledZoomLevel]);
+  }, [children, controlledCenter, controlledZoomLevel, rotate]);
 
   return (
     <SyncMapContext.Provider value={value}>

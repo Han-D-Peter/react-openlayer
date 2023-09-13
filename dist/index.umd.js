@@ -36150,8 +36150,10 @@
         map.addInteraction(drawRef.current);
       };
       const finishDrawingByRightClick = e => {
-        e.preventDefault();
-        drawRef.current.finishDrawing();
+        if (e.button === 2) {
+          e.preventDefault();
+          drawRef.current.finishDrawing();
+        }
       };
       const drawing = event => {
         const feature = event.feature;
@@ -36198,10 +36200,10 @@
         map.addLayer(vectorLayer);
         const drawingInstance = drawRef.current;
         drawingInstance.on("drawend", drawing);
-        map.getViewport().addEventListener("contextmenu", finishDrawingByRightClick);
+        map.getViewport().addEventListener("mousedown", finishDrawingByRightClick);
         return () => {
           drawingInstance.un("drawend", drawing);
-          map.getViewport().removeEventListener("contextmenu", finishDrawingByRightClick);
+          map.getViewport().removeEventListener("mousedown", finishDrawingByRightClick);
         };
       }, []);
       a$1.useEffect(() => {
