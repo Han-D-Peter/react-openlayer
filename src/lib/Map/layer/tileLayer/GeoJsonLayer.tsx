@@ -134,6 +134,7 @@ export function GeoJsonLayer({
       source: drawVectorSource,
     });
     map.addInteraction(snap);
+
     map.addLayer(vectorLayer);
 
     return () => {

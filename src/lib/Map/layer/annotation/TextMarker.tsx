@@ -15,6 +15,7 @@ import Text from "ol/style/Text";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import { Annotation } from ".";
+import { useInteractionEvent } from "../../hooks";
 
 export interface TextMarkerProps extends Annotation {
   center: Coordinate;
@@ -35,7 +36,39 @@ export const TextMarker = ({
     new Feature({ geometry: new Point(fromLonLat(center)) })
   );
 
-  const annotationLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
+  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+    new VectorLayer({
+      source: new VectorSource({
+        features: [annotationRef.current],
+      }),
+    })
+  );
+
+  function onHoverHandler(event: SelectEvent) {
+    if (event.selected.length > 0) {
+      if (onHover) {
+        onHover({ annotation: annotationRef.current, properties });
+      }
+    } else {
+      // hover 이벤트에 의해 선택된 Circle이 없는 경우
+      // 선택 해제에 대한 작업 수행
+      // 예: 기본 스타일 복원 등
+    }
+  }
+
+  function onClickHandler(event: SelectEvent) {
+    if (event.selected.length > 0) {
+      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
+      if (onClick) {
+        onClick({
+          annotation: annotationRef.current,
+          properties,
+        });
+      }
+      // 선택된 Feature에 대한 작업 수행
+      // 예: 스타일 변경, 정보 표시 등
+    }
+  }
 
   useEffect(() => {
     if (annotationRef.current) {
@@ -50,13 +83,13 @@ export const TextMarker = ({
     }
   }, [zIndex]);
 
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler,
+  });
+
   useEffect(() => {
-    const newLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [annotationRef.current],
-      }),
-    });
-    annotationLayerRef.current = newLayer;
     annotationRef.current.setStyle(
       new Style({
         text: new Text({
@@ -95,57 +128,12 @@ export const TextMarker = ({
     });
     vectorLayer.setZIndex(zIndex);
 
-    const clickSelect = new Select({
-      condition: click,
-      style: null,
-      layers: [vectorLayer],
-    });
-
-    const hoverSelect = new Select({
-      condition: pointerMove,
-      style: null,
-      layers: [vectorLayer],
-    });
-
-    map.addInteraction(hoverSelect);
-    map.addInteraction(clickSelect);
     map.addLayer(vectorLayer);
 
-    function onHoverHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        if (onHover) {
-          onHover({ annotation: annotationRef.current, properties });
-        }
-      } else {
-        // hover 이벤트에 의해 선택된 Circle이 없는 경우
-        // 선택 해제에 대한 작업 수행
-        // 예: 기본 스타일 복원 등
-      }
-    }
-
-    function onClickHandler(event: SelectEvent) {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties,
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    }
-    hoverSelect.on("select", onHoverHandler);
-    clickSelect.on("select", onClickHandler);
-
     return () => {
-      hoverSelect.un("select", onHoverHandler);
-      clickSelect.un("select", onClickHandler);
-      map.removeInteraction(hoverSelect);
-      map.removeInteraction(clickSelect);
       map.removeLayer(vectorLayer);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [color, children, map, onHover, properties, onClick, opacity]);
   return <></>;
 };

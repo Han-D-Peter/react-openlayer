@@ -1,8 +1,8 @@
 import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useCallback, useEffect, useRef } from "react";
-import { Modify } from "ol/interaction";
-import { doubleClick } from "ol/events/condition";
+import { Modify, Snap } from "ol/interaction";
+import { altShiftKeysOnly, doubleClick } from "ol/events/condition";
 import { Collection } from "ol";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { BiSolidPencil } from "react-icons/bi";
@@ -21,6 +21,7 @@ export function ModifyAnnotation({
   const clickedAnnotation = useSelectAnnotation();
 
   const modifyInteractionRef = useRef<Modify | null>(null);
+  const snapInteractionRef = useRef<Snap | null>(null);
 
   const map = useMap();
   const id = useId();
@@ -65,28 +66,36 @@ export function ModifyAnnotation({
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
           features: new Collection([clickedAnnotation]),
-          deleteCondition: doubleClick,
+          deleteCondition: altShiftKeysOnly,
         });
+        snapInteractionRef.current = new Snap({
+          features: new Collection([clickedAnnotation]),
+        });
+
         modifyInteractionRef.current.on("modifystart", onModifyStart);
         modifyInteractionRef.current.on("modifyend", onModifyEnd);
-
+        map.addInteraction(snapInteractionRef.current);
         map.addInteraction(modifyInteractionRef.current);
       }
     } else {
-      if (modifyInteractionRef.current) {
+      if (modifyInteractionRef.current && snapInteractionRef.current) {
         modifyInteractionRef.current.un("modifystart", onModifyStart);
         modifyInteractionRef.current.un("modifyend", onModifyEnd);
         map.removeInteraction(modifyInteractionRef.current);
         modifyInteractionRef.current = null;
+        map.removeInteraction(snapInteractionRef.current);
+        snapInteractionRef.current = null;
       }
     }
 
     return () => {
-      if (modifyInteractionRef.current) {
+      if (modifyInteractionRef.current && snapInteractionRef.current) {
         modifyInteractionRef.current.un("modifystart", onModifyStart);
         modifyInteractionRef.current.un("modifyend", onModifyEnd);
         map.removeInteraction(modifyInteractionRef.current);
+        map.removeInteraction(snapInteractionRef.current);
         modifyInteractionRef.current = null;
+        snapInteractionRef.current = null;
       }
     };
   }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive]);

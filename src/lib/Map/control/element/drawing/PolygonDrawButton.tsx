@@ -104,8 +104,10 @@ export function PolygonDrawButton({
   };
 
   const finishDrawingByRightClick = (e: MouseEvent) => {
-    e.preventDefault();
-    drawRef.current.finishDrawing();
+    if (e.button === 2) {
+      e.preventDefault();
+      drawRef.current.finishDrawing();
+    }
   };
 
   const drawing = (event: DrawEvent) => {
@@ -154,14 +156,12 @@ export function PolygonDrawButton({
     map.addLayer(vectorLayer);
     const drawingInstance = drawRef.current;
     drawingInstance.on("drawend", drawing);
-    map
-      .getViewport()
-      .addEventListener("contextmenu", finishDrawingByRightClick);
+    map.getViewport().addEventListener("mousedown", finishDrawingByRightClick);
     return () => {
       drawingInstance.un("drawend", drawing);
       map
         .getViewport()
-        .removeEventListener("contextmenu", finishDrawingByRightClick);
+        .removeEventListener("mousedown", finishDrawingByRightClick);
     };
   }, []);
 
