@@ -146,7 +146,7 @@ export const CustomMarker = ({
   }, [selected, opacity]);
 
   useEffect(() => {
-    if (!children?.props.color) return;
+    if (!children?.props?.color) return;
     annotationStyleRef.current
       .getText()
       .getFill()
@@ -159,10 +159,10 @@ export const CustomMarker = ({
     if (annotationLayerRef.current && children && !children.props.isPopup) {
       annotationStyleRef.current.setText(
         makeText({
-          text: children.props.children || "",
-          size: children.props.size || 15,
-          color: children.props.color ? children.props.color : "black",
-          outline: children.props.outline,
+          text: children?.props?.children || "",
+          size: children?.props?.size || 15,
+          color: children?.props?.color ? children.props.color : "black",
+          outline: children?.props?.outline,
           isMarker: true,
         })
       );

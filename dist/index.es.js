@@ -38713,18 +38713,19 @@ const TextMarker = ({
     onHover: onHoverHandler
   });
   useEffect(() => {
+    var _a, _b, _c;
     annotationRef.current.setStyle(new Style$1({
       text: new Text$1({
         text: children ? children.props.children : "",
-        font: `${(children === null || children === void 0 ? void 0 : children.props.size) || 15}px Arial`,
+        font: `${((_a = children === null || children === void 0 ? void 0 : children.props) === null || _a === void 0 ? void 0 : _a.size) || 15}px Arial`,
         fill: new Fill$1({
-          color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "white" // 텍스트의 색상
+          color: ((_b = children === null || children === void 0 ? void 0 : children.props) === null || _b === void 0 ? void 0 : _b.color) ? children.props.color : "white" // 텍스트의 색상
         }),
 
         overflow: true,
         offsetX: 0,
         offsetY: -15,
-        stroke: (children === null || children === void 0 ? void 0 : children.props.outline) ? new Stroke$1({
+        stroke: ((_c = children === null || children === void 0 ? void 0 : children.props) === null || _c === void 0 ? void 0 : _c.outline) ? new Stroke$1({
           color: `white`,
           width: 3
         }) : undefined

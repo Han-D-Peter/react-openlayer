@@ -38707,18 +38707,19 @@
         onHover: onHoverHandler
       });
       a$1.useEffect(() => {
+        var _a, _b, _c;
         annotationRef.current.setStyle(new Style__default["default"]({
           text: new Text__default["default"]({
             text: children ? children.props.children : "",
-            font: `${(children === null || children === void 0 ? void 0 : children.props.size) || 15}px Arial`,
+            font: `${((_a = children === null || children === void 0 ? void 0 : children.props) === null || _a === void 0 ? void 0 : _a.size) || 15}px Arial`,
             fill: new Fill__default["default"]({
-              color: (children === null || children === void 0 ? void 0 : children.props.color) ? children.props.color : "white" // 텍스트의 색상
+              color: ((_b = children === null || children === void 0 ? void 0 : children.props) === null || _b === void 0 ? void 0 : _b.color) ? children.props.color : "white" // 텍스트의 색상
             }),
 
             overflow: true,
             offsetX: 0,
             offsetY: -15,
-            stroke: (children === null || children === void 0 ? void 0 : children.props.outline) ? new Stroke__default["default"]({
+            stroke: ((_c = children === null || children === void 0 ? void 0 : children.props) === null || _c === void 0 ? void 0 : _c.outline) ? new Stroke__default["default"]({
               color: `white`,
               width: 3
             }) : undefined
