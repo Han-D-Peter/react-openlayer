@@ -38001,7 +38001,7 @@ const CustomCircle = ({
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
-      hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+      hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
     }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
@@ -38135,7 +38135,7 @@ const CustomMarker = ({
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
-      hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+      hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
     }));
   }, [properties]);
   useEffect(() => {
@@ -38371,7 +38371,7 @@ const CustomPolygon = ({
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
-      hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+      hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
     }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
@@ -38502,7 +38502,7 @@ const CustomPolyLine = ({
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
-      hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+      hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
     }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);
@@ -38640,7 +38640,7 @@ const CustomRectangle = ({
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
-      hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+      hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
     }));
     annotationLayerRef.current.setZIndex(zIndex);
     map.addLayer(annotationLayerRef.current);

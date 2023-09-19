@@ -37995,7 +37995,7 @@
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
-          hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+          hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
         }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
@@ -38129,7 +38129,7 @@
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
-          hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+          hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
         }));
       }, [properties]);
       a$1.useEffect(() => {
@@ -38365,7 +38365,7 @@
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
-          hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+          hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
         }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
@@ -38496,7 +38496,7 @@
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
-          hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+          hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
         }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
@@ -38634,7 +38634,7 @@
           isModifying: false,
           source: annotationLayerRef.current.getSource(),
           layer: annotationLayerRef.current,
-          hasPopup: children === null || children === void 0 ? void 0 : children.props.isPopup
+          hasPopup: children ? children === null || children === void 0 ? void 0 : children.props.isPopup : false
         }));
         annotationLayerRef.current.setZIndex(zIndex);
         map.addLayer(annotationLayerRef.current);
