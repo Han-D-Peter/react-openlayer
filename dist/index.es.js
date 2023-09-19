@@ -37918,7 +37918,7 @@ const CustomCircle = ({
       size: children.props.size || 15,
       color: children.props.color ? children.props.color : "black",
       outline: children.props.outline,
-      isMarker: true
+      isMarker: false
     }) : undefined
   }));
   useEffect(() => {
@@ -37950,7 +37950,7 @@ const CustomCircle = ({
         size: children.props.size || 15,
         color: children.props.color ? children.props.color : "black",
         outline: children.props.outline,
-        isMarker: true
+        isMarker: false
       }));
       annotationRef.current.setStyle(hoveredFeatureStyle);
     } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
@@ -38277,7 +38277,7 @@ const CustomPolygon = ({
       size: children.props.size || 15,
       color: children.props.color ? children.props.color : "black",
       outline: children.props.outline,
-      isMarker: true
+      isMarker: false
     }) : undefined
   }));
   const onClickHandler = useCallback(event => {
@@ -38313,7 +38313,7 @@ const CustomPolygon = ({
         size: children.props.size || 15,
         color: children.props.color ? children.props.color : "black",
         outline: children.props.outline,
-        isMarker: true
+        isMarker: false
       }));
       annotationRef.current.setStyle(hoveredFeatureStyle);
     } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
@@ -38354,7 +38354,7 @@ const CustomPolygon = ({
         size: children.props.size || 15,
         color: children.props.color ? children.props.color : "black",
         outline: children.props.outline,
-        isMarker: true
+        isMarker: false
       }));
     }
   }, [children]);
@@ -38414,7 +38414,7 @@ const CustomPolyLine = ({
       size: children.props.size || 15,
       color: children.props.color ? children.props.color : "black",
       outline: children.props.outline,
-      isMarker: true
+      isMarker: false
     }) : undefined
   }));
   useEffect(() => {
@@ -38446,7 +38446,7 @@ const CustomPolyLine = ({
         size: children.props.size || 15,
         color: children.props.color ? children.props.color : "black",
         outline: children.props.outline,
-        isMarker: true
+        isMarker: false
       }));
       annotationRef.current.setStyle(hoveredFeatureStyle);
     } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
@@ -38545,7 +38545,7 @@ const CustomRectangle = ({
       size: children.props.size || 15,
       color: children.props.color ? children.props.color : "black",
       outline: children.props.outline,
-      isMarker: true
+      isMarker: false
     }) : undefined
   }));
   const onHoverHandler = useCallback(event => {
@@ -38568,7 +38568,7 @@ const CustomRectangle = ({
         size: children.props.size || 15,
         color: children.props.color ? children.props.color : "black",
         outline: children.props.outline,
-        isMarker: true
+        isMarker: false
       }));
       annotationRef.current.setStyle(hoveredFeatureStyle);
     } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
@@ -38613,7 +38613,7 @@ const CustomRectangle = ({
         size: children.props.size || 15,
         color: children.props.color ? children.props.color : "black",
         outline: children.props.outline,
-        isMarker: true
+        isMarker: false
       }));
     }
   }, [children]);

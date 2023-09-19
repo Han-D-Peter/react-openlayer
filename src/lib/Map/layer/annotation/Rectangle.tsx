@@ -185,7 +185,7 @@ export const CustomRectangle = ({
       isModifying: false,
       source: annotationLayerRef.current.getSource(),
       layer: annotationLayerRef.current,
-      hasPopup: children?.props.isPopup,
+      hasPopup: children ? children?.props.isPopup : false,
     });
 
     annotationLayerRef.current.setZIndex(zIndex);

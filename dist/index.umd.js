@@ -37912,7 +37912,7 @@
           size: children.props.size || 15,
           color: children.props.color ? children.props.color : "black",
           outline: children.props.outline,
-          isMarker: true
+          isMarker: false
         }) : undefined
       }));
       a$1.useEffect(() => {
@@ -37944,7 +37944,7 @@
             size: children.props.size || 15,
             color: children.props.color ? children.props.color : "black",
             outline: children.props.outline,
-            isMarker: true
+            isMarker: false
           }));
           annotationRef.current.setStyle(hoveredFeatureStyle);
         } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
@@ -38271,7 +38271,7 @@
           size: children.props.size || 15,
           color: children.props.color ? children.props.color : "black",
           outline: children.props.outline,
-          isMarker: true
+          isMarker: false
         }) : undefined
       }));
       const onClickHandler = a$1.useCallback(event => {
@@ -38307,7 +38307,7 @@
             size: children.props.size || 15,
             color: children.props.color ? children.props.color : "black",
             outline: children.props.outline,
-            isMarker: true
+            isMarker: false
           }));
           annotationRef.current.setStyle(hoveredFeatureStyle);
         } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
@@ -38348,7 +38348,7 @@
             size: children.props.size || 15,
             color: children.props.color ? children.props.color : "black",
             outline: children.props.outline,
-            isMarker: true
+            isMarker: false
           }));
         }
       }, [children]);
@@ -38408,7 +38408,7 @@
           size: children.props.size || 15,
           color: children.props.color ? children.props.color : "black",
           outline: children.props.outline,
-          isMarker: true
+          isMarker: false
         }) : undefined
       }));
       a$1.useEffect(() => {
@@ -38440,7 +38440,7 @@
             size: children.props.size || 15,
             color: children.props.color ? children.props.color : "black",
             outline: children.props.outline,
-            isMarker: true
+            isMarker: false
           }));
           annotationRef.current.setStyle(hoveredFeatureStyle);
         } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
@@ -38539,7 +38539,7 @@
           size: children.props.size || 15,
           color: children.props.color ? children.props.color : "black",
           outline: children.props.outline,
-          isMarker: true
+          isMarker: false
         }) : undefined
       }));
       const onHoverHandler = a$1.useCallback(event => {
@@ -38562,7 +38562,7 @@
             size: children.props.size || 15,
             color: children.props.color ? children.props.color : "black",
             outline: children.props.outline,
-            isMarker: true
+            isMarker: false
           }));
           annotationRef.current.setStyle(hoveredFeatureStyle);
         } else if (event.selected.length === 0 && (children === null || children === void 0 ? void 0 : children.props.isPopup)) {
@@ -38607,7 +38607,7 @@
             size: children.props.size || 15,
             color: children.props.color ? children.props.color : "black",
             outline: children.props.outline,
-            isMarker: true
+            isMarker: false
           }));
         }
       }, [children]);
