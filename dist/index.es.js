@@ -37989,6 +37989,11 @@ const CustomCircle = ({
     }
   }, [zIndex]);
   useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
+  useEffect(() => {
     const newLayer = new VectorLayer({
       source: new VectorSource({
         features: [annotationRef.current]
@@ -38132,6 +38137,11 @@ const CustomMarker = ({
         outline: (_d = children === null || children === void 0 ? void 0 : children.props) === null || _d === void 0 ? void 0 : _d.outline,
         isMarker: true
       }));
+    }
+  }, [children]);
+  useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
     }
   }, [children]);
   useEffect(() => {
@@ -38364,6 +38374,11 @@ const CustomPolygon = ({
     }
   }, [children]);
   useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
+  useEffect(() => {
     const newLayer = new VectorLayer({
       source: new VectorSource({
         features: [annotationRef.current]
@@ -38494,6 +38509,11 @@ const CustomPolyLine = ({
       annotationLayerRef.current.setZIndex(zIndex);
     }
   }, [zIndex]);
+  useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
   useEffect(() => {
     const newLayer = new VectorLayer({
       source: new VectorSource({
@@ -38631,6 +38651,11 @@ const CustomRectangle = ({
       width: 2
     }));
   }, [opacity, color]);
+  useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
   useEffect(() => {
     if (!map) return;
     const newLayer = new VectorLayer({

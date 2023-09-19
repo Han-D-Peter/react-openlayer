@@ -37983,6 +37983,11 @@
         }
       }, [zIndex]);
       a$1.useEffect(() => {
+        if (!children) {
+          annotationStyleRef.current.setText(new style.Text());
+        }
+      }, [children]);
+      a$1.useEffect(() => {
         const newLayer = new VectorLayer__default["default"]({
           source: new VectorSource__default["default"]({
             features: [annotationRef.current]
@@ -38126,6 +38131,11 @@
             outline: (_d = children === null || children === void 0 ? void 0 : children.props) === null || _d === void 0 ? void 0 : _d.outline,
             isMarker: true
           }));
+        }
+      }, [children]);
+      a$1.useEffect(() => {
+        if (!children) {
+          annotationStyleRef.current.setText(new style.Text());
         }
       }, [children]);
       a$1.useEffect(() => {
@@ -38358,6 +38368,11 @@
         }
       }, [children]);
       a$1.useEffect(() => {
+        if (!children) {
+          annotationStyleRef.current.setText(new style.Text());
+        }
+      }, [children]);
+      a$1.useEffect(() => {
         const newLayer = new VectorLayer__default["default"]({
           source: new VectorSource__default["default"]({
             features: [annotationRef.current]
@@ -38488,6 +38503,11 @@
           annotationLayerRef.current.setZIndex(zIndex);
         }
       }, [zIndex]);
+      a$1.useEffect(() => {
+        if (!children) {
+          annotationStyleRef.current.setText(new style.Text());
+        }
+      }, [children]);
       a$1.useEffect(() => {
         const newLayer = new VectorLayer__default["default"]({
           source: new VectorSource__default["default"]({
@@ -38625,6 +38645,11 @@
           width: 2
         }));
       }, [opacity, color]);
+      a$1.useEffect(() => {
+        if (!children) {
+          annotationStyleRef.current.setText(new style.Text());
+        }
+      }, [children]);
       a$1.useEffect(() => {
         if (!map) return;
         const newLayer = new VectorLayer__default["default"]({
