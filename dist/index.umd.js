@@ -36302,11 +36302,11 @@
           }),
           fill: new Fill__default["default"]({
             color: "rgba(2, 26, 255, 0.3)"
-          }),
-          image: new Icon__default["default"]({
-            src: "/images/polyline.svg",
-            anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
+          // image: new Icon({
+          //   src: "/images/polyline.svg", // 마커 이미지 경로
+          //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+          // }),
         })
       }));
 
@@ -36321,11 +36321,11 @@
             }),
             fill: new Fill__default["default"]({
               color: "rgba(2, 26, 255, 0.3)"
-            }),
-            image: new Icon__default["default"]({
-              src: "/images/polyline.svg",
-              anchor: [0.5, 1] // 마커 이미지의 앵커 위치
             })
+            // image: new Icon({
+            //   src: "/images/polyline.svg", // 마커 이미지 경로
+            //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+            // }),
           })
         });
       }, [onCanvas]);
