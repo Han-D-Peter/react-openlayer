@@ -99,6 +99,7 @@ export function PolylineDrawButton({
     if (onStart) {
       onStart();
     }
+    map.getViewport().style.cursor = "crosshair";
     map.setProperties({ isDrawing: true });
     map.addInteraction(drawRef.current);
   };
@@ -106,6 +107,7 @@ export function PolylineDrawButton({
   const finishDrawingByRightClick = (e: MouseEvent) => {
     e.preventDefault();
     drawRef.current.finishDrawing();
+    map.getViewport().style.cursor = "pointer";
   };
 
   const drawing = (event: DrawEvent) => {
@@ -138,7 +140,7 @@ export function PolylineDrawButton({
     });
 
     selectButton("");
-
+    map.getViewport().style.cursor = "pointer";
     map.removeInteraction(drawRef.current);
 
     if (onEnd) {

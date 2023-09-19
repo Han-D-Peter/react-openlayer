@@ -65,10 +65,10 @@ export function PolygonDrawButton({
         fill: new Fill({
           color: "rgba(2, 26, 255, 0.3)",
         }),
-        image: new Icon({
-          src: "/images/polygon.svg", // 마커 이미지 경로
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        }),
+        // image: new Icon({
+        //   src: "/images/polygon.svg", // 마커 이미지 경로
+        //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+        // }),
       }),
     })
   );
@@ -85,10 +85,10 @@ export function PolygonDrawButton({
         fill: new Fill({
           color: "rgba(2, 26, 255, 0.3)",
         }),
-        image: new Icon({
-          src: "/images/polygon.svg", // 마커 이미지 경로
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        }),
+        // image: new Icon({
+        //   src: "/images/polygon.svg", // 마커 이미지 경로
+        //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+        // }),
       }),
     });
   }, [onCanvas]);
@@ -101,12 +101,14 @@ export function PolygonDrawButton({
     }
     map.setProperties({ isDrawing: true });
     map.addInteraction(drawRef.current);
+    map.getViewport().style.cursor = "crosshair";
   };
 
   const finishDrawingByRightClick = (e: MouseEvent) => {
     if (e.button === 2) {
       e.preventDefault();
       drawRef.current.finishDrawing();
+      map.getViewport().style.cursor = "pointer";
     }
   };
 
@@ -139,6 +141,7 @@ export function PolygonDrawButton({
       positions: geometry.getCoordinates(),
     });
     selectButton("");
+    map.getViewport().style.cursor = "pointer";
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);

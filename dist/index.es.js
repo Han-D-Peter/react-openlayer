@@ -46424,7 +46424,7 @@ const SyncMap = ({
   }, [zoomLevel]);
   useEffect(() => {
     var _a;
-    (_a = mapObj.current) === null || _a === void 0 ? void 0 : _a.getView().setRotation(rotate);
+    (_a = mapObj.current) === null || _a === void 0 ? void 0 : _a.getView().setRotation(rotate * Math.PI / 180);
   }, [rotate]);
   useEffect(() => {
     const mapRef = mapObj.current;
@@ -46456,7 +46456,8 @@ const SyncMapContext = /*#__PURE__*/createContext(null);
 const SyncMapGroup = ({
   center = [127.9745613, 37.3236563],
   zoomLevel = 15,
-  children
+  children,
+  rotate = 0
 }) => {
   const [controlledCenter, setControlledCenter] = useState(center);
   const [controlledZoomLevel, setControlledZoomLevel] = useState(zoomLevel);
@@ -46488,11 +46489,12 @@ const SyncMapGroup = ({
       }
       const adjustedChild = /*#__PURE__*/createElement(SyncMap, Object.assign(Object.assign({}, child.props), {
         center: controlledCenter,
-        zoomLevel: controlledZoomLevel
+        zoomLevel: controlledZoomLevel,
+        rotate: rotate
       }));
       return adjustedChild;
     });
-  }, [children, controlledCenter, controlledZoomLevel]);
+  }, [children, controlledCenter, controlledZoomLevel, rotate]);
   return jsx(SyncMapContext.Provider, Object.assign({
     value: value
   }, {

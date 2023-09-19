@@ -13,6 +13,11 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    * @description You can set this property for using buttons multiful. This property change css of button(border-radius)
    */
   side?: "top" | "bottom" | "middle" | "solo";
+
+  /**
+   * @default "md"
+   */
+  size?: "xs" | "sm" | "md" | "lg" | "xlg";
   isActive?: boolean;
   hasPopup?: boolean;
   popupText?: string;
@@ -35,16 +40,25 @@ const getborderRadiusBySide = (side: "top" | "bottom" | "middle" | "solo") => {
   }
 };
 
+const buttonSize = {
+  xs: "30px",
+  sm: "35px",
+  md: "40px",
+  lg: "45px",
+  xlg: "50px",
+};
+
 const StyledButton = styled.button<{
   side: "top" | "bottom" | "middle" | "solo";
+  size: "xs" | "sm" | "md" | "lg" | "xlg";
   isDisabled: boolean;
   active?: boolean;
 }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  width: ${({ size }) => buttonSize[size]};
+  height: ${({ size }) => buttonSize[size]};
   background: white;
   border: 0;
   border-radius: ${(props) => getborderRadiusBySide(props.side)};
@@ -83,6 +97,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       side = "middle",
       isDisabled = false,
       isActive = false,
+      size = "md",
       ...props
     }: ButtonProps,
     ref
@@ -104,6 +119,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           side={side}
           isDisabled={isDisabled}
           active={isActive}
+          size={size}
           {...props}
         >
           {children}

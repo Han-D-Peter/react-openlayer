@@ -49,12 +49,12 @@ export const ZoomFeature = () => {
 
   return (
     <ControlGroup>
-      <Button onClick={zoomIn} isDisabled={!isAbledZoomIn}>
+      <Button size="xs" onClick={zoomIn} isDisabled={!isAbledZoomIn}>
         <InnerButton>
           <ZoomIn size={24} color={isAbledZoomIn ? "black" : "#e2e2e2"} />
         </InnerButton>
       </Button>
-      <Button onClick={zoomOut} isDisabled={!isAbledZoomOut}>
+      <Button size="xs" onClick={zoomOut} isDisabled={!isAbledZoomOut}>
         <InnerButton>
           <ZoomOut size={24} color={isAbledZoomOut ? "black" : "#e2e2e2"} />
         </InnerButton>
