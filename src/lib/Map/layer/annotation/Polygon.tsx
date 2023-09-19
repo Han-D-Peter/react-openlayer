@@ -62,7 +62,7 @@ export const CustomPolygon = ({
               size: children.props.size || 15,
               color: children.props.color ? children.props.color : "black",
               outline: children.props.outline,
-              isMarker: true,
+              isMarker: false,
             })
           : undefined,
     })
@@ -111,7 +111,7 @@ export const CustomPolygon = ({
             size: children.props.size || 15,
             color: children.props.color ? children.props.color : "black",
             outline: children.props.outline,
-            isMarker: true,
+            isMarker: false,
           })
         );
 
@@ -169,7 +169,7 @@ export const CustomPolygon = ({
           size: children.props.size || 15,
           color: children.props.color ? children.props.color : "black",
           outline: children.props.outline,
-          isMarker: true,
+          isMarker: false,
         })
       );
     }

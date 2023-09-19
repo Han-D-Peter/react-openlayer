@@ -36255,6 +36255,7 @@ function PolygonDrawButton(_a) {
     onClick: () => {
       if (isActive) {
         selectButton("");
+        map.getViewport().style.cursor = "pointer";
       } else {
         selectButton(buttonId);
         startDrawing();
@@ -36433,6 +36434,7 @@ function PolylineDrawButton(_a) {
     onClick: () => {
       if (isActive) {
         selectButton("");
+        map.getViewport().style.cursor = "pointer";
       } else {
         selectButton(buttonId);
         startDrawing();

@@ -36249,6 +36249,7 @@
         onClick: () => {
           if (isActive) {
             selectButton("");
+            map.getViewport().style.cursor = "pointer";
           } else {
             selectButton(buttonId);
             startDrawing();
@@ -36427,6 +36428,7 @@
         onClick: () => {
           if (isActive) {
             selectButton("");
+            map.getViewport().style.cursor = "pointer";
           } else {
             selectButton(buttonId);
             startDrawing();
