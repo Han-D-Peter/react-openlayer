@@ -147,10 +147,10 @@ export const CustomMarker = ({
 
   useEffect(() => {
     if (!children?.props?.color) return;
-    annotationStyleRef.current
-      .getText()
-      .getFill()
-      .setColor(children.props.color);
+    const gottonText = annotationStyleRef.current.getText();
+    if (gottonText) {
+      gottonText.getFill().setColor(children.props.color);
+    }
 
     annotationRef.current.setStyle(annotationStyleRef.current);
   }, [color, children]);

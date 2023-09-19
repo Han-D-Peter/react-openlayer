@@ -38108,17 +38108,19 @@
         annotationRef.current.setStyle(annotationStyleRef.current);
       }, [selected, opacity]);
       a$1.useEffect(() => {
-        if (!(children === null || children === void 0 ? void 0 : children.props.color)) return;
+        var _a;
+        if (!((_a = children === null || children === void 0 ? void 0 : children.props) === null || _a === void 0 ? void 0 : _a.color)) return;
         annotationStyleRef.current.getText().getFill().setColor(children.props.color);
         annotationRef.current.setStyle(annotationStyleRef.current);
       }, [color, children]);
       a$1.useEffect(() => {
+        var _a, _b, _c, _d;
         if (annotationLayerRef.current && children && !children.props.isPopup) {
           annotationStyleRef.current.setText(makeText({
-            text: children.props.children || "",
-            size: children.props.size || 15,
-            color: children.props.color ? children.props.color : "black",
-            outline: children.props.outline,
+            text: ((_a = children === null || children === void 0 ? void 0 : children.props) === null || _a === void 0 ? void 0 : _a.children) || "",
+            size: ((_b = children === null || children === void 0 ? void 0 : children.props) === null || _b === void 0 ? void 0 : _b.size) || 15,
+            color: ((_c = children === null || children === void 0 ? void 0 : children.props) === null || _c === void 0 ? void 0 : _c.color) ? children.props.color : "black",
+            outline: (_d = children === null || children === void 0 ? void 0 : children.props) === null || _d === void 0 ? void 0 : _d.outline,
             isMarker: true
           }));
         }
