@@ -160,6 +160,12 @@ export const CustomCircle = ({
   }, [zIndex]);
 
   useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
+
+  useEffect(() => {
     const newLayer = new VectorLayer({
       source: new VectorSource({
         features: [annotationRef.current],

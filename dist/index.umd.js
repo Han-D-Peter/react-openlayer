@@ -38110,7 +38110,10 @@
       a$1.useEffect(() => {
         var _a;
         if (!((_a = children === null || children === void 0 ? void 0 : children.props) === null || _a === void 0 ? void 0 : _a.color)) return;
-        annotationStyleRef.current.getText().getFill().setColor(children.props.color);
+        const gottonText = annotationStyleRef.current.getText();
+        if (gottonText) {
+          gottonText.getFill().setColor(children.props.color);
+        }
         annotationRef.current.setStyle(annotationStyleRef.current);
       }, [color, children]);
       a$1.useEffect(() => {

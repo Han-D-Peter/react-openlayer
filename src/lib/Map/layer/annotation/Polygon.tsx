@@ -174,6 +174,11 @@ export const CustomPolygon = ({
       );
     }
   }, [children]);
+  useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
 
   useEffect(() => {
     const newLayer = new VectorLayer({

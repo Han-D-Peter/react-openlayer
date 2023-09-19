@@ -170,6 +170,12 @@ export const CustomMarker = ({
   }, [children]);
 
   useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
+
+  useEffect(() => {
     annotationRef.current.setProperties({
       ...properties,
       shape: "Marker",

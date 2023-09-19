@@ -78,7 +78,6 @@ function App() {
         width={mapSize.width}
         ref={ref}
         isAbledSelection
-        isShownOsm={isShown}
       >
         <GeoJsonLayer geoJson={json} color="blue" />
         <TestField />
@@ -97,19 +96,20 @@ function App() {
         />
         <LayerGroup zIndex={1}>
           <CustomMarker
-            selected={isShown}
             opacity={0.4}
             center={[126.840492, 35.190337]}
             onClick={() => {
               console.log("click");
             }}
           >
-            <InnerText outline>bottom left</InnerText>
+            {isShown ? <InnerText outline>bottom left</InnerText> : null}
           </CustomMarker>
           <CustomMarker center={[126.840746, 35.190475]}>
-            <InnerText isPopup outline>
-              top right
-            </InnerText>
+            {isShown ? (
+              <InnerText isPopup outline>
+                top right
+              </InnerText>
+            ) : null}
           </CustomMarker>
 
           <CustomCircle
@@ -126,7 +126,7 @@ function App() {
             radius={20}
             color="BLUE"
           >
-            <InnerText>Circle2</InnerText>
+            {isShown ? <InnerText>Circle2</InnerText> : null}
           </CustomCircle>
           <CustomPolyLine
             positions={[

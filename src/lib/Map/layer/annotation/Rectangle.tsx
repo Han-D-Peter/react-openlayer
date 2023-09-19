@@ -170,6 +170,12 @@ export const CustomRectangle = ({
   }, [opacity, color]);
 
   useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
+
+  useEffect(() => {
     if (!map) return;
     const newLayer = new VectorLayer({
       source: new VectorSource({
