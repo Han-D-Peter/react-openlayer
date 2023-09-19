@@ -317,12 +317,23 @@
         return "5px 5px 5px 5px";
       }
     };
+    const buttonSize = {
+      xs: "30px",
+      sm: "35px",
+      md: "40px",
+      lg: "45px",
+      xlg: "50px"
+    };
     const StyledButton = styled__default["default"].button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  width: ${({
+  size
+}) => buttonSize[size]};
+  height: ${({
+  size
+}) => buttonSize[size]};
   background: white;
   border: 0;
   border-radius: ${props => getborderRadiusBySide(props.side)};
@@ -357,9 +368,10 @@
           onClick,
           side = "middle",
           isDisabled = false,
-          isActive = false
+          isActive = false,
+          size = "md"
         } = _a,
-        props = __rest$1(_a, ["hasPopup", "popupText", "children", "onClick", "side", "isDisabled", "isActive"]);
+        props = __rest$1(_a, ["hasPopup", "popupText", "children", "onClick", "side", "isDisabled", "isActive", "size"]);
       const [isHover, setIsHover] = a$1.useState(false);
       const onClickBtn = () => {
         if (onClick) {
@@ -374,7 +386,8 @@
           onMouseLeave: () => setIsHover(false),
           side: side,
           isDisabled: isDisabled,
-          active: isActive
+          active: isActive,
+          size: size
         }, props, {
           children: children
         })), hasPopup && isHover && jsxRuntime.jsx(ButtonPopup, {
@@ -36110,11 +36123,11 @@
           }),
           fill: new Fill__default["default"]({
             color: "rgba(2, 26, 255, 0.3)"
-          }),
-          image: new Icon__default["default"]({
-            src: "/images/polygon.svg",
-            anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
+          // image: new Icon({
+          //   src: "/images/polygon.svg", // 마커 이미지 경로
+          //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+          // }),
         })
       }));
 
@@ -36129,11 +36142,11 @@
             }),
             fill: new Fill__default["default"]({
               color: "rgba(2, 26, 255, 0.3)"
-            }),
-            image: new Icon__default["default"]({
-              src: "/images/polygon.svg",
-              anchor: [0.5, 1] // 마커 이미지의 앵커 위치
             })
+            // image: new Icon({
+            //   src: "/images/polygon.svg", // 마커 이미지 경로
+            //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+            // }),
           })
         });
       }, [onCanvas]);
@@ -36148,11 +36161,13 @@
           isDrawing: true
         });
         map.addInteraction(drawRef.current);
+        map.getViewport().style.cursor = "crosshair";
       };
       const finishDrawingByRightClick = e => {
         if (e.button === 2) {
           e.preventDefault();
           drawRef.current.finishDrawing();
+          map.getViewport().style.cursor = "pointer";
         }
       };
       const drawing = event => {
@@ -36182,6 +36197,7 @@
           positions: geometry.getCoordinates()
         });
         selectButton("");
+        map.getViewport().style.cursor = "pointer";
         map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(feature);
@@ -36320,6 +36336,7 @@
         if (onStart) {
           onStart();
         }
+        map.getViewport().style.cursor = "crosshair";
         map.setProperties({
           isDrawing: true
         });
@@ -36328,6 +36345,7 @@
       const finishDrawingByRightClick = e => {
         e.preventDefault();
         drawRef.current.finishDrawing();
+        map.getViewport().style.cursor = "pointer";
       };
       const drawing = event => {
         const feature = event.feature;
@@ -36356,6 +36374,7 @@
           positions: geometry.getCoordinates()
         });
         selectButton("");
+        map.getViewport().style.cursor = "pointer";
         map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(feature);
@@ -37835,6 +37854,7 @@
       }, []);
       return jsxRuntime.jsxs(ControlGroup, {
         children: [jsxRuntime.jsx(Button, Object.assign({
+          size: "xs",
           onClick: zoomIn,
           isDisabled: !isAbledZoomIn
         }, {
@@ -37845,6 +37865,7 @@
             })
           })
         })), jsxRuntime.jsx(Button, Object.assign({
+          size: "xs",
           onClick: zoomOut,
           isDisabled: !isAbledZoomOut
         }, {

@@ -323,12 +323,23 @@ const getborderRadiusBySide = side => {
     return "5px 5px 5px 5px";
   }
 };
+const buttonSize = {
+  xs: "30px",
+  sm: "35px",
+  md: "40px",
+  lg: "45px",
+  xlg: "50px"
+};
 const StyledButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 40px;
-  height: 40px;
+  width: ${({
+  size
+}) => buttonSize[size]};
+  height: ${({
+  size
+}) => buttonSize[size]};
   background: white;
   border: 0;
   border-radius: ${props => getborderRadiusBySide(props.side)};
@@ -363,9 +374,10 @@ const Button = /*#__PURE__*/forwardRef((_a, ref) => {
       onClick,
       side = "middle",
       isDisabled = false,
-      isActive = false
+      isActive = false,
+      size = "md"
     } = _a,
-    props = __rest$1(_a, ["hasPopup", "popupText", "children", "onClick", "side", "isDisabled", "isActive"]);
+    props = __rest$1(_a, ["hasPopup", "popupText", "children", "onClick", "side", "isDisabled", "isActive", "size"]);
   const [isHover, setIsHover] = useState(false);
   const onClickBtn = () => {
     if (onClick) {
@@ -380,7 +392,8 @@ const Button = /*#__PURE__*/forwardRef((_a, ref) => {
       onMouseLeave: () => setIsHover(false),
       side: side,
       isDisabled: isDisabled,
-      active: isActive
+      active: isActive,
+      size: size
     }, props, {
       children: children
     })), hasPopup && isHover && jsx(ButtonPopup, {
@@ -36116,11 +36129,11 @@ function PolygonDrawButton(_a) {
       }),
       fill: new Fill$1({
         color: "rgba(2, 26, 255, 0.3)"
-      }),
-      image: new Icon({
-        src: "/images/polygon.svg",
-        anchor: [0.5, 1] // 마커 이미지의 앵커 위치
       })
+      // image: new Icon({
+      //   src: "/images/polygon.svg", // 마커 이미지 경로
+      //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+      // }),
     })
   }));
 
@@ -36135,11 +36148,11 @@ function PolygonDrawButton(_a) {
         }),
         fill: new Fill$1({
           color: "rgba(2, 26, 255, 0.3)"
-        }),
-        image: new Icon({
-          src: "/images/polygon.svg",
-          anchor: [0.5, 1] // 마커 이미지의 앵커 위치
         })
+        // image: new Icon({
+        //   src: "/images/polygon.svg", // 마커 이미지 경로
+        //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+        // }),
       })
     });
   }, [onCanvas]);
@@ -36154,11 +36167,13 @@ function PolygonDrawButton(_a) {
       isDrawing: true
     });
     map.addInteraction(drawRef.current);
+    map.getViewport().style.cursor = "crosshair";
   };
   const finishDrawingByRightClick = e => {
     if (e.button === 2) {
       e.preventDefault();
       drawRef.current.finishDrawing();
+      map.getViewport().style.cursor = "pointer";
     }
   };
   const drawing = event => {
@@ -36188,6 +36203,7 @@ function PolygonDrawButton(_a) {
       positions: geometry.getCoordinates()
     });
     selectButton("");
+    map.getViewport().style.cursor = "pointer";
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
@@ -36326,6 +36342,7 @@ function PolylineDrawButton(_a) {
     if (onStart) {
       onStart();
     }
+    map.getViewport().style.cursor = "crosshair";
     map.setProperties({
       isDrawing: true
     });
@@ -36334,6 +36351,7 @@ function PolylineDrawButton(_a) {
   const finishDrawingByRightClick = e => {
     e.preventDefault();
     drawRef.current.finishDrawing();
+    map.getViewport().style.cursor = "pointer";
   };
   const drawing = event => {
     const feature = event.feature;
@@ -36362,6 +36380,7 @@ function PolylineDrawButton(_a) {
       positions: geometry.getCoordinates()
     });
     selectButton("");
+    map.getViewport().style.cursor = "pointer";
     map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
@@ -37841,6 +37860,7 @@ const ZoomFeature = () => {
   }, []);
   return jsxs(ControlGroup, {
     children: [jsx(Button, Object.assign({
+      size: "xs",
       onClick: zoomIn,
       isDisabled: !isAbledZoomIn
     }, {
@@ -37851,6 +37871,7 @@ const ZoomFeature = () => {
         })
       })
     })), jsx(Button, Object.assign({
+      size: "xs",
       onClick: zoomOut,
       isDisabled: !isAbledZoomOut
     }, {
