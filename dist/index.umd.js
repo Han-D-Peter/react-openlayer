@@ -36977,9 +36977,10 @@
 
     function ModifyAnnotation(_a) {
       var {
-          onModifyChange
+          onModifyChange,
+          target
         } = _a,
-        props = __rest$1(_a, ["onModifyChange"]);
+        props = __rest$1(_a, ["onModifyChange", "target"]);
       const clickedAnnotation = useSelectAnnotation();
       const modifyInteractionRef = a$1.useRef(null);
       const snapInteractionRef = a$1.useRef(null);
@@ -37001,17 +37002,37 @@
           map.setProperties(Object.assign(Object.assign({}, existMapProperties), {
             isModifying: true
           }));
+          return;
+        } else if (target) {
+          const existProperties = target.getProperties();
+          const existMapProperties = map.getProperties();
+          target.setProperties(Object.assign(Object.assign({}, existProperties), {
+            isModifying: true
+          }));
+          map.setProperties(Object.assign(Object.assign({}, existMapProperties), {
+            isModifying: true
+          }));
+          return;
         }
-      }, [clickedAnnotation]);
+      }, [clickedAnnotation, map, target]);
       const onModifyEnd = a$1.useCallback(event => {
         if (onModifyChange) {
           onModifyChange(event);
         }
-        const existProperties = clickedAnnotation.getProperties();
-        clickedAnnotation.setProperties(Object.assign(Object.assign({}, existProperties), {
-          isModifying: true
-        }));
-      }, [clickedAnnotation, onModifyChange]);
+        if (clickedAnnotation) {
+          const existProperties = clickedAnnotation.getProperties();
+          clickedAnnotation.setProperties(Object.assign(Object.assign({}, existProperties), {
+            isModifying: true
+          }));
+          return;
+        } else if (target) {
+          const existProperties = target.getProperties();
+          target.setProperties(Object.assign(Object.assign({}, existProperties), {
+            isModifying: true
+          }));
+          return;
+        }
+      }, [clickedAnnotation, onModifyChange, target]);
       // 수정중임을 map 에 명시
       a$1.useEffect(() => {
         const existMapProperties = map.getProperties();
@@ -37020,7 +37041,7 @@
         }));
       }, [isActive]);
       a$1.useEffect(() => {
-        if (clickedAnnotation && isActive) {
+        if (clickedAnnotation && !target && isActive) {
           if (!modifyInteractionRef.current) {
             modifyInteractionRef.current = new interaction.Modify({
               features: new Collection$1([clickedAnnotation]),
@@ -37034,16 +37055,17 @@
             map.addInteraction(snapInteractionRef.current);
             map.addInteraction(modifyInteractionRef.current);
           }
-        } else {
-          if (modifyInteractionRef.current && snapInteractionRef.current) {
-            modifyInteractionRef.current.un("modifystart", onModifyStart);
-            modifyInteractionRef.current.un("modifyend", onModifyEnd);
-            map.removeInteraction(modifyInteractionRef.current);
-            modifyInteractionRef.current = null;
-            map.removeInteraction(snapInteractionRef.current);
-            snapInteractionRef.current = null;
-          }
         }
+        // else {
+        //   if (modifyInteractionRef.current && snapInteractionRef.current) {
+        //     modifyInteractionRef.current.un("modifystart", onModifyStart);
+        //     modifyInteractionRef.current.un("modifyend", onModifyEnd);
+        //     map.removeInteraction(modifyInteractionRef.current);
+        //     modifyInteractionRef.current = null;
+        //     map.removeInteraction(snapInteractionRef.current);
+        //     snapInteractionRef.current = null;
+        //   }
+        // }
         return () => {
           if (modifyInteractionRef.current && snapInteractionRef.current) {
             modifyInteractionRef.current.un("modifystart", onModifyStart);
@@ -37054,7 +37076,81 @@
             snapInteractionRef.current = null;
           }
         };
-      }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive]);
+      }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive, target]);
+      a$1.useEffect(() => {
+        if (!clickedAnnotation && target && isActive) {
+          if (!modifyInteractionRef.current) {
+            modifyInteractionRef.current = new interaction.Modify({
+              features: new Collection$1([target]),
+              deleteCondition: condition.altShiftKeysOnly
+            });
+            snapInteractionRef.current = new interaction.Snap({
+              features: new Collection$1([target])
+            });
+            modifyInteractionRef.current.on("modifystart", onModifyStart);
+            modifyInteractionRef.current.on("modifyend", onModifyEnd);
+            map.addInteraction(snapInteractionRef.current);
+            map.addInteraction(modifyInteractionRef.current);
+          }
+        }
+        // else {
+        //   if (modifyInteractionRef.current && snapInteractionRef.current) {
+        //     modifyInteractionRef.current.un("modifystart", onModifyStart);
+        //     modifyInteractionRef.current.un("modifyend", onModifyEnd);
+        //     map.removeInteraction(modifyInteractionRef.current);
+        //     modifyInteractionRef.current = null;
+        //     map.removeInteraction(snapInteractionRef.current);
+        //     snapInteractionRef.current = null;
+        //   }
+        // }
+        return () => {
+          if (modifyInteractionRef.current && snapInteractionRef.current) {
+            modifyInteractionRef.current.un("modifystart", onModifyStart);
+            modifyInteractionRef.current.un("modifyend", onModifyEnd);
+            map.removeInteraction(modifyInteractionRef.current);
+            map.removeInteraction(snapInteractionRef.current);
+            modifyInteractionRef.current = null;
+            snapInteractionRef.current = null;
+          }
+        };
+      }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive, target]);
+      a$1.useEffect(() => {
+        if (clickedAnnotation && target && isActive) {
+          if (!modifyInteractionRef.current) {
+            modifyInteractionRef.current = new interaction.Modify({
+              features: new Collection$1([clickedAnnotation]),
+              deleteCondition: condition.altShiftKeysOnly
+            });
+            snapInteractionRef.current = new interaction.Snap({
+              features: new Collection$1([clickedAnnotation])
+            });
+            modifyInteractionRef.current.on("modifystart", onModifyStart);
+            modifyInteractionRef.current.on("modifyend", onModifyEnd);
+            map.addInteraction(snapInteractionRef.current);
+            map.addInteraction(modifyInteractionRef.current);
+          }
+        }
+        // else {
+        //   if (modifyInteractionRef.current && snapInteractionRef.current) {
+        //     modifyInteractionRef.current.un("modifystart", onModifyStart);
+        //     modifyInteractionRef.current.un("modifyend", onModifyEnd);
+        //     map.removeInteraction(modifyInteractionRef.current);
+        //     modifyInteractionRef.current = null;
+        //     map.removeInteraction(snapInteractionRef.current);
+        //     snapInteractionRef.current = null;
+        //   }
+        // }
+        return () => {
+          if (modifyInteractionRef.current && snapInteractionRef.current) {
+            modifyInteractionRef.current.un("modifystart", onModifyStart);
+            modifyInteractionRef.current.un("modifyend", onModifyEnd);
+            map.removeInteraction(modifyInteractionRef.current);
+            map.removeInteraction(snapInteractionRef.current);
+            modifyInteractionRef.current = null;
+            snapInteractionRef.current = null;
+          }
+        };
+      }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive, target]);
       return jsxRuntime.jsx(Button, Object.assign({
         id: buttonId,
         hasPopup: true,
@@ -37109,9 +37205,10 @@
 
     function MoveAnnotation(_a) {
       var {
-          onMoveChange
+          onMoveChange,
+          target
         } = _a,
-        props = __rest$1(_a, ["onMoveChange"]);
+        props = __rest$1(_a, ["onMoveChange", "target"]);
       const translateInteractionRef = a$1.useRef(null);
       const clickedAnnotation = useSelectAnnotation();
       const map = useMap();
@@ -37496,6 +37593,7 @@
     };
 
     function DrawingTools({
+      target = null,
       multiMarker = true,
       marker = true,
       polyline = true,
@@ -37599,23 +37697,15 @@
             onCanvas: onCanvas
           })]
         }), jsxRuntime.jsxs(ControlGroup, {
-          children: [edit && jsxRuntime.jsx(ModifyAnnotation
-          // isActive={isSelected === "6"}
-          // onClick={() => {
-          //   switchControl("6");
-          // }}
-          , {
+          children: [edit && jsxRuntime.jsx(ModifyAnnotation, {
+            target: target,
             // isActive={isSelected === "6"}
             // onClick={() => {
             //   switchControl("6");
             // }}
             onModifyChange: onModify
-          }), movement && jsxRuntime.jsx(MoveAnnotation
-          // isActive={isSelected === "7"}
-          // onClick={() => {
-          //   switchControl("7");
-          // }}
-          , {
+          }), movement && jsxRuntime.jsx(MoveAnnotation, {
+            target: target,
             // isActive={isSelected === "7"}
             // onClick={() => {
             //   switchControl("7");

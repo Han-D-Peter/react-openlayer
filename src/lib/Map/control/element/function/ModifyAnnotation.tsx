@@ -168,11 +168,11 @@ export function ModifyAnnotation({
     if (clickedAnnotation && target && isActive) {
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
-          features: new Collection([clickedAnnotation]),
+          features: new Collection([target]),
           deleteCondition: altShiftKeysOnly,
         });
         snapInteractionRef.current = new Snap({
-          features: new Collection([clickedAnnotation]),
+          features: new Collection([target]),
         });
 
         modifyInteractionRef.current.on("modifystart", onModifyStart);
