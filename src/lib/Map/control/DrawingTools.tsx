@@ -31,7 +31,7 @@ export interface DrawingToolsProps {
   rectangle?: boolean;
   polygon?: boolean;
   text?: boolean;
-
+  target?: Feature<Geometry> | null;
   edit?: boolean;
   movement?: boolean;
   remove?: boolean;
@@ -45,6 +45,7 @@ export interface DrawingToolsProps {
 }
 
 export function DrawingTools({
+  target = null,
   multiMarker = true,
   marker = true,
   polyline = true,
@@ -157,6 +158,7 @@ export function DrawingTools({
       <ControlGroup>
         {edit && (
           <ModifyAnnotation
+            target={target}
             // isActive={isSelected === "6"}
             // onClick={() => {
             //   switchControl("6");
@@ -166,6 +168,7 @@ export function DrawingTools({
         )}
         {movement && (
           <MoveAnnotation
+            target={target}
             // isActive={isSelected === "7"}
             // onClick={() => {
             //   switchControl("7");

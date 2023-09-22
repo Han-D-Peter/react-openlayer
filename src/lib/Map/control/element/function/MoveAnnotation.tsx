@@ -1,6 +1,6 @@
 import React, { useId } from "react";
 import { useCallback, useEffect, useRef } from "react";
-import { Collection } from "ol";
+import { Collection, Feature } from "ol";
 import { Translate } from "ol/interaction";
 import { TranslateEvent } from "ol/interaction/Translate";
 import { Button, ButtonProps } from "../Button";
@@ -8,13 +8,16 @@ import { useMap, useSelectAnnotation } from "../../../hooks";
 import { MovementIcon } from "../../../constants/icons/MovementIcon";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
+import { Geometry } from "ol/geom";
 
 export interface MoveAnnotationProps extends ButtonProps {
   onMoveChange?: (e: TranslateEvent) => void;
+  target: Feature<Geometry> | null;
 }
 
 export function MoveAnnotation({
   onMoveChange,
+  target,
   ...props
 }: MoveAnnotationProps) {
   const translateInteractionRef = useRef<Translate | null>(null);

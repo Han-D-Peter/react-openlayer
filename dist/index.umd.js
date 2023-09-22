@@ -38506,6 +38506,14 @@
       a$1.useEffect(() => {
         if (!children) {
           annotationStyleRef.current.setText(new style.Text());
+        } else {
+          annotationStyleRef.current.setText(makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: false
+          }));
         }
       }, [children]);
       a$1.useEffect(() => {

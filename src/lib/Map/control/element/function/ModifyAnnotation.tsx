@@ -3,19 +3,22 @@ import { Button, ButtonProps } from "../Button";
 import { useCallback, useEffect, useRef } from "react";
 import { Modify, Snap } from "ol/interaction";
 import { altShiftKeysOnly, doubleClick } from "ol/events/condition";
-import { Collection } from "ol";
+import { Collection, Feature } from "ol";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { BiSolidPencil } from "react-icons/bi";
 import { useMap, useSelectAnnotation } from "../../../hooks";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
+import { Geometry } from "ol/geom";
 
 export interface ModifyAnnotationProps extends ButtonProps {
   onModifyChange?: (e: ModifyEvent) => void;
+  target: Feature<Geometry> | null;
 }
 
 export function ModifyAnnotation({
   onModifyChange,
+  target,
   ...props
 }: ModifyAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
@@ -38,21 +41,42 @@ export function ModifyAnnotation({
       });
 
       map.setProperties({ ...existMapProperties, isModifying: true });
+      return;
+    } else if (target) {
+      const existProperties = target.getProperties();
+      const existMapProperties = map.getProperties();
+      target.setProperties({
+        ...existProperties,
+        isModifying: true,
+      });
+
+      map.setProperties({ ...existMapProperties, isModifying: true });
+      return;
     }
-  }, [clickedAnnotation]);
+  }, [clickedAnnotation, map, target]);
 
   const onModifyEnd = useCallback(
     (event: ModifyEvent) => {
       if (onModifyChange) {
         onModifyChange(event);
       }
-      const existProperties = clickedAnnotation.getProperties();
-      clickedAnnotation.setProperties({
-        ...existProperties,
-        isModifying: true,
-      });
+      if (clickedAnnotation) {
+        const existProperties = clickedAnnotation.getProperties();
+        clickedAnnotation.setProperties({
+          ...existProperties,
+          isModifying: true,
+        });
+        return;
+      } else if (target) {
+        const existProperties = target.getProperties();
+        target.setProperties({
+          ...existProperties,
+          isModifying: true,
+        });
+        return;
+      }
     },
-    [clickedAnnotation, onModifyChange]
+    [clickedAnnotation, onModifyChange, target]
   );
 
   // 수정중임을 map 에 명시
@@ -62,7 +86,7 @@ export function ModifyAnnotation({
   }, [isActive]);
 
   useEffect(() => {
-    if (clickedAnnotation && isActive) {
+    if (clickedAnnotation && !target && isActive) {
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
           features: new Collection([clickedAnnotation]),
@@ -77,16 +101,17 @@ export function ModifyAnnotation({
         map.addInteraction(snapInteractionRef.current);
         map.addInteraction(modifyInteractionRef.current);
       }
-    } else {
-      if (modifyInteractionRef.current && snapInteractionRef.current) {
-        modifyInteractionRef.current.un("modifystart", onModifyStart);
-        modifyInteractionRef.current.un("modifyend", onModifyEnd);
-        map.removeInteraction(modifyInteractionRef.current);
-        modifyInteractionRef.current = null;
-        map.removeInteraction(snapInteractionRef.current);
-        snapInteractionRef.current = null;
-      }
     }
+    // else {
+    //   if (modifyInteractionRef.current && snapInteractionRef.current) {
+    //     modifyInteractionRef.current.un("modifystart", onModifyStart);
+    //     modifyInteractionRef.current.un("modifyend", onModifyEnd);
+    //     map.removeInteraction(modifyInteractionRef.current);
+    //     modifyInteractionRef.current = null;
+    //     map.removeInteraction(snapInteractionRef.current);
+    //     snapInteractionRef.current = null;
+    //   }
+    // }
 
     return () => {
       if (modifyInteractionRef.current && snapInteractionRef.current) {
@@ -98,7 +123,86 @@ export function ModifyAnnotation({
         snapInteractionRef.current = null;
       }
     };
-  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive]);
+  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive, target]);
+
+  useEffect(() => {
+    if (!clickedAnnotation && target && isActive) {
+      if (!modifyInteractionRef.current) {
+        modifyInteractionRef.current = new Modify({
+          features: new Collection([target]),
+          deleteCondition: altShiftKeysOnly,
+        });
+        snapInteractionRef.current = new Snap({
+          features: new Collection([target]),
+        });
+
+        modifyInteractionRef.current.on("modifystart", onModifyStart);
+        modifyInteractionRef.current.on("modifyend", onModifyEnd);
+        map.addInteraction(snapInteractionRef.current);
+        map.addInteraction(modifyInteractionRef.current);
+      }
+    }
+    // else {
+    //   if (modifyInteractionRef.current && snapInteractionRef.current) {
+    //     modifyInteractionRef.current.un("modifystart", onModifyStart);
+    //     modifyInteractionRef.current.un("modifyend", onModifyEnd);
+    //     map.removeInteraction(modifyInteractionRef.current);
+    //     modifyInteractionRef.current = null;
+    //     map.removeInteraction(snapInteractionRef.current);
+    //     snapInteractionRef.current = null;
+    //   }
+    // }
+
+    return () => {
+      if (modifyInteractionRef.current && snapInteractionRef.current) {
+        modifyInteractionRef.current.un("modifystart", onModifyStart);
+        modifyInteractionRef.current.un("modifyend", onModifyEnd);
+        map.removeInteraction(modifyInteractionRef.current);
+        map.removeInteraction(snapInteractionRef.current);
+        modifyInteractionRef.current = null;
+        snapInteractionRef.current = null;
+      }
+    };
+  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive, target]);
+  useEffect(() => {
+    if (clickedAnnotation && target && isActive) {
+      if (!modifyInteractionRef.current) {
+        modifyInteractionRef.current = new Modify({
+          features: new Collection([clickedAnnotation]),
+          deleteCondition: altShiftKeysOnly,
+        });
+        snapInteractionRef.current = new Snap({
+          features: new Collection([clickedAnnotation]),
+        });
+
+        modifyInteractionRef.current.on("modifystart", onModifyStart);
+        modifyInteractionRef.current.on("modifyend", onModifyEnd);
+        map.addInteraction(snapInteractionRef.current);
+        map.addInteraction(modifyInteractionRef.current);
+      }
+    }
+    // else {
+    //   if (modifyInteractionRef.current && snapInteractionRef.current) {
+    //     modifyInteractionRef.current.un("modifystart", onModifyStart);
+    //     modifyInteractionRef.current.un("modifyend", onModifyEnd);
+    //     map.removeInteraction(modifyInteractionRef.current);
+    //     modifyInteractionRef.current = null;
+    //     map.removeInteraction(snapInteractionRef.current);
+    //     snapInteractionRef.current = null;
+    //   }
+    // }
+
+    return () => {
+      if (modifyInteractionRef.current && snapInteractionRef.current) {
+        modifyInteractionRef.current.un("modifystart", onModifyStart);
+        modifyInteractionRef.current.un("modifyend", onModifyEnd);
+        map.removeInteraction(modifyInteractionRef.current);
+        map.removeInteraction(snapInteractionRef.current);
+        modifyInteractionRef.current = null;
+        snapInteractionRef.current = null;
+      }
+    };
+  }, [clickedAnnotation, map, onModifyEnd, onModifyStart, isActive, target]);
 
   return (
     <Button
