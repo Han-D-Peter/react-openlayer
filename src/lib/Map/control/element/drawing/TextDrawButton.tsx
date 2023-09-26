@@ -177,6 +177,7 @@ export function TextDrawButton({
       onClick={() => {
         if (isActive) {
           selectButton("");
+          map.setProperties({ isDrawing: false });
         } else {
           map.getViewport().style.cursor = "pointer";
           selectButton(buttonId);

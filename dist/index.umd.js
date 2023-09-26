@@ -35906,6 +35906,7 @@
           if (isActive) {
             selectButton("");
           } else {
+            map.getViewport().style.cursor = "pointer";
             selectButton(buttonId);
             startDrawing();
           }
@@ -36517,14 +36518,9 @@
           }),
           fill: new Fill__default["default"]({
             color: "rgba(2, 26, 255, 0.3)"
-          }),
-          image: new Icon__default["default"]({
-            src: "/images/Rectangle.svg",
-            anchor: [0.5, 1] // 마커 이미지의 앵커 위치
           })
         })
       }));
-
       a$1.useEffect(() => {
         drawRef.current = new interaction.Draw({
           source: onCanvas ? drawVectorSource : undefined,
@@ -36537,10 +36533,6 @@
             }),
             fill: new Fill__default["default"]({
               color: "rgba(2, 26, 255, 0.3)"
-            }),
-            image: new Icon__default["default"]({
-              src: "/images/Rectangle.svg",
-              anchor: [0.5, 1] // 마커 이미지의 앵커 위치
             })
           })
         });
@@ -36552,6 +36544,7 @@
         if (onStart) {
           onStart();
         }
+        map.getViewport().style.cursor = "crosshair";
         map.setProperties({
           isDrawing: true
         });
@@ -36587,6 +36580,7 @@
           positions: geometry.getCoordinates()
         });
         selectButton("");
+        map.getViewport().style.cursor = "pointer";
         map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(event.feature);
@@ -36632,6 +36626,7 @@
         onClick: () => {
           if (isActive) {
             selectButton("");
+            map.getViewport().style.cursor = "pointer";
           } else {
             selectButton(buttonId);
             startDrawing();
@@ -36874,6 +36869,7 @@
           if (isActive) {
             selectButton("");
           } else {
+            map.getViewport().style.cursor = "pointer";
             selectButton(buttonId);
             startDrawing();
           }

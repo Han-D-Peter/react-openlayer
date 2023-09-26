@@ -181,6 +181,7 @@ export function RectangleDrawButton({
       onClick={() => {
         if (isActive) {
           selectButton("");
+          map.setProperties({ isDrawing: false });
           map.getViewport().style.cursor = "pointer";
         } else {
           selectButton(buttonId);
