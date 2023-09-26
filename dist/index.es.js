@@ -37124,11 +37124,11 @@ function ModifyAnnotation(_a) {
     if (clickedAnnotation && target && isActive) {
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
-          features: new Collection$1([clickedAnnotation]),
+          features: new Collection$1([target]),
           deleteCondition: altShiftKeysOnly$1
         });
         snapInteractionRef.current = new Snap({
-          features: new Collection$1([clickedAnnotation])
+          features: new Collection$1([target])
         });
         modifyInteractionRef.current.on("modifystart", onModifyStart);
         modifyInteractionRef.current.on("modifyend", onModifyEnd);

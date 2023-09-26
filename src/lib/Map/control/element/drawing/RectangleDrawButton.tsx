@@ -63,10 +63,6 @@ export function RectangleDrawButton({
         fill: new Fill({
           color: "rgba(2, 26, 255, 0.3)",
         }),
-        image: new Icon({
-          src: "/images/Rectangle.svg", // 마커 이미지 경로
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        }),
       }),
     })
   );
@@ -84,10 +80,6 @@ export function RectangleDrawButton({
         fill: new Fill({
           color: "rgba(2, 26, 255, 0.3)",
         }),
-        image: new Icon({
-          src: "/images/Rectangle.svg", // 마커 이미지 경로
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        }),
       }),
     });
   }, [onCanvas]);
@@ -100,6 +92,7 @@ export function RectangleDrawButton({
     if (onStart) {
       onStart();
     }
+    map.getViewport().style.cursor = "crosshair";
     map.setProperties({ isDrawing: true });
     map.addInteraction(drawRef.current);
   };
@@ -137,7 +130,7 @@ export function RectangleDrawButton({
       positions: geometry.getCoordinates(),
     });
     selectButton("");
-
+    map.getViewport().style.cursor = "pointer";
     map.removeInteraction(drawRef.current);
 
     if (onEnd) {
@@ -188,6 +181,7 @@ export function RectangleDrawButton({
       onClick={() => {
         if (isActive) {
           selectButton("");
+          map.getViewport().style.cursor = "pointer";
         } else {
           selectButton(buttonId);
           startDrawing();

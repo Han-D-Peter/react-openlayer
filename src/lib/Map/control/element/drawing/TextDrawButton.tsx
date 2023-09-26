@@ -178,6 +178,7 @@ export function TextDrawButton({
         if (isActive) {
           selectButton("");
         } else {
+          map.getViewport().style.cursor = "pointer";
           selectButton(buttonId);
           startDrawing();
         }

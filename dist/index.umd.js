@@ -37118,11 +37118,11 @@
         if (clickedAnnotation && target && isActive) {
           if (!modifyInteractionRef.current) {
             modifyInteractionRef.current = new interaction.Modify({
-              features: new Collection$1([clickedAnnotation]),
+              features: new Collection$1([target]),
               deleteCondition: condition.altShiftKeysOnly
             });
             snapInteractionRef.current = new interaction.Snap({
-              features: new Collection$1([clickedAnnotation])
+              features: new Collection$1([target])
             });
             modifyInteractionRef.current.on("modifystart", onModifyStart);
             modifyInteractionRef.current.on("modifyend", onModifyEnd);

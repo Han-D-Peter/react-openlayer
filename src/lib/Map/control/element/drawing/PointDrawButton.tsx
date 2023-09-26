@@ -180,6 +180,7 @@ export function PointDrawButton({
         if (isActive) {
           selectButton("");
         } else {
+          map.getViewport().style.cursor = "pointer";
           selectButton(buttonId);
           startDrawing();
         }
