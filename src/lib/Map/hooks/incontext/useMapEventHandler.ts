@@ -62,7 +62,6 @@ export const useMapEventHandler = ({
   const clickEventHandler = useCallback(
     (event: MapBrowserEvent<any>) => {
       if (onClick) {
-        event.preventDefault();
         onClick({ event, lonlat: toLonLat(event.coordinate) });
       }
     },
@@ -72,6 +71,7 @@ export const useMapEventHandler = ({
   const doubleClickEventHandler = useCallback(
     (event: MapBrowserEvent<any>) => {
       if (onDoubleClick) {
+        event.preventDefault();
         onDoubleClick({ event, lonlat: toLonLat(event.coordinate) });
       }
     },

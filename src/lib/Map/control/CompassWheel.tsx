@@ -28,10 +28,10 @@ export const CompassWheel = ({
 
   const compassSize = (size: Size) => {
     if (size === "sm") {
-      return 100;
+      return 50;
     }
     if (size === "md") {
-      return 150;
+      return 125;
     }
 
     if (size === "lg") {

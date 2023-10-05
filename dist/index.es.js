@@ -125,17 +125,27 @@ const useMapEventHandler = ({
   onHover,
   onMapLoaded,
   onLoadStarted,
-  onTileLoadEnded
+  onTileLoadEnded,
+  onDoubleClick
 }) => {
   const map = useMap();
   const clickEventHandler = useCallback(event => {
     if (onClick) {
+      event.preventDefault();
       onClick({
         event,
         lonlat: toLonLat(event.coordinate)
       });
     }
   }, [onClick]);
+  const doubleClickEventHandler = useCallback(event => {
+    if (onDoubleClick) {
+      onDoubleClick({
+        event,
+        lonlat: toLonLat(event.coordinate)
+      });
+    }
+  }, [onDoubleClick]);
   const dragEventHandler = useCallback(event => {
     if (onDrag) {
       onDrag({
@@ -173,6 +183,12 @@ const useMapEventHandler = ({
       map.un("pointerdrag", dragEventHandler);
     };
   }, [dragEventHandler, map]);
+  useEffect(() => {
+    map.on("dblclick", doubleClickEventHandler);
+    return () => {
+      map.un("dblclick", doubleClickEventHandler);
+    };
+  }, [doubleClickEventHandler, map]);
   useEffect(() => {
     map.on("singleclick", clickEventHandler);
     return () => {
