@@ -168,9 +168,9 @@
         };
       }, [dragEventHandler, map]);
       a$1.useEffect(() => {
-        map.on("click", clickEventHandler);
+        map.on("singleclick", clickEventHandler);
         return () => {
-          map.un("click", clickEventHandler);
+          map.un("singleclick", clickEventHandler);
         };
       }, [clickEventHandler, map]);
       a$1.useEffect(() => {

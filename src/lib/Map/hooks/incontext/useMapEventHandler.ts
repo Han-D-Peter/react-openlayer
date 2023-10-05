@@ -21,6 +21,13 @@ export interface useMapEventHandlerArgs {
     event: MapBrowserEvent<any>;
     lonlat: Coordinate;
   }) => void;
+  onDoubleClick?: ({
+    event,
+    lonlat,
+  }?: {
+    event: MapBrowserEvent<any>;
+    lonlat: Coordinate;
+  }) => void;
   onHover?: ({
     event,
     lonlat,
@@ -48,16 +55,27 @@ export const useMapEventHandler = ({
   onMapLoaded,
   onLoadStarted,
   onTileLoadEnded,
+  onDoubleClick,
 }: useMapEventHandlerArgs) => {
   const map = useMap();
 
   const clickEventHandler = useCallback(
     (event: MapBrowserEvent<any>) => {
       if (onClick) {
+        event.preventDefault();
         onClick({ event, lonlat: toLonLat(event.coordinate) });
       }
     },
     [onClick]
+  );
+
+  const doubleClickEventHandler = useCallback(
+    (event: MapBrowserEvent<any>) => {
+      if (onDoubleClick) {
+        onDoubleClick({ event, lonlat: toLonLat(event.coordinate) });
+      }
+    },
+    [onDoubleClick]
   );
 
   const dragEventHandler = useCallback(
@@ -110,6 +128,14 @@ export const useMapEventHandler = ({
       map.un("pointerdrag", dragEventHandler);
     };
   }, [dragEventHandler, map]);
+
+  useEffect(() => {
+    map.on("dblclick", doubleClickEventHandler);
+
+    return () => {
+      map.un("dblclick", doubleClickEventHandler);
+    };
+  }, [doubleClickEventHandler, map]);
 
   useEffect(() => {
     map.on("singleclick", clickEventHandler);

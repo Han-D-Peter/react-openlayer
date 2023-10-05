@@ -174,9 +174,9 @@ const useMapEventHandler = ({
     };
   }, [dragEventHandler, map]);
   useEffect(() => {
-    map.on("click", clickEventHandler);
+    map.on("singleclick", clickEventHandler);
     return () => {
-      map.un("click", clickEventHandler);
+      map.un("singleclick", clickEventHandler);
     };
   }, [clickEventHandler, map]);
   useEffect(() => {
