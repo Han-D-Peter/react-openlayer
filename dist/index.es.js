@@ -35911,6 +35911,9 @@ function PointDrawButton(_a) {
     onClick: () => {
       if (isActive) {
         selectButton("");
+        map.setProperties({
+          isDrawing: false
+        });
       } else {
         map.getViewport().style.cursor = "pointer";
         selectButton(buttonId);
@@ -36256,6 +36259,9 @@ function PolygonDrawButton(_a) {
     onClick: () => {
       if (isActive) {
         selectButton("");
+        map.setProperties({
+          isDrawing: false
+        });
         map.getViewport().style.cursor = "pointer";
       } else {
         selectButton(buttonId);
@@ -36435,6 +36441,9 @@ function PolylineDrawButton(_a) {
     onClick: () => {
       if (isActive) {
         selectButton("");
+        map.setProperties({
+          isDrawing: false
+        });
         map.getViewport().style.cursor = "pointer";
       } else {
         selectButton(buttonId);
@@ -36632,6 +36641,9 @@ function RectangleDrawButton(_a) {
     onClick: () => {
       if (isActive) {
         selectButton("");
+        map.setProperties({
+          isDrawing: false
+        });
         map.getViewport().style.cursor = "pointer";
       } else {
         selectButton(buttonId);
@@ -36874,6 +36886,9 @@ function TextDrawButton(_a) {
     onClick: () => {
       if (isActive) {
         selectButton("");
+        map.setProperties({
+          isDrawing: false
+        });
       } else {
         map.getViewport().style.cursor = "pointer";
         selectButton(buttonId);

@@ -35905,6 +35905,9 @@
         onClick: () => {
           if (isActive) {
             selectButton("");
+            map.setProperties({
+              isDrawing: false
+            });
           } else {
             map.getViewport().style.cursor = "pointer";
             selectButton(buttonId);
@@ -36250,6 +36253,9 @@
         onClick: () => {
           if (isActive) {
             selectButton("");
+            map.setProperties({
+              isDrawing: false
+            });
             map.getViewport().style.cursor = "pointer";
           } else {
             selectButton(buttonId);
@@ -36429,6 +36435,9 @@
         onClick: () => {
           if (isActive) {
             selectButton("");
+            map.setProperties({
+              isDrawing: false
+            });
             map.getViewport().style.cursor = "pointer";
           } else {
             selectButton(buttonId);
@@ -36626,6 +36635,9 @@
         onClick: () => {
           if (isActive) {
             selectButton("");
+            map.setProperties({
+              isDrawing: false
+            });
             map.getViewport().style.cursor = "pointer";
           } else {
             selectButton(buttonId);
@@ -36868,6 +36880,9 @@
         onClick: () => {
           if (isActive) {
             selectButton("");
+            map.setProperties({
+              isDrawing: false
+            });
           } else {
             map.getViewport().style.cursor = "pointer";
             selectButton(buttonId);
