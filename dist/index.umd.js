@@ -125,7 +125,6 @@
       const map = useMap();
       const clickEventHandler = a$1.useCallback(event => {
         if (onClick) {
-          event.preventDefault();
           onClick({
             event,
             lonlat: proj.toLonLat(event.coordinate)
@@ -134,6 +133,7 @@
       }, [onClick]);
       const doubleClickEventHandler = a$1.useCallback(event => {
         if (onDoubleClick) {
+          event.preventDefault();
           onDoubleClick({
             event,
             lonlat: proj.toLonLat(event.coordinate)
@@ -37484,10 +37484,10 @@
       const map = useMap();
       const compassSize = size => {
         if (size === "sm") {
-          return 100;
+          return 50;
         }
         if (size === "md") {
-          return 150;
+          return 125;
         }
         if (size === "lg") {
           return 200;

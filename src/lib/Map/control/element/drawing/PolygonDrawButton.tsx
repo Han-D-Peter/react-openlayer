@@ -115,6 +115,13 @@ export function PolygonDrawButton({
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
     const geometry = feature.getGeometry() as Polygon;
+
+    if (geometry.getCoordinates()[0].length <= 3) {
+      drawVectorSource.removeFeature(feature);
+      map.removeInteraction(drawRef.current);
+      return;
+    }
+
     feature.setStyle(
       new Style({
         stroke: new Stroke({
