@@ -1,4 +1,4 @@
-import React, { useId } from "react";
+import React, { useId, useState } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw, Snap } from "ol/interaction";
@@ -48,6 +48,7 @@ export function PolygonDrawButton({
   const id = useId();
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
+  const [count, setCount] = useState(0);
 
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
@@ -100,13 +101,21 @@ export function PolygonDrawButton({
       onStart();
     }
     map.setProperties({ isDrawing: true });
-    map.addInteraction(drawRef.current);
+    drawRef.current.setActive(true);
     map.getViewport().style.cursor = "crosshair";
   };
 
   const finishDrawingByRightClick = (e: MouseEvent) => {
+    setCount((prev) => prev + 1);
     if (e.button === 2) {
       e.preventDefault();
+      if (count < 3) {
+        drawRef.current.abortDrawing();
+        setCount(0);
+        selectButton("");
+        drawRef.current.setActive(false);
+        return;
+      }
       drawRef.current.finishDrawing();
       map.getViewport().style.cursor = "pointer";
     }
@@ -115,12 +124,6 @@ export function PolygonDrawButton({
   const drawing = (event: DrawEvent) => {
     const feature = event.feature;
     const geometry = feature.getGeometry() as Polygon;
-
-    if (geometry.getCoordinates()[0].length <= 3) {
-      drawVectorSource.removeFeature(feature);
-      map.removeInteraction(drawRef.current);
-      return;
-    }
 
     feature.setStyle(
       new Style({
@@ -149,13 +152,14 @@ export function PolygonDrawButton({
     });
     selectButton("");
     map.getViewport().style.cursor = "pointer";
-    map.removeInteraction(drawRef.current);
+    drawRef.current.setActive(true);
     if (onEnd) {
       onEnd(feature);
     }
     if (onCanvas) {
       selectFeature(feature);
     }
+
     setTimeout(() => map.setProperties({ isDrawing: false }), 100);
   };
 
@@ -165,9 +169,11 @@ export function PolygonDrawButton({
     });
     map.addLayer(vectorLayer);
     const drawingInstance = drawRef.current;
+    map.addInteraction(drawingInstance);
     drawingInstance.on("drawend", drawing);
     map.getViewport().addEventListener("mousedown", finishDrawingByRightClick);
     return () => {
+      map.removeInteraction(drawingInstance);
       drawingInstance.un("drawend", drawing);
       map
         .getViewport()
@@ -178,6 +184,8 @@ export function PolygonDrawButton({
   useEffect(() => {
     if (!isActive) {
       map.removeInteraction(drawRef.current);
+    } else {
+      map.addInteraction(drawRef.current);
     }
 
     const snap = new Snap({

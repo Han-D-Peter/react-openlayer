@@ -79,7 +79,7 @@ function App() {
         ref={ref}
         isAbledSelection
       >
-        <GeoJsonLayer geoJson={json} color="blue" />
+        {/* <GeoJsonLayer geoJson={json} color="blue" /> */}
         <TestField />
         <TileLayer
           maxZoom={23}

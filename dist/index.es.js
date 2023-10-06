@@ -36199,6 +36199,11 @@ function PolygonDrawButton(_a) {
   const drawing = event => {
     const feature = event.feature;
     const geometry = feature.getGeometry();
+    if (geometry.getCoordinates()[0].length <= 3) {
+      drawVectorSource.removeFeature(feature);
+      map.removeInteraction(drawRef.current);
+      return;
+    }
     feature.setStyle(new Style$1({
       stroke: new Stroke$1({
         color: "rgb(2, 26, 255)",
