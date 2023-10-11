@@ -1,6 +1,6 @@
 import { ReactNode, useCallback, useEffect, useId, useRef } from "react";
 import { defaults as defaultControls } from "ol/control";
-import { Location } from "../MapContainer";
+import { ControlContext, Location } from "../MapContainer";
 import { Map } from "ol";
 import { fromLonLat, toLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
@@ -8,6 +8,7 @@ import { OSM } from "ol/source";
 import { Coordinate } from "ol/coordinate";
 import { MapContext } from "../MapContext";
 import { useSyncMapContext } from "../hooks/incontext/useSyncContext";
+import VectorSource from "ol/source/Vector";
 
 export interface SyncMapProps {
   /**
@@ -70,6 +71,7 @@ export const SyncMap = ({
       ],
     })
   );
+  const drawVectorSource = useRef<VectorSource>(new VectorSource());
 
   const { adjustCenter, onWheelHandler } = useSyncMapContext();
 
@@ -105,15 +107,19 @@ export const SyncMap = ({
 
   return (
     <MapContext.Provider value={mapObj.current}>
-      <div
-        id={mapId}
-        onWheel={(e) => onWheelHandler(e, mapObj.current)}
-        onMouseUp={onMouseUpOnMap}
-        className="react-openlayers-map-container"
-        style={{ width, height }}
+      <ControlContext.Provider
+        value={{ drawVectorSource: drawVectorSource.current }}
       >
-        {children}
-      </div>
+        <div
+          id={mapId}
+          onWheel={(e) => onWheelHandler(e, mapObj.current)}
+          onMouseUp={onMouseUpOnMap}
+          className="react-openlayers-map-container"
+          style={{ width, height }}
+        >
+          {children}
+        </div>
+      </ControlContext.Provider>
     </MapContext.Provider>
   );
 };
