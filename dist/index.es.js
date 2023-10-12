@@ -46597,6 +46597,7 @@ const SyncMap = ({
       })
     })]
   }));
+  const drawVectorSource = useRef(new VectorSource());
   const {
     adjustCenter,
     onWheelHandler
@@ -46629,17 +46630,23 @@ const SyncMap = ({
   return jsx(MapContext.Provider, Object.assign({
     value: mapObj.current
   }, {
-    children: jsx("div", Object.assign({
-      id: mapId,
-      onWheel: e => onWheelHandler(e, mapObj.current),
-      onMouseUp: onMouseUpOnMap,
-      className: "react-openlayers-map-container",
-      style: {
-        width,
-        height
+    children: jsx(ControlContext.Provider, Object.assign({
+      value: {
+        drawVectorSource: drawVectorSource.current
       }
     }, {
-      children: children
+      children: jsx("div", Object.assign({
+        id: mapId,
+        onWheel: e => onWheelHandler(e, mapObj.current),
+        onMouseUp: onMouseUpOnMap,
+        className: "react-openlayers-map-container",
+        style: {
+          width,
+          height
+        }
+      }, {
+        children: children
+      }))
     }))
   }));
 };

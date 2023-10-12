@@ -46591,6 +46591,7 @@
           })
         })]
       }));
+      const drawVectorSource = a$1.useRef(new VectorSource__default["default"]());
       const {
         adjustCenter,
         onWheelHandler
@@ -46623,17 +46624,23 @@
       return jsxRuntime.jsx(MapContext.Provider, Object.assign({
         value: mapObj.current
       }, {
-        children: jsxRuntime.jsx("div", Object.assign({
-          id: mapId,
-          onWheel: e => onWheelHandler(e, mapObj.current),
-          onMouseUp: onMouseUpOnMap,
-          className: "react-openlayers-map-container",
-          style: {
-            width,
-            height
+        children: jsxRuntime.jsx(ControlContext.Provider, Object.assign({
+          value: {
+            drawVectorSource: drawVectorSource.current
           }
         }, {
-          children: children
+          children: jsxRuntime.jsx("div", Object.assign({
+            id: mapId,
+            onWheel: e => onWheelHandler(e, mapObj.current),
+            onMouseUp: onMouseUpOnMap,
+            className: "react-openlayers-map-container",
+            style: {
+              width,
+              height
+            }
+          }, {
+            children: children
+          }))
         }))
       }));
     };

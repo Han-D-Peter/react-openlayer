@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes, useState } from "react";
+import React, { ButtonHTMLAttributes, MouseEvent, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { ReactNode, forwardRef } from "react";
@@ -6,7 +6,7 @@ import { ReactNode, forwardRef } from "react";
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
   isDisabled?: boolean;
-  onClick?: () => void;
+  onClick?: (e?: MouseEvent<HTMLButtonElement>) => void;
 
   /**
    * @default "middle"
@@ -103,9 +103,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const [isHover, setIsHover] = useState(false);
-    const onClickBtn = () => {
+    const onClickBtn = (e: MouseEvent<HTMLButtonElement>) => {
       if (onClick) {
-        onClick();
+        onClick(e);
       }
     };
 
