@@ -395,9 +395,9 @@ const Button = /*#__PURE__*/forwardRef((_a, ref) => {
     } = _a,
     props = __rest$1(_a, ["hasPopup", "popupText", "children", "onClick", "side", "isDisabled", "isActive", "size"]);
   const [isHover, setIsHover] = useState(false);
-  const onClickBtn = () => {
+  const onClickBtn = e => {
     if (onClick) {
-      onClick();
+      onClick(e);
     }
   };
   return jsxs(ButtonContainer, {
@@ -36129,7 +36129,6 @@ function PolygonDrawButton(_a) {
     selectButton,
     selectedButtonId
   } = useControlSection();
-  const [count, setCount] = useState(0);
   const isActive = buttonId === selectedButtonId;
   const {
     selectFeature
@@ -36187,20 +36186,12 @@ function PolygonDrawButton(_a) {
     map.setProperties({
       isDrawing: true
     });
-    drawRef.current.setActive(true);
+    map.addInteraction(drawRef.current);
     map.getViewport().style.cursor = "crosshair";
   };
   const finishDrawingByRightClick = e => {
-    setCount(prev => prev + 1);
     if (e.button === 2) {
       e.preventDefault();
-      if (count < 3) {
-        drawRef.current.abortDrawing();
-        setCount(0);
-        selectButton("");
-        drawRef.current.setActive(false);
-        return;
-      }
       drawRef.current.finishDrawing();
       map.getViewport().style.cursor = "pointer";
     }
@@ -36233,7 +36224,7 @@ function PolygonDrawButton(_a) {
     });
     selectButton("");
     map.getViewport().style.cursor = "pointer";
-    drawRef.current.setActive(true);
+    map.removeInteraction(drawRef.current);
     if (onEnd) {
       onEnd(feature);
     }
@@ -36250,11 +36241,9 @@ function PolygonDrawButton(_a) {
     });
     map.addLayer(vectorLayer);
     const drawingInstance = drawRef.current;
-    map.addInteraction(drawingInstance);
     drawingInstance.on("drawend", drawing);
     map.getViewport().addEventListener("mousedown", finishDrawingByRightClick);
     return () => {
-      map.removeInteraction(drawingInstance);
       drawingInstance.un("drawend", drawing);
       map.getViewport().removeEventListener("mousedown", finishDrawingByRightClick);
     };
@@ -36262,8 +36251,6 @@ function PolygonDrawButton(_a) {
   useEffect(() => {
     if (!isActive) {
       map.removeInteraction(drawRef.current);
-    } else {
-      map.addInteraction(drawRef.current);
     }
     const snap = new Snap({
       source: drawVectorSource

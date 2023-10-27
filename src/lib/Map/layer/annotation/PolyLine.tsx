@@ -31,6 +31,7 @@ export const CustomPolyLine = ({
   zIndex = 0,
   children,
   opacity = 1,
+  isDisabledSelection = false,
 }: CustomPolyLineProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<LineString>>(
@@ -135,6 +136,7 @@ export const CustomPolyLine = ({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
     onHover: onHoverHandler,
+    isDisabledSelection,
   });
 
   useEffect(() => {

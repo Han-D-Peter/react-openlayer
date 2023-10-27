@@ -389,9 +389,9 @@
         } = _a,
         props = __rest$1(_a, ["hasPopup", "popupText", "children", "onClick", "side", "isDisabled", "isActive", "size"]);
       const [isHover, setIsHover] = a$1.useState(false);
-      const onClickBtn = () => {
+      const onClickBtn = e => {
         if (onClick) {
-          onClick();
+          onClick(e);
         }
       };
       return jsxRuntime.jsxs(ButtonContainer, {
@@ -36123,7 +36123,6 @@
         selectButton,
         selectedButtonId
       } = useControlSection();
-      const [count, setCount] = a$1.useState(0);
       const isActive = buttonId === selectedButtonId;
       const {
         selectFeature
@@ -36181,20 +36180,12 @@
         map.setProperties({
           isDrawing: true
         });
-        drawRef.current.setActive(true);
+        map.addInteraction(drawRef.current);
         map.getViewport().style.cursor = "crosshair";
       };
       const finishDrawingByRightClick = e => {
-        setCount(prev => prev + 1);
         if (e.button === 2) {
           e.preventDefault();
-          if (count < 3) {
-            drawRef.current.abortDrawing();
-            setCount(0);
-            selectButton("");
-            drawRef.current.setActive(false);
-            return;
-          }
           drawRef.current.finishDrawing();
           map.getViewport().style.cursor = "pointer";
         }
@@ -36227,7 +36218,7 @@
         });
         selectButton("");
         map.getViewport().style.cursor = "pointer";
-        drawRef.current.setActive(true);
+        map.removeInteraction(drawRef.current);
         if (onEnd) {
           onEnd(feature);
         }
@@ -36244,11 +36235,9 @@
         });
         map.addLayer(vectorLayer);
         const drawingInstance = drawRef.current;
-        map.addInteraction(drawingInstance);
         drawingInstance.on("drawend", drawing);
         map.getViewport().addEventListener("mousedown", finishDrawingByRightClick);
         return () => {
-          map.removeInteraction(drawingInstance);
           drawingInstance.un("drawend", drawing);
           map.getViewport().removeEventListener("mousedown", finishDrawingByRightClick);
         };
@@ -36256,8 +36245,6 @@
       a$1.useEffect(() => {
         if (!isActive) {
           map.removeInteraction(drawRef.current);
-        } else {
-          map.addInteraction(drawRef.current);
         }
         const snap = new interaction.Snap({
           source: drawVectorSource

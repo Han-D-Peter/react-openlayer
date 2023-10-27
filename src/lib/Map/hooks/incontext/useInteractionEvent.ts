@@ -10,12 +10,14 @@ interface useInteractionEventArgs {
   annotation: VectorLayer<VectorSource<Geometry>>;
   onClick?: (e: SelectEvent) => void;
   onHover?: (e: SelectEvent) => void;
+  isDisabledSelection?: boolean;
 }
 
 export function useInteractionEvent({
   annotation,
   onClick,
   onHover,
+  isDisabledSelection = false,
 }: useInteractionEventArgs) {
   const map = useMap();
   const clickSelect = useMemo(
@@ -39,23 +41,23 @@ export function useInteractionEvent({
   );
 
   useEffect(() => {
-    if (onHover) {
+    if (onHover && !isDisabledSelection) {
       hoverSelect.on("select", onHover);
     }
-    if (onClick) {
+    if (onClick && !isDisabledSelection) {
       clickSelect.on("select", onClick);
     }
     map.addInteraction(clickSelect);
     map.addInteraction(hoverSelect);
     return () => {
-      if (onHover) {
+      if (onHover && !isDisabledSelection) {
         hoverSelect.un("select", onHover);
       }
-      if (onClick) {
+      if (onClick && !isDisabledSelection) {
         clickSelect.un("select", onClick);
       }
       map.removeInteraction(clickSelect);
       map.removeInteraction(hoverSelect);
     };
-  }, [onClick, onHover, map, hoverSelect, clickSelect]);
+  }, [onClick, onHover, map, hoverSelect, clickSelect, isDisabledSelection]);
 }
