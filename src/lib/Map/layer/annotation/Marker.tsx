@@ -31,6 +31,7 @@ export const CustomMarker = ({
   selected = false,
   opacity = 1,
   children,
+  isDisabledSelection = false,
 }: CustomMarkerProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Point>>(
@@ -117,6 +118,7 @@ export const CustomMarker = ({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
     onHover: onHoverHandler,
+    isDisabledSelection,
   });
 
   useEffect(() => {

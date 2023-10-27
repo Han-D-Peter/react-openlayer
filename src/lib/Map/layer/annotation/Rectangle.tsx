@@ -31,6 +31,7 @@ export const CustomRectangle = ({
   zIndex = 0,
   children,
   opacity = 1,
+  isDisabledSelection = false,
 }: CustomRectangleProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
@@ -124,6 +125,7 @@ export const CustomRectangle = ({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
     onHover: onHoverHandler,
+    isDisabledSelection,
   });
 
   useEffect(() => {

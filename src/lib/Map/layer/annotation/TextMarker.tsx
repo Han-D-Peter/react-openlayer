@@ -30,6 +30,7 @@ export const TextMarker = ({
   children,
   opacity,
   zIndex = 0,
+  isDisabledSelection = false,
 }: TextMarkerProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Point>>(
@@ -87,6 +88,7 @@ export const TextMarker = ({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
     onHover: onHoverHandler,
+    isDisabledSelection,
   });
 
   useEffect(() => {

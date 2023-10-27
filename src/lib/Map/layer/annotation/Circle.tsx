@@ -33,6 +33,7 @@ export const CustomCircle = ({
   zIndex = 0,
   children,
   opacity = 1,
+  isDisabledSelection = false,
 }: CustomCircleProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Circle>>(
@@ -144,6 +145,7 @@ export const CustomCircle = ({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
     onHover: onHoverHandler,
+    isDisabledSelection,
   });
 
   useEffect(() => {

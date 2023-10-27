@@ -28,6 +28,7 @@ export function CustomMultiPoint({
   zIndex = 0,
   children,
   opacity = 1,
+  isDisabledSelection = false,
 }: CustomMultiPointProps) {
   const map = useMap();
   const annotationRef = useRef<Feature<MultiPoint>>(
@@ -74,6 +75,7 @@ export function CustomMultiPoint({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
     onHover: onHoverHandler,
+    isDisabledSelection,
   });
 
   useEffect(() => {

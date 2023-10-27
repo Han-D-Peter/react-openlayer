@@ -255,7 +255,8 @@
     function useInteractionEvent({
       annotation,
       onClick,
-      onHover
+      onHover,
+      isDisabledSelection = false
     }) {
       const map = useMap();
       const clickSelect = a$1.useMemo(() => new Select__default["default"]({
@@ -269,25 +270,25 @@
         layers: [annotation]
       }), [annotation]);
       a$1.useEffect(() => {
-        if (onHover) {
+        if (onHover && !isDisabledSelection) {
           hoverSelect.on("select", onHover);
         }
-        if (onClick) {
+        if (onClick && !isDisabledSelection) {
           clickSelect.on("select", onClick);
         }
         map.addInteraction(clickSelect);
         map.addInteraction(hoverSelect);
         return () => {
-          if (onHover) {
+          if (onHover && !isDisabledSelection) {
             hoverSelect.un("select", onHover);
           }
-          if (onClick) {
+          if (onClick && !isDisabledSelection) {
             clickSelect.un("select", onClick);
           }
           map.removeInteraction(clickSelect);
           map.removeInteraction(hoverSelect);
         };
-      }, [onClick, onHover, map, hoverSelect, clickSelect]);
+      }, [onClick, onHover, map, hoverSelect, clickSelect, isDisabledSelection]);
     }
 
     function useDidUpdate(func, dependencies) {
@@ -36123,6 +36124,7 @@
         selectButton,
         selectedButtonId
       } = useControlSection();
+      const [count, setCount] = a$1.useState(0);
       const isActive = buttonId === selectedButtonId;
       const {
         selectFeature
@@ -36180,12 +36182,20 @@
         map.setProperties({
           isDrawing: true
         });
-        map.addInteraction(drawRef.current);
+        drawRef.current.setActive(true);
         map.getViewport().style.cursor = "crosshair";
       };
       const finishDrawingByRightClick = e => {
+        setCount(prev => prev + 1);
         if (e.button === 2) {
           e.preventDefault();
+          if (count < 3) {
+            drawRef.current.abortDrawing();
+            setCount(0);
+            selectButton("");
+            drawRef.current.setActive(false);
+            return;
+          }
           drawRef.current.finishDrawing();
           map.getViewport().style.cursor = "pointer";
         }
@@ -36218,7 +36228,7 @@
         });
         selectButton("");
         map.getViewport().style.cursor = "pointer";
-        map.removeInteraction(drawRef.current);
+        drawRef.current.setActive(true);
         if (onEnd) {
           onEnd(feature);
         }
@@ -36235,9 +36245,11 @@
         });
         map.addLayer(vectorLayer);
         const drawingInstance = drawRef.current;
+        map.addInteraction(drawingInstance);
         drawingInstance.on("drawend", drawing);
         map.getViewport().addEventListener("mousedown", finishDrawingByRightClick);
         return () => {
+          map.removeInteraction(drawingInstance);
           drawingInstance.un("drawend", drawing);
           map.getViewport().removeEventListener("mousedown", finishDrawingByRightClick);
         };
@@ -36245,6 +36257,8 @@
       a$1.useEffect(() => {
         if (!isActive) {
           map.removeInteraction(drawRef.current);
+        } else {
+          map.addInteraction(drawRef.current);
         }
         const snap = new interaction.Snap({
           source: drawVectorSource
@@ -38523,7 +38537,8 @@
       onHover,
       zIndex = 0,
       children,
-      opacity = 1
+      opacity = 1,
+      isDisabledSelection = false
     }) => {
       const map = useMap();
       const annotationRef = a$1.useRef(new Feature__default["default"](new geom.LineString(positions.map(position => proj.fromLonLat(position)))));
@@ -38602,7 +38617,8 @@
       useInteractionEvent({
         annotation: annotationLayerRef.current,
         onClick: onClickHandler,
-        onHover: onHoverHandler
+        onHover: onHoverHandler,
+        isDisabledSelection
       });
       a$1.useEffect(() => {
         if (annotationRef.current) {

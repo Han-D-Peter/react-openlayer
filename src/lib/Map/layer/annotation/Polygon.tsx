@@ -31,6 +31,7 @@ export const CustomPolygon = ({
   zIndex = 0,
   children,
   opacity = 1,
+  isDisabledSelection = false,
 }: CustomPolygonProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
@@ -144,6 +145,7 @@ export const CustomPolygon = ({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
     onHover: onHoverHandler,
+    isDisabledSelection,
   });
 
   useEffect(() => {
