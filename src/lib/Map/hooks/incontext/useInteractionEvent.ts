@@ -41,19 +41,20 @@ export function useInteractionEvent({
   );
 
   useEffect(() => {
-    if (onHover && !isDisabledSelection) {
+    if (isDisabledSelection) return;
+    if (onHover) {
       hoverSelect.on("select", onHover);
     }
-    if (onClick && !isDisabledSelection) {
+    if (onClick) {
       clickSelect.on("select", onClick);
     }
     map.addInteraction(clickSelect);
     map.addInteraction(hoverSelect);
     return () => {
-      if (onHover && !isDisabledSelection) {
+      if (onHover) {
         hoverSelect.un("select", onHover);
       }
-      if (onClick && !isDisabledSelection) {
+      if (onClick) {
         clickSelect.un("select", onClick);
       }
       map.removeInteraction(clickSelect);
