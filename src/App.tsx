@@ -113,6 +113,7 @@ function App() {
           </CustomMarker>
 
           <CustomCircle
+            isDisabledSelection
             center={[126.841884, 35.191516]}
             radius={20}
             color="RED"
@@ -122,6 +123,7 @@ function App() {
         </LayerGroup>
         <LayerGroup zIndex={0}>
           <CustomCircle
+            isDisabledSelection
             center={[126.841784, 35.191406]}
             radius={20}
             color="BLUE"
@@ -129,6 +131,7 @@ function App() {
             {isShown ? <InnerText>Circle2</InnerText> : null}
           </CustomCircle>
           <CustomPolyLine
+            isDisabledSelection
             positions={[
               [126.840684, 35.190816],
               [126.840476, 35.190419],

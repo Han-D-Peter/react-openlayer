@@ -124,6 +124,7 @@ export const MapContainer = memo(
         new TileLayer({
           source: new OSM({
             crossOrigin: "anonymous",
+            attributions: [],
           }),
           zIndex: -1000,
         })

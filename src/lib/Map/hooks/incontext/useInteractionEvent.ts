@@ -41,15 +41,17 @@ export function useInteractionEvent({
   );
 
   useEffect(() => {
-    if (isDisabledSelection) return;
     if (onHover) {
       hoverSelect.on("select", onHover);
     }
     if (onClick) {
       clickSelect.on("select", onClick);
     }
-    map.addInteraction(clickSelect);
-    map.addInteraction(hoverSelect);
+    if (!isDisabledSelection) {
+      map.addInteraction(clickSelect);
+      map.addInteraction(hoverSelect);
+    }
+
     return () => {
       if (onHover) {
         hoverSelect.un("select", onHover);
@@ -57,8 +59,10 @@ export function useInteractionEvent({
       if (onClick) {
         clickSelect.un("select", onClick);
       }
-      map.removeInteraction(clickSelect);
-      map.removeInteraction(hoverSelect);
+      if (!isDisabledSelection) {
+        map.removeInteraction(clickSelect);
+        map.removeInteraction(hoverSelect);
+      }
     };
   }, [onClick, onHover, map, hoverSelect, clickSelect, isDisabledSelection]);
 }
