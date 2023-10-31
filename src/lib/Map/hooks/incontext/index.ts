@@ -5,3 +5,4 @@ export * from "./useMapEventHandler";
 export * from "./useMapRotation";
 export * from "./useSelectAnnotation";
 export * from "./useInteractionEvent";
+export * from "./useFullScreen";
