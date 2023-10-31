@@ -66,5 +66,5 @@ export const useFullScreen = () => {
     };
   }, [map]);
 
-  return { isFull, toggleFullScreen, makeFull, makeUnFull };
+  return { isFull, toggleFullScreen, makeFull, makeUnFull, ref };
 };
