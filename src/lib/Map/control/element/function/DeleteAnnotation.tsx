@@ -9,6 +9,7 @@ import { useMap, useSelectAnnotation } from "../../../hooks";
 import { useFeatureStore } from "src/lib/Map/hooks/incontext/useFeatureStore";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
+import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
 
 export interface DeleteAnnotationProps extends ButtonProps {
   onDeleteChange?: (e: SelectEvent) => void;
@@ -24,6 +25,7 @@ export function DeleteAnnotation({
   const id = useId();
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
+  const { drawVectorSource } = useDrawSource();
   const isActive = buttonId === selectedButtonId;
   const selectInteractionRef = useRef<Select | null>(null);
 
@@ -42,6 +44,7 @@ export function DeleteAnnotation({
         if (onDeleteChange) {
           onDeleteChange(event);
         }
+        drawVectorSource.removeFeature(target);
         selectButton("");
       }
     },
