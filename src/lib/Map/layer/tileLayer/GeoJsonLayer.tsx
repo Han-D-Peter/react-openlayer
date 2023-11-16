@@ -133,7 +133,8 @@ export function GeoJsonLayer({
     const snap = new Snap({
       source: drawVectorSource,
     });
-    snap.setActive(true);
+
+    snap.setActive(false);
     map.addInteraction(snap);
 
     map.addLayer(vectorLayer);
