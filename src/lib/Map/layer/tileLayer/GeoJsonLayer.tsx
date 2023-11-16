@@ -134,14 +134,13 @@ export function GeoJsonLayer({
       source: drawVectorSource,
     });
 
-    snap.setActive(false);
     map.addInteraction(snap);
 
     map.addLayer(vectorLayer);
 
     return () => {
       map.removeLayer(vectorLayer);
-      snap.setActive(false);
+      features.forEach((feat) => drawVectorSource.removeFeature(feat));
       map.removeInteraction(snap);
     };
   }, [map, geoJson, color]);
