@@ -126,7 +126,6 @@ export const MapContainer = memo(
             crossOrigin: "anonymous",
             attributions: [],
           }),
-          zIndex: -1000,
         })
       );
       const mapObj = useRef<Map>(

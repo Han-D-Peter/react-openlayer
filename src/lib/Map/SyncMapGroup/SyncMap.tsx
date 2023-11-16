@@ -66,6 +66,7 @@ export const SyncMap = ({
         new TileLayer({
           source: new OSM({
             crossOrigin: "anonymous",
+            attributions: [],
           }),
         }),
       ],

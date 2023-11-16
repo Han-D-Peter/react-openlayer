@@ -21,15 +21,9 @@ export function CompassIcon({
           cy="120.373"
           r="105"
           stroke="black"
-          stroke-width="3"
+          strokeWidth="3"
         />
-        <circle
-          cx="119.5"
-          cy="120.373"
-          r="93"
-          stroke="black"
-          stroke-width="3"
-        />
+        <circle cx="119.5" cy="120.373" r="93" stroke="black" strokeWidth="3" />
         <path
           d="M135.739 0V40.8728H128.275L110.493 15.1477H110.194V40.8728H101.552V0H109.136L126.778 25.7052H127.138V0H135.739Z"
           fill="black"
@@ -50,7 +44,7 @@ export function CompassIcon({
           d="M102.921 118.373L119 44.5704L135.079 118.373H102.921Z"
           fill="#FF0000"
           stroke="black"
-          stroke-width="2"
+          strokeWidth="2"
         />
         <path
           d="M119 43.6228L135.083 119.373H102.928L119 43.6228Z"
@@ -60,7 +54,7 @@ export function CompassIcon({
           d="M135.079 120.373L119 194.175L102.921 120.373L135.079 120.373Z"
           fill="#FF0000"
           stroke="black"
-          stroke-width="2"
+          strokeWidth="2"
         />
         <path
           d="M119 193.873L102.929 119.373L135.072 119.373L119 193.873Z"
