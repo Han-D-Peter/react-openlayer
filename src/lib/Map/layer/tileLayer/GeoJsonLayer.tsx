@@ -90,10 +90,13 @@ export function GeoJsonLayer({
     features.forEach((feature) => {
       const geoMetry = feature.getGeometry();
 
+      feature.setProperties({ color });
+
       if (geoMetry) {
         geoMetry.transform(fromProjection, toProjection);
       }
     });
+
     drawVectorSource.addFeatures(features);
 
     const vectorLayer = new VectorLayer({
@@ -121,7 +124,7 @@ export function GeoJsonLayer({
         } else {
           return new Style({
             stroke: new Stroke({
-              color,
+              color: feature.getProperties()["color"],
             }),
           });
         }
