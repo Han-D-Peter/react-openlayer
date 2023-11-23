@@ -1,4 +1,11 @@
-import { ReactNode, useCallback, useEffect, useId, useRef } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import { defaults as defaultControls } from "ol/control";
 import { ControlContext, Location } from "../MapContainer";
 import { Map, View } from "ol";
@@ -99,7 +106,7 @@ export const SyncMap = ({
     mapObj.current?.getView().setRotation((rotate * Math.PI) / 180);
   }, [rotate]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const mapRef = mapObj.current;
     console.log("map", mapRef);
     console.log("mapId", mapId);
