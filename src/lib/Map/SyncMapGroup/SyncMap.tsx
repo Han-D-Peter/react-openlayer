@@ -1,7 +1,7 @@
 import { ReactNode, useCallback, useEffect, useId, useRef } from "react";
 import { defaults as defaultControls } from "ol/control";
 import { ControlContext, Location } from "../MapContainer";
-import { Map } from "ol";
+import { Map, View } from "ol";
 import { fromLonLat, toLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -56,12 +56,16 @@ export const SyncMap = ({
 }: SyncMapProps) => {
   const id = useId();
   const mapId = `react-openlayers-map-${id}`;
+
   const mapObj = useRef<Map>(
     new Map({
       controls: defaultControls({
         zoom: false,
         rotate: true,
       }).extend([]),
+      view: new View({
+        zoom: zoomLevel,
+      }),
       layers: [
         new TileLayer({
           source: new OSM({
