@@ -16,6 +16,7 @@ import { Coordinate } from "ol/coordinate";
 import { MapContext } from "../MapContext";
 import { useSyncMapContext } from "../hooks/incontext/useSyncContext";
 import VectorSource from "ol/source/Vector";
+import { SyncMapContext } from "./SyncMapContext";
 
 export interface SyncMapProps {
   /**
@@ -63,6 +64,14 @@ export const SyncMap = ({
 }: SyncMapProps) => {
   const id = useId();
   const mapId = `react-openlayers-map-${id}`;
+  const osmRef = useRef<TileLayer<OSM>>(
+    new TileLayer({
+      source: new OSM({
+        crossOrigin: "anonymous",
+        attributions: [],
+      }),
+    })
+  );
 
   const mapObj = useRef<Map>(
     new Map({
@@ -73,14 +82,6 @@ export const SyncMap = ({
       view: new View({
         zoom: zoomLevel,
       }),
-      layers: [
-        new TileLayer({
-          source: new OSM({
-            crossOrigin: "anonymous",
-            attributions: [],
-          }),
-        }),
-      ],
     })
   );
   const drawVectorSource = useRef<VectorSource>(new VectorSource());
@@ -92,7 +93,7 @@ export const SyncMap = ({
       const current = mapObj.current.getView().getCenter();
       adjustCenter(toLonLat(current as Coordinate) as Location);
     }
-  }, []);
+  }, [isDecoupled]);
 
   useEffect(() => {
     mapObj.current.getView().setCenter(fromLonLat(center));
@@ -107,6 +108,7 @@ export const SyncMap = ({
   }, [rotate]);
 
   useLayoutEffect(() => {
+    mapObj.current.addLayer(osmRef.current);
     const mapRef = mapObj.current;
     console.log("map", mapRef);
     console.log("mapId", mapId);
@@ -116,10 +118,10 @@ export const SyncMap = ({
       mapRef.setTarget(undefined);
       mapRef.setLayers([]);
     };
-  }, [mapId, isDecoupled]);
+  }, [mapId]);
 
   return (
-    <MapContext.Provider value={mapObj.current}>
+    <SyncMapContext.Provider value={mapObj.current}>
       <ControlContext.Provider
         value={{ drawVectorSource: drawVectorSource.current }}
       >
@@ -133,6 +135,6 @@ export const SyncMap = ({
           {children}
         </div>
       </ControlContext.Provider>
-    </MapContext.Provider>
+    </SyncMapContext.Provider>
   );
 };
