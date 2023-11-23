@@ -97,7 +97,8 @@ export const SyncMap = ({
 
   useEffect(() => {
     const mapRef = mapObj.current;
-
+    console.log("map", mapRef);
+    console.log("mapId", mapId);
     mapRef.setTarget(mapId);
 
     return () => {
