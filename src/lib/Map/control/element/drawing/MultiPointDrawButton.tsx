@@ -47,16 +47,16 @@ export function MultiPointDrawButton({
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
-  const { drawVectorSource } = useDrawSource();
+  const drawVectorSource = useRef(new VectorSource({}));
   const vectorLayerRef = useRef(
     new VectorLayer({
       zIndex: 1,
-      source: drawVectorSource,
+      source: drawVectorSource.current,
     })
   );
   const drawRef = useRef(
     new Draw({
-      source: drawVectorSource,
+      source: drawVectorSource.current,
       type: "MultiPoint",
     })
   );
@@ -82,7 +82,7 @@ export function MultiPointDrawButton({
     feature.setProperties({
       shape: "MultiPoint",
       isModifying: false,
-      source: drawVectorSource,
+      source: drawVectorSource.current,
       layer: vectorLayerRef.current,
       positions: geometry.getCoordinates(),
     });
@@ -94,7 +94,7 @@ export function MultiPointDrawButton({
       onEnd(features);
     }
     if (!onCanvas) {
-      drawVectorSource.clear();
+      drawVectorSource.current.clear();
     }
     setFeatures([]);
     map.removeInteraction(drawRef.current);
