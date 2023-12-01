@@ -117,6 +117,7 @@ export function CustomMultiPoint({
         ...properties,
         shape: "MultiPoint",
         isModifying: false,
+        annotation: annotationRef.current,
         source: annotationLayerRef.current.getSource(),
         layer: annotationLayerRef.current,
         hasPopup: children?.props.isPopup,
