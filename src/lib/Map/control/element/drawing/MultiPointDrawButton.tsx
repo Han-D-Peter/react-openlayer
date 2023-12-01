@@ -50,7 +50,7 @@ export function MultiPointDrawButton({
   const drawVectorSource = useRef(new VectorSource({}));
   const vectorLayerRef = useRef(
     new VectorLayer({
-      zIndex: 1,
+      zIndex: 10,
       source: drawVectorSource.current,
     })
   );
