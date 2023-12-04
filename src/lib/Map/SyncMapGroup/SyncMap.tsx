@@ -16,7 +16,7 @@ import { Coordinate } from "ol/coordinate";
 import { MapContext } from "../MapContext";
 import { useSyncMapContext } from "../hooks/incontext/useSyncContext";
 import VectorSource from "ol/source/Vector";
-import { SyncMapContext } from "./SyncMapContext";
+import { SyncMapContext, SyncMapValueContext } from "./SyncMapContext";
 
 export interface SyncMapProps {
   /**
@@ -125,15 +125,17 @@ export const SyncMap = ({
       <ControlContext.Provider
         value={{ drawVectorSource: drawVectorSource.current }}
       >
-        <div
-          id={mapId}
-          onWheel={(e) => onWheelHandler(e, mapObj.current)}
-          onMouseUp={onMouseUpOnMap}
-          className="react-openlayers-map-container"
-          style={{ width, height }}
-        >
-          {children}
-        </div>
+        <SyncMapValueContext.Provider value={{ zoomLevel, rotate }}>
+          <div
+            id={mapId}
+            onWheel={(e) => onWheelHandler(e, mapObj.current)}
+            onMouseUp={onMouseUpOnMap}
+            className="react-openlayers-map-container"
+            style={{ width, height }}
+          >
+            {children}
+          </div>
+        </SyncMapValueContext.Provider>
       </ControlContext.Provider>
     </SyncMapContext.Provider>
   );
