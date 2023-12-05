@@ -122,6 +122,7 @@ export const MapContainer = memo(
       const mapId = `react-openlayers-map-${id}`;
       const osmRef = useRef<TileLayer<OSM>>(
         new TileLayer({
+          zIndex: -1,
           source: new OSM({
             crossOrigin: "anonymous",
             attributions: [],
