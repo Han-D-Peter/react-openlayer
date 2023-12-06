@@ -211,8 +211,6 @@ export const MapContainer = memo(
         if (defaultZoomControl) {
           mapRef.removeControl(defaultZoomControl);
         }
-        console.log("map", mapRef);
-        console.log("mapId", mapId);
         mapRef.setTarget(mapId);
         return () => {
           mapRef.setTarget(undefined);

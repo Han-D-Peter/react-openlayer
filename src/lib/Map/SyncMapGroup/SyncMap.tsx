@@ -16,7 +16,7 @@ import { Coordinate } from "ol/coordinate";
 
 import { useSyncMapContext } from "../hooks/incontext/useSyncContext";
 import VectorSource from "ol/source/Vector";
-import { SyncMapContext } from "./SyncMapContext";
+import { MapContext } from "../MapContext";
 
 export interface SyncMapProps {
   /**
@@ -121,7 +121,7 @@ export const SyncMap = ({
   }, [mapId]);
 
   return (
-    <SyncMapContext.Provider value={mapObj.current}>
+    <MapContext.Provider value={mapObj.current}>
       <ControlContext.Provider
         value={{ drawVectorSource: drawVectorSource.current }}
       >
@@ -135,6 +135,6 @@ export const SyncMap = ({
           {children}
         </div>
       </ControlContext.Provider>
-    </SyncMapContext.Provider>
+    </MapContext.Provider>
   );
 };
