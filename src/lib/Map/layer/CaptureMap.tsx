@@ -21,6 +21,7 @@ export const CaptureMap = ({ onCaptured }: CaptureMapProps) => {
       if (!map) return;
       const mapCanvas = document.createElement("canvas");
       const size = map.getSize() as Size;
+      console.log("🚀 ~ file: CaptureMap.tsx:24 ~ capture ~ size:", size);
 
       mapCanvas.width = size[0];
       mapCanvas.height = size[1];
