@@ -31,7 +31,7 @@ export const CaptureMap = ({ onCaptured }: CaptureMapProps) => {
         .querySelectorAll(".ol-layer canvas, canvas.ol-layer");
 
       Array.prototype.forEach.call(mapLayers, function (canvas) {
-        if (canvas.width > 0 || canvas.height > 0) {
+        if (canvas.width > 0 && canvas.height > 0) {
           const opacity =
             canvas.parentNode.style.opacity || canvas.style.opacity;
           mapContext.globalAlpha = opacity === "" ? 1 : Number(opacity);
