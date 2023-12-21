@@ -120,6 +120,8 @@ export const MapContainer = memo(
     ) => {
       const id = useId();
       const mapId = `react-openlayers-map-${id}`;
+
+      console.log("map rendering", mapId);
       const osmRef = useRef<TileLayer<OSM>>(
         new TileLayer({
           zIndex: -1,
