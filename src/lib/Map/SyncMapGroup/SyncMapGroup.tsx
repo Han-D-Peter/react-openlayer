@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import { Map } from "ol";
+import { Map, MapEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { toLonLat } from "ol/proj";
 import {
@@ -12,6 +12,7 @@ import {
   useState,
   useRef,
   WheelEvent,
+  useEffect,
 } from "react";
 import { Location } from "../MapContainer";
 import { SyncMap, SyncMapProps } from "./SyncMap";
@@ -45,6 +46,8 @@ export interface SyncMapContextProps {
   adjustCenter: (location: Location) => void;
   adjustZoomLevel: (level: number) => void;
   onWheelHandler: (event: WheelEvent<HTMLDivElement>, map: Map) => void;
+  onZoomHandler: (event: MapEvent, map: Map) => void;
+  adjustRotate: (rotation: number) => void;
 }
 
 export const SyncMapContext = createContext<SyncMapContextProps | null>(null);
@@ -57,6 +60,7 @@ export const SyncMapGroup = ({
 }: SyncMapGroupProps) => {
   const [controlledCenter, setControlledCenter] = useState(center);
   const [controlledZoomLevel, setControlledZoomLevel] = useState(zoomLevel);
+  const [controlledRotation, setControlledRotation] = useState(rotate);
   const handleWheel = useRef(
     debounce((event, map: Map) => {
       setControlledZoomLevel(map.getView().getZoom() as number);
@@ -73,6 +77,10 @@ export const SyncMapGroup = ({
     []
   );
 
+  const onZoomHandler = useCallback((event: MapEvent, map: Map) => {
+    handleWheel.current(event, map);
+  }, []);
+
   const adjustCenter = useCallback((location: Location) => {
     setControlledCenter(location);
   }, []);
@@ -81,6 +89,14 @@ export const SyncMapGroup = ({
     setControlledZoomLevel(level);
   }, []);
 
+  const adjustRotate = useCallback((rotation: number) => {
+    setControlledRotation(rotation);
+  }, []);
+
+  useEffect(() => {
+    setControlledRotation(rotate);
+  }, [rotate]);
+
   const value = useMemo(
     () => ({
       controlledCenter,
@@ -88,6 +104,8 @@ export const SyncMapGroup = ({
       adjustCenter,
       adjustZoomLevel,
       onWheelHandler,
+      onZoomHandler,
+      adjustRotate,
     }),
     [
       controlledCenter,
@@ -95,6 +113,8 @@ export const SyncMapGroup = ({
       adjustCenter,
       adjustZoomLevel,
       onWheelHandler,
+      onZoomHandler,
+      adjustRotate,
     ]
   );
 
@@ -107,11 +127,11 @@ export const SyncMapGroup = ({
         ...child.props,
         center: controlledCenter,
         zoomLevel: controlledZoomLevel,
-        rotate: rotate,
+        rotate: controlledRotation,
       });
       return adjustedChild;
     });
-  }, [children, controlledCenter, controlledZoomLevel, rotate]);
+  }, [children, controlledCenter, controlledZoomLevel, controlledRotation]);
 
   return (
     <SyncMapContext.Provider value={value}>

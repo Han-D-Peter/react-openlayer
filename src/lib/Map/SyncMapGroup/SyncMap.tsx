@@ -1,5 +1,6 @@
 import {
   ReactNode,
+  TouchEvent,
   useCallback,
   useEffect,
   useId,
@@ -8,7 +9,7 @@ import {
 } from "react";
 import { defaults as defaultControls } from "ol/control";
 import { ControlContext, Location } from "../MapContainer";
-import { Map, View } from "ol";
+import { Map, MapBrowserEvent, MapEvent, View } from "ol";
 import { fromLonLat, toLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -86,7 +87,8 @@ export const SyncMap = ({
   );
   const drawVectorSource = useRef<VectorSource>(new VectorSource());
 
-  const { adjustCenter, onWheelHandler } = useSyncMapContext();
+  const { adjustCenter, onWheelHandler, onZoomHandler, adjustRotate } =
+    useSyncMapContext();
 
   const onMouseUpOnMap = useCallback(() => {
     if (!isDecoupled) {
@@ -107,11 +109,26 @@ export const SyncMap = ({
     mapObj.current?.getView().setRotation((rotate * Math.PI) / 180);
   }, [rotate]);
 
+  useEffect(() => {
+    const map = mapObj.current;
+
+    function zoomHandler(e: MapBrowserEvent<any>) {
+      const rotation = map.getView().getRotation();
+      onZoomHandler(e, map);
+      adjustRotate(rotation);
+    }
+
+    map.on("pointerdrag", zoomHandler);
+
+    return () => {
+      map.un("pointerdrag", zoomHandler);
+    };
+  }, [onZoomHandler]);
+
   useLayoutEffect(() => {
     mapObj.current.addLayer(osmRef.current);
     const mapRef = mapObj.current;
-    console.log("map", mapRef);
-    console.log("mapId", mapId);
+
     mapRef.setTarget(mapId);
 
     return () => {
@@ -129,6 +146,9 @@ export const SyncMap = ({
           id={mapId}
           onWheel={(e) => onWheelHandler(e, mapObj.current)}
           onMouseUp={onMouseUpOnMap}
+          onTouchEnd={(e) => {
+            onMouseUpOnMap();
+          }}
           className="react-openlayers-map-container"
           style={{ width, height }}
         >
