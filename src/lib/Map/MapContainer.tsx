@@ -176,7 +176,6 @@ export const MapContainer = memo(
 
       useEffect(() => {
         if (mapObj.current && center) {
-          console.log("center", center);
           const view = mapObj.current.getView();
           view.setCenter(fromLonLat(center));
         }
