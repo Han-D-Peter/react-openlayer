@@ -5,6 +5,7 @@ import {
   CustomPolyLine,
   CustomPolygon,
   CustomRectangle,
+  ImageMarker,
 } from "./lib/Map/layer/annotation";
 import { InnerText } from "./lib/Map/Text";
 import { FullScreenFeature } from "./lib/Map/control/FullScreenFeature";
@@ -37,7 +38,6 @@ import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
 import TestField from "./TestField";
 import json from "./sample.json";
-import ImageMarker from "./lib/Map/layer/annotation/ImageMarker";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
