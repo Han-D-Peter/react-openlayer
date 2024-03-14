@@ -37,9 +37,11 @@ import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
 import TestField from "./TestField";
 import json from "./sample.json";
+import ImageMarker from "./lib/Map/layer/annotation/ImageMarker";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
+icon.point = "/images/imageMarker.png";
 
 function App() {
   const [isShown, setIsShown] = useState(true);
@@ -72,6 +74,7 @@ function App() {
       >
         off
       </button>
+      <TestField />
 
       <MapContainer
         height={mapSize.height}
@@ -79,8 +82,8 @@ function App() {
         ref={ref}
         isAbledSelection
       >
-        {/* <GeoJsonLayer geoJson={json} color="blue" /> */}
-        <TestField />
+        <GeoJsonLayer geoJson={json} color="red" />
+
         <TileLayer
           maxZoom={23}
           crossOrigin={"anonymous"}
@@ -111,6 +114,23 @@ function App() {
               </InnerText>
             ) : null}
           </CustomMarker>
+
+          <ImageMarker
+            isOpened
+            onHover={(isHover, annotation) => {
+              console.log("isHover", isHover, annotation);
+            }}
+            onImageClick={(img) => console.log("img", img)}
+            imageUrl="/images/12314.JPG"
+            imageTitle="12314.JPG"
+            center={[126.841746, 35.190495]}
+          />
+
+          <ImageMarker
+            imageUrl="/images/12314.JPG"
+            imageTitle="12314.JPG"
+            center={[126.842746, 35.191495]}
+          />
 
           <CustomCircle
             isDisabledSelection
@@ -152,18 +172,20 @@ function App() {
         </LayerGroup>
 
         <CustomMultiPoint
+          zIndex={10}
           onClick={(event) => {
             console.log("raw event ", event);
             console.log("event", getProfileFromFeature(event.annotation));
           }}
           positions={[
-            [126.843684, 35.190616],
+            [126.840684, 35.190219],
             [126.840476, 35.190219],
-            [126.840604, 35.190133],
-            [126.841268, 35.190381],
+            [126.840476, 35.190133],
+            [126.840684, 35.190133],
           ]}
         ></CustomMultiPoint>
         <CustomPolygon
+          zIndex={10}
           onClick={(event) =>
             console.log("event", getProfileFromFeature(event.annotation))
           }
@@ -229,7 +251,6 @@ function App() {
           <ZoomFeature />
           <FullScreenFeature />
           <DrawingTools
-            multiMarker={false}
             onCanvas
             onDrawEnd={(e) => {
               if (!_.isArray(e)) {
@@ -251,16 +272,9 @@ function App() {
         }}
       />
       <SyncMapGroup rotate={rotate}>
-        <SyncMap>
-          <ControlSection>
-            <h1>hello</h1>
-          </ControlSection>
-        </SyncMap>
-        <SyncMap>
-          <ControlSection>
-            <h1>hello</h1>
-          </ControlSection>
-        </SyncMap>
+        <SyncMap></SyncMap>
+        <SyncMap></SyncMap>
+        <SyncMap></SyncMap>
       </SyncMapGroup>
     </div>
   );

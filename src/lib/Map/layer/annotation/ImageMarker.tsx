@@ -74,7 +74,7 @@ function makeImgContainer(
   return container;
 }
 
-export default function ImageMarker({
+export function ImageMarker({
   center,
   imageUrl,
   imageTitle,
