@@ -28,11 +28,14 @@ export function MoveAnnotation({
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
 
-  const onMoveEnd = useCallback((event: TranslateEvent) => {
-    if (onMoveChange) {
-      onMoveChange(event);
-    }
-  }, []);
+  const onMoveEnd = useCallback(
+    (event: TranslateEvent) => {
+      if (onMoveChange) {
+        onMoveChange(event);
+      }
+    },
+    [onMoveChange]
+  );
 
   useEffect(() => {
     if (clickedAnnotation && isActive) {

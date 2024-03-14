@@ -58,9 +58,6 @@ export function FeatureStore({
       if (!feature.getProperties().shape) return;
       // 이미 선택한 마커 또 선택하면 해제
 
-      console.log("selectedFeature", selectedFeature);
-      console.log("feature", feature);
-
       if (selectedFeature === feature) {
         unSelectFeature();
       } else {
