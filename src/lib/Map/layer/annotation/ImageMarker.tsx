@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import styled from "@emotion/styled";
-import { Overlay } from "ol";
+import { MapBrowserEvent, Overlay } from "ol";
 import { Coordinate } from "ol/coordinate";
 import Feature, { FeatureLike } from "ol/Feature";
 import { Point } from "ol/geom";
@@ -61,7 +61,6 @@ function makeImgContainer(
   container.style.backgroundImage = `url(${imageUrl})`;
   container.style.backgroundRepeat = "no-repeat";
   container.style.backgroundSize = `${width} ${height}`;
-  container.style.marginBottom = "20px";
   container.style.cursor = "pointer";
 
   imgTitleContainer.style.fontSize = "10px";
@@ -88,6 +87,7 @@ export function ImageMarker({
   onImageClick,
   pointScale = 1,
 }: ImageMarkerProps) {
+  const overlayCenter = [center[0], center[1] + 0.0001];
   const map = useMap();
   const id = useId();
   const annotationRef = useRef<Feature<Point>>(
@@ -95,7 +95,7 @@ export function ImageMarker({
   );
   const popupOverlayRef = useRef<Overlay>(
     new Overlay({
-      position: fromLonLat(center),
+      position: fromLonLat(overlayCenter),
       element: makeImgContainer(width, height, imageUrl, imageTitle, id),
       autoPan: false,
       positioning: "bottom-center",
@@ -119,18 +119,12 @@ export function ImageMarker({
     onHover && onHover(false, annotationRef.current);
   };
 
-  const onClickHandler = (event: SelectEvent) => {
-    if (event.selected.length > 0) {
-      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-      if (onClick) {
-        onClick({
-          annotation: annotationRef.current,
-        });
+  const onClickHandler = (event: MapBrowserEvent<MouseEvent>) => {
+    map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
+      if (feature && annotationRef.current === feature) {
+        onClick && onClick({ annotation: annotationRef.current });
       }
-
-      // 선택된 Feature에 대한 작업 수행
-      // 예: 스타일 변경, 정보 표시 등
-    }
+    });
   };
 
   const onHoverHandler = (event: SelectEvent) => {
@@ -163,9 +157,9 @@ export function ImageMarker({
     }
     if (popupOverlayRef.current) {
       const overlay = popupOverlayRef.current;
-      overlay.setPosition(fromLonLat(center));
+      overlay.setPosition(fromLonLat(overlayCenter));
     }
-  }, [center]);
+  }, [overlayCenter, center]);
 
   useEffect(() => {
     if (annotationLayerRef.current) {
@@ -181,12 +175,13 @@ export function ImageMarker({
         anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
       }),
     });
+
     annotationRef.current.setStyle(style);
   }, [pointScale]);
 
   useInteractionEvent({
     annotation: annotationLayerRef.current,
-    onClick: onClickHandler,
+    // onClick: onClickHandler,
     onHover: onHoverHandler,
   });
 
@@ -200,6 +195,7 @@ export function ImageMarker({
 
   useEffect(() => {
     map.addLayer(annotationLayerRef.current);
+    map.on("click", onClickHandler);
 
     return () => {
       map.removeLayer(annotationLayerRef.current);
