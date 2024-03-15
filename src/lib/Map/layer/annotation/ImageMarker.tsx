@@ -154,7 +154,7 @@ export function ImageMarker({
     overlay.setElement(
       makeImgContainer(width, height, imageUrl, imageTitle, id)
     );
-  }, [isOpened, imageTitle, imageUrl, width, height, id]);
+  }, [isOpened, hover, leave, imageTitle, imageUrl, width, height, id]);
 
   useEffect(() => {
     if (annotationRef.current) {
