@@ -62,6 +62,7 @@ function makeImgContainer(
   container.style.backgroundRepeat = "no-repeat";
   container.style.backgroundSize = `${width} ${height}`;
   container.style.cursor = "pointer";
+  container.style.marginBottom = "20px";
 
   imgTitleContainer.style.fontSize = "10px";
   imgTitleContainer.style.color = "white";
@@ -87,7 +88,7 @@ export function ImageMarker({
   onImageClick,
   pointScale = 1,
 }: ImageMarkerProps) {
-  const overlayCenter = [center[0], center[1] + 0.0001];
+  const overlayCenter = [center[0], center[1]];
   const map = useMap();
   const id = useId();
   const annotationRef = useRef<Feature<Point>>(
