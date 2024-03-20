@@ -62,7 +62,9 @@ function makeImgContainer(
   container.style.backgroundRepeat = "no-repeat";
   container.style.backgroundSize = `${width} ${height}`;
   container.style.cursor = "pointer";
-  container.style.marginBottom = "20px";
+  container.style.position = "absolute";
+  container.style.top = "-150px";
+  container.style.left = "-100px";
 
   imgTitleContainer.style.fontSize = "10px";
   imgTitleContainer.style.color = "white";
