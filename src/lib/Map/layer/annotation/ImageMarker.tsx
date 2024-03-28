@@ -64,7 +64,7 @@ function makeImgContainer(
   container.style.cursor = "pointer";
   container.style.position = "absolute";
   container.style.top = "-150px";
-  container.style.left = "-100px";
+  container.style.left = "-104px";
 
   imgTitleContainer.style.fontSize = "10px";
   imgTitleContainer.style.color = "white";

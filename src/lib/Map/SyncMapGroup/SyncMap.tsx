@@ -113,9 +113,9 @@ export const SyncMap = ({
     const map = mapObj.current;
 
     function zoomHandler(e: MapBrowserEvent<any>) {
-      const rotation = map.getView().getRotation();
+      // const rotation = map.getView().getRotation();
+      // adjustRotate(rotation);
       onZoomHandler(e, map);
-      adjustRotate(rotation);
     }
 
     map.on("pointerdrag", zoomHandler);
