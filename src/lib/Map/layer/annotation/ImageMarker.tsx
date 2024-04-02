@@ -255,6 +255,7 @@ export function ImageMarker({
 
     return () => {
       map.removeLayer(annotationLayerRef.current);
+      map.removeOverlay(popupOverlayRef.current);
     };
   }, [map]);
 
