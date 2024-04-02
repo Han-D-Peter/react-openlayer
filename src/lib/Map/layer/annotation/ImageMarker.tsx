@@ -39,6 +39,8 @@ interface ImageMarkerProps {
     // properties: Record<string, any>;
   }) => void;
   onImageClick?: (imgUrl: string) => void;
+
+  grade?: 0 | 1 | 2 | 3;
 }
 
 function makeImgContainer(
@@ -76,6 +78,21 @@ function makeImgContainer(
   return container;
 }
 
+function gradeImage(grade: 0 | 1 | 2 | 3) {
+  switch (grade) {
+    case 0:
+      return icon.imageMarker.zero;
+    case 1:
+      return icon.imageMarker.one;
+    case 2:
+      return icon.imageMarker.two;
+    case 3:
+      return icon.imageMarker.three;
+    default:
+      break;
+  }
+}
+
 export function ImageMarker({
   center,
   imageUrl,
@@ -89,6 +106,7 @@ export function ImageMarker({
   onHover,
   onImageClick,
   pointScale = 1,
+  grade = 0,
 }: ImageMarkerProps) {
   const overlayCenter = [center[0], center[1]];
   const map = useMap();
@@ -125,7 +143,42 @@ export function ImageMarker({
   const onClickHandler = (event: MapBrowserEvent<MouseEvent>) => {
     map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
       if (feature && annotationRef.current === feature) {
+        // const preStyle = annotationRef.current.getStyle() as Style;
+        // const imageIcon = preStyle.getImage() as Icon;
+        // const iconSrc = imageIcon.getSrc();
+
+        // if (iconSrc === icon.imageMarker.selected) {
+        //   const style = new Style({
+        //     image: new Icon({
+        //       src: gradeImage(grade), // 마커 이미지 경로
+        //       scale: 0.17 * pointScale,
+        //       anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+        //     }),
+        //   });
+
+        //   annotationRef.current.setStyle(style);
+        //   return;
+        // }
+        // const style = new Style({
+        //   image: new Icon({
+        //     src: icon.imageMarker.selected, // 마커 이미지 경로
+        //     scale: 0.17 * pointScale,
+        //     anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+        //   }),
+        // });
+
+        // annotationRef.current.setStyle(style);
         onClick && onClick({ annotation: annotationRef.current });
+      } else {
+        const style = new Style({
+          image: new Icon({
+            src: gradeImage(grade), // 마커 이미지 경로
+            scale: 0.17 * pointScale,
+            anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+          }),
+        });
+
+        annotationRef.current.setStyle(style);
       }
     });
   };
@@ -173,14 +226,14 @@ export function ImageMarker({
   useLayoutEffect(() => {
     const style = new Style({
       image: new Icon({
-        src: icon.point, // 마커 이미지 경로
+        src: gradeImage(grade), // 마커 이미지 경로
         scale: 0.17 * pointScale,
         anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
       }),
     });
 
     annotationRef.current.setStyle(style);
-  }, [pointScale]);
+  }, [pointScale, grade]);
 
   useInteractionEvent({
     annotation: annotationLayerRef.current,

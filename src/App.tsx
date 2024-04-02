@@ -36,12 +36,17 @@ import { Map, View } from "ol";
 import { SyncMapGroup } from "../src/lib/Map/SyncMapGroup";
 import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
-import TestField from "./TestField";
+import TestField, { ImageAnnotation } from "./TestField";
 import json from "./sample.json";
+import TestImageMarker from "./TestImageMarker";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
-icon.point = "/images/imageMarker.png";
+icon.imageMarker.selected = "/images/imageMarker(selected).png";
+icon.imageMarker.zero = "/images/imageMarker(one).png";
+icon.imageMarker.one = "/images/imageMarker(two).png";
+icon.imageMarker.two = "/images/imageMarker(three).png";
+icon.imageMarker.three = "/images/imageMarker(four).png";
 
 function App() {
   const [isShown, setIsShown] = useState(true);
@@ -115,23 +120,19 @@ function App() {
             ) : null}
           </CustomMarker>
 
-          <ImageMarker
-            isOpened
-            onHover={(isHover, annotation) => {
-              console.log("isHover", isHover, annotation);
-            }}
+          <ImageAnnotation
             onImageClick={(img) => console.log("img", img)}
             imageUrl="/images/12314.JPG"
             imageTitle="12314.JPG"
             center={[126.841746, 35.190495]}
           />
 
-          <ImageMarker
+          <ImageAnnotation
             imageUrl="/images/12314.JPG"
             imageTitle="12314.JPG"
             center={[126.842746, 35.191495]}
           />
-
+          <TestImageMarker />
           <CustomCircle
             isDisabledSelection
             center={[126.841884, 35.191516]}
