@@ -188,10 +188,11 @@ export function ImageMarker({
     // });
   };
 
-  const onHoverHandler = (event: MapBrowserEvent<MouseEvent>) => {
-    const features = map.getFeaturesAtPixel(event.pixel);
-    if (features[0] && annotationRef.current === features[0]) {
-      hover();
+  const onHoverHandler = (event: SelectEvent) => {
+    if (event.selected.length > 0) {
+      if (event.selected[0] === annotationRef.current) {
+        hover();
+      }
     } else {
       !isOpened && leave();
     }
@@ -242,7 +243,7 @@ export function ImageMarker({
   useInteractionEvent({
     annotation: annotationLayerRef.current,
     // onClick: onClickHandler,
-    // onHover: onHoverHandler,
+    onHover: onHoverHandler,
   });
 
   useEffect(() => {
@@ -256,12 +257,10 @@ export function ImageMarker({
   useEffect(() => {
     map.addLayer(annotationLayerRef.current);
     map.on("click", onClickHandler);
-    map.on("pointermove", onHoverHandler);
 
     return () => {
       map.removeLayer(annotationLayerRef.current);
       map.removeOverlay(popupOverlayRef.current);
-      map.un("click", onClickHandler);
     };
   }, [map]);
 
