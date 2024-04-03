@@ -41,6 +41,8 @@ interface ImageMarkerProps {
   onImageClick?: (imgUrl: string) => void;
 
   grade?: 0 | 1 | 2 | 3;
+
+  selected?: boolean;
 }
 
 function makeImgContainer(
@@ -107,6 +109,7 @@ export function ImageMarker({
   onImageClick,
   pointScale = 1,
   grade = 0,
+  selected = false,
 }: ImageMarkerProps) {
   const overlayCenter = [center[0], center[1]];
   const map = useMap();
@@ -253,6 +256,30 @@ export function ImageMarker({
       popupOverlayRef.current.getElement()!.onclick = null;
     };
   }, [onImageClick, imageUrl]);
+
+  useEffect(() => {
+    if (selected) {
+      const style = new Style({
+        image: new Icon({
+          src: icon.imageMarker.selected,
+          scale: 0.17 * pointScale,
+          anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+        }),
+      });
+
+      annotationRef.current.setStyle(style);
+    } else {
+      const style = new Style({
+        image: new Icon({
+          src: gradeImage(grade), // 마커 이미지 경로
+          scale: 0.17 * pointScale,
+          anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+        }),
+      });
+
+      annotationRef.current.setStyle(style);
+    }
+  }, [selected, grade, pointScale]);
 
   useEffect(() => {
     map.addLayer(annotationLayerRef.current);
