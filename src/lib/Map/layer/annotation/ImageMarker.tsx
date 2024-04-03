@@ -141,46 +141,51 @@ export function ImageMarker({
   };
 
   const onClickHandler = (event: MapBrowserEvent<MouseEvent>) => {
-    map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
-      if (feature && annotationRef.current === feature) {
-        // const preStyle = annotationRef.current.getStyle() as Style;
-        // const imageIcon = preStyle.getImage() as Icon;
-        // const iconSrc = imageIcon.getSrc();
+    const features = map.getFeaturesAtPixel(event.pixel);
+    if (features[0] && annotationRef.current === features[0]) {
+      onClick && onClick({ annotation: annotationRef.current });
+    } else {
+      const style = new Style({
+        image: new Icon({
+          src: gradeImage(grade), // 마커 이미지 경로
+          scale: 0.17 * pointScale,
+          anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+        }),
+      });
 
-        // if (iconSrc === icon.imageMarker.selected) {
-        //   const style = new Style({
-        //     image: new Icon({
-        //       src: gradeImage(grade), // 마커 이미지 경로
-        //       scale: 0.17 * pointScale,
-        //       anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-        //     }),
-        //   });
+      annotationRef.current.setStyle(style);
+    }
+    // map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
+    //   if (feature && annotationRef.current === feature) {
+    //     onClick && onClick({ annotation: annotationRef.current });
+    //     // const preStyle = annotationRef.current.getStyle() as Style;
+    //     // const imageIcon = preStyle.getImage() as Icon;
+    //     // const iconSrc = imageIcon.getSrc();
 
-        //   annotationRef.current.setStyle(style);
-        //   return;
-        // }
-        // const style = new Style({
-        //   image: new Icon({
-        //     src: icon.imageMarker.selected, // 마커 이미지 경로
-        //     scale: 0.17 * pointScale,
-        //     anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-        //   }),
-        // });
+    //     // if (iconSrc === icon.imageMarker.selected) {
+    //     //   const style = new Style({
+    //     //     image: new Icon({
+    //     //       src: gradeImage(grade), // 마커 이미지 경로
+    //     //       scale: 0.17 * pointScale,
+    //     //       anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+    //     //     }),
+    //     //   });
 
-        // annotationRef.current.setStyle(style);
-        onClick && onClick({ annotation: annotationRef.current });
-      } else {
-        const style = new Style({
-          image: new Icon({
-            src: gradeImage(grade), // 마커 이미지 경로
-            scale: 0.17 * pointScale,
-            anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-          }),
-        });
+    //     //   annotationRef.current.setStyle(style);
+    //     //   return;
+    //     // }
+    //     // const style = new Style({
+    //     //   image: new Icon({
+    //     //     src: icon.imageMarker.selected, // 마커 이미지 경로
+    //     //     scale: 0.17 * pointScale,
+    //     //     anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+    //     //   }),
+    //     // });
 
-        annotationRef.current.setStyle(style);
-      }
-    });
+    //     // annotationRef.current.setStyle(style);
+    //   } else {
+    //   }
+    // });
   };
 
   const onHoverHandler = (event: SelectEvent) => {
