@@ -130,7 +130,13 @@ function App() {
           <ImageAnnotation
             imageUrl="/images/12314.JPG"
             imageTitle="12314.JPG"
-            center={[126.842746, 35.191495]}
+            center={[126.841756, 35.190495]}
+          />
+
+          <ImageAnnotation
+            imageUrl="/images/12314.JPG"
+            imageTitle="12314.JPG"
+            center={[126.841766, 35.190495]}
           />
           <TestImageMarker />
           <CustomCircle
