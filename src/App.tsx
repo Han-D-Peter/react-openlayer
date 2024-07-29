@@ -36,9 +36,8 @@ import { Map, View } from "ol";
 import { SyncMapGroup } from "../src/lib/Map/SyncMapGroup";
 import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
-import TestField, { ImageAnnotation } from "./TestField";
+import TestField from "./TestField";
 import json from "./sample.json";
-import TestImageMarker from "./TestImageMarker";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
@@ -120,25 +119,6 @@ function App() {
             ) : null}
           </CustomMarker>
 
-          <ImageAnnotation
-            onImageClick={(img) => console.log("img", img)}
-            imageUrl="/images/12314.JPG"
-            imageTitle="12314.JPG"
-            center={[126.841746, 35.190495]}
-          />
-
-          <ImageAnnotation
-            imageUrl="/images/12314.JPG"
-            imageTitle="12314.JPG"
-            center={[126.841756, 35.190495]}
-          />
-
-          <ImageAnnotation
-            imageUrl="/images/12314.JPG"
-            imageTitle="12314.JPG"
-            center={[126.841766, 35.190495]}
-          />
-          <TestImageMarker />
           <CustomCircle
             isDisabledSelection
             center={[126.841884, 35.191516]}
