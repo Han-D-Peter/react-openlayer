@@ -6,6 +6,7 @@ import {
   CustomPolygon,
   CustomRectangle,
   ImageMarker,
+  BoundaryCircle,
 } from "./lib/Map/layer/annotation";
 import { InnerText } from "./lib/Map/Text";
 import { FullScreenFeature } from "./lib/Map/control/FullScreenFeature";
@@ -38,7 +39,6 @@ import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
 import TestField from "./TestField";
 import json from "./sample.json";
-import BoundaryCircle from "./lib/Map/layer/annotation/BoundaryCircle";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";

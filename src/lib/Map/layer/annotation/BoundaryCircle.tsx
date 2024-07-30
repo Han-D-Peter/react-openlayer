@@ -26,7 +26,7 @@ interface BoundaryCircleProps {
   onLeave?: () => void;
 }
 
-export default function BoundaryCircle({
+export function BoundaryCircle({
   circleRadius,
   children,
   color = "ROYAL_BLUE",
