@@ -6,6 +6,7 @@ export interface InnerTextProps {
   outline?: boolean;
   children: string;
   isPopup?: boolean;
+  upperText?: boolean;
 }
 
 export function InnerText({
@@ -14,6 +15,7 @@ export function InnerText({
   outline,
   children,
   isPopup = false,
+  upperText = false,
 }: InnerTextProps) {
   return <></>;
 }

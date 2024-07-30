@@ -69,41 +69,31 @@ export const CustomPolygon = ({
     })
   );
 
-  const onClickHandler = useCallback(
-    (event: SelectEvent) => {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties,
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    },
-    [onClick, properties]
-  );
+  const onClickHandler = useCallback(() => {
+    if (onClick) {
+      onClick({
+        annotation: annotationRef.current,
+        properties,
+      });
+    }
+    // 선택된 Feature에 대한 작업 수행
+    // 예: 스타일 변경, 정보 표시 등
+  }, [onClick, properties]);
 
   const onHoverHandler = useCallback(
-    (event: SelectEvent) => {
-      if (event.selected.length > 0) {
+    (feature: Feature) => {
+      if (feature) {
         if (onHover) {
           onHover({ annotation: annotationRef.current, properties });
         }
-      } else {
-        // hover 이벤트에 의해 선택된 Circle이 없는 경우
-        // 선택 해제에 대한 작업 수행
-        // 예: 기본 스타일 복원 등
       }
 
       // 수정중일땐 팝업 관여하지 않음
       if (map.getProperties().isModifying) return;
 
       // Pop up text
-      if (event.selected.length > 0 && children?.props.isPopup) {
-        const hoveredFeature = event.selected[0];
+      if (feature && children?.props.isPopup) {
+        const hoveredFeature = feature;
 
         const hoveredFeatureStyle = hoveredFeature.getStyle() as Style;
         hoveredFeatureStyle.setText(
@@ -117,7 +107,7 @@ export const CustomPolygon = ({
         );
 
         annotationRef.current.setStyle(hoveredFeatureStyle);
-      } else if (event.selected.length === 0 && children?.props.isPopup) {
+      } else if (feature && children?.props.isPopup) {
         const hoveredFeatureStyle = annotationRef.current.getStyle() as Style;
 
         hoveredFeatureStyle.setText(new Text());

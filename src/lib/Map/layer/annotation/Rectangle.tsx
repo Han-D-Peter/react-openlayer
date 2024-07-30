@@ -70,8 +70,8 @@ export const CustomRectangle = ({
     })
   );
 
-  const onHoverHandler = useCallback((event: SelectEvent) => {
-    if (event.selected.length > 0) {
+  const onHoverHandler = useCallback((feature: Feature) => {
+    if (feature) {
       if (onHover) {
         onHover({ annotation: annotationRef.current, properties });
       }
@@ -85,8 +85,8 @@ export const CustomRectangle = ({
     if (map.getProperties().isModifying) return;
 
     // Pop up text
-    if (event.selected.length > 0 && children?.props.isPopup) {
-      const hoveredFeature = event.selected[0];
+    if (feature && children?.props.isPopup) {
+      const hoveredFeature = feature;
       const hoveredFeatureStyle = hoveredFeature.getStyle() as Style;
       hoveredFeatureStyle.setText(
         makeText({
@@ -99,7 +99,7 @@ export const CustomRectangle = ({
       );
 
       annotationRef.current.setStyle(hoveredFeatureStyle);
-    } else if (event.selected.length === 0 && children?.props.isPopup) {
+    } else if (feature && children?.props.isPopup) {
       const hoveredFeatureStyle = annotationRef.current.getStyle() as Style;
 
       hoveredFeatureStyle.setText(new Text());
@@ -107,18 +107,15 @@ export const CustomRectangle = ({
     }
   }, []);
 
-  const onClickHandler = useCallback((event: SelectEvent) => {
-    if (event.selected.length > 0) {
-      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-      if (onClick) {
-        onClick({
-          annotation: annotationRef.current,
-          properties,
-        });
-      }
-      // 선택된 Feature에 대한 작업 수행
-      // 예: 스타일 변경, 정보 표시 등
+  const onClickHandler = useCallback(() => {
+    if (onClick) {
+      onClick({
+        annotation: annotationRef.current,
+        properties,
+      });
     }
+    // 선택된 Feature에 대한 작업 수행
+    // 예: 스타일 변경, 정보 표시 등
   }, []);
 
   useInteractionEvent({

@@ -57,6 +57,9 @@ export function FeatureStore({
     reversedFeture.forEach((feature) => {
       if (!feature.getProperties().shape) return;
       // 이미 선택한 마커 또 선택하면 해제
+      if (feature.getProperties()["notSelectable"]) return;
+      // const { onClick } = feature.getProperties();
+      // onClick && onClick();
 
       if (selectedFeature === feature) {
         unSelectFeature();

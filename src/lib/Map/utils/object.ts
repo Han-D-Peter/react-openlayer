@@ -14,6 +14,16 @@ export const icon = {
   marker: "",
   selected: "",
   imageMarker: { selected: "", zero: "", one: "", two: "", three: "" },
+  imageCircleMarker: {
+    BLUE: "",
+    BROWN: "",
+    GREEN: "",
+    RED: "",
+    ROYAL_BLUE: "",
+    SELECT: "",
+    SKYBLUE: "",
+    YELLOW: "",
+  },
 };
 
 export const makeText = ({

@@ -23,6 +23,10 @@ export const ANNOTATION_COLOR = {
     fill: (opacity: number) => `rgba(165, 42, 42, ${0.3 * opacity})`,
     stroke: (opacity: number) => `rgba(165, 42, 42, ${opacity})`,
   },
+  ROYAL_BLUE: {
+    fill: (opacity: number) => `rgba(65, 105, 225, ${0.3 * opacity})`,
+    stroke: (opacity: number) => `rgba(65, 105, 225, ${opacity})`,
+  },
   SELECT: {
     fill: () => "rgba(1, 1, 1, 0.5)",
     stroke: () => "rgb(1, 1, 1)",

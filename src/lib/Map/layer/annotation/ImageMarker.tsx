@@ -192,9 +192,9 @@ export function ImageMarker({
     // });
   };
 
-  const onHoverHandler = (event: SelectEvent) => {
-    if (event.selected.length > 0) {
-      if (event.selected[0] === annotationRef.current) {
+  const onHoverHandler = (feature: Feature) => {
+    if (feature) {
+      if (feature === annotationRef.current) {
         hover();
       }
     } else {

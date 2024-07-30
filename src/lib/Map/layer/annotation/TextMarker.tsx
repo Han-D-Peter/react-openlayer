@@ -45,8 +45,8 @@ export const TextMarker = ({
     })
   );
 
-  function onHoverHandler(event: SelectEvent) {
-    if (event.selected.length > 0) {
+  function onHoverHandler(feature: Feature) {
+    if (feature) {
       if (onHover) {
         onHover({ annotation: annotationRef.current, properties });
       }
@@ -57,18 +57,15 @@ export const TextMarker = ({
     }
   }
 
-  function onClickHandler(event: SelectEvent) {
-    if (event.selected.length > 0) {
-      // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-      if (onClick) {
-        onClick({
-          annotation: annotationRef.current,
-          properties,
-        });
-      }
-      // 선택된 Feature에 대한 작업 수행
-      // 예: 스타일 변경, 정보 표시 등
+  function onClickHandler() {
+    if (onClick) {
+      onClick({
+        annotation: annotationRef.current,
+        properties,
+      });
     }
+    // 선택된 Feature에 대한 작업 수행
+    // 예: 스타일 변경, 정보 표시 등
   }
 
   useEffect(() => {

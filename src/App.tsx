@@ -38,6 +38,7 @@ import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
 import TestField from "./TestField";
 import json from "./sample.json";
+import BoundaryCircle from "./lib/Map/layer/annotation/BoundaryCircle";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
@@ -46,6 +47,14 @@ icon.imageMarker.zero = "/images/imageMarker(one).png";
 icon.imageMarker.one = "/images/imageMarker(two).png";
 icon.imageMarker.two = "/images/imageMarker(three).png";
 icon.imageMarker.three = "/images/imageMarker(four).png";
+icon.imageCircleMarker.BLUE = "/images/imageCircleMarker/BLUE.png";
+icon.imageCircleMarker.BROWN = "/images/imageCircleMarker/BROWN.png";
+icon.imageCircleMarker.GREEN = "/images/imageCircleMarker/GREEN.png";
+icon.imageCircleMarker.RED = "/images/imageCircleMarker/RED.png";
+icon.imageCircleMarker.ROYAL_BLUE = "/images/imageCircleMarker/ROYAL_BLUE.png";
+icon.imageCircleMarker.SELECT = "/images/imageCircleMarker/SELECT.png";
+icon.imageCircleMarker.SKYBLUE = "/images/imageCircleMarker/SKYBLUE.png";
+icon.imageCircleMarker.YELLOW = "/images/imageCircleMarker/YELLOW.png";
 
 function App() {
   const [isShown, setIsShown] = useState(true);
@@ -101,16 +110,28 @@ function App() {
             [126.841584, 35.191516],
           ]}
         />
-        <LayerGroup zIndex={1}>
-          <CustomMarker
-            opacity={0.4}
-            center={[126.840492, 35.190337]}
-            onClick={() => {
-              console.log("click");
-            }}
+        <LayerGroup zIndex={0}>
+          <CustomCircle
+            onClick={() => console.log("click red circle")}
+            center={[126.841884, 35.191516]}
+            radius={20}
+            color="RED"
           >
+            <InnerText isPopup>Circle1</InnerText>
+          </CustomCircle>
+          <CustomMarker opacity={0.4} center={[126.840492, 35.190337]}>
             {isShown ? <InnerText outline>bottom left</InnerText> : null}
           </CustomMarker>
+          <BoundaryCircle
+            center={[126.841284, 35.191516]}
+            circleRadius={200}
+            color="ROYAL_BLUE"
+            onClick={() => console.log("boundary")}
+            onHover={() => console.log("boundary hover")}
+            onLeave={() => console.log("boundary leave")}
+          >
+            ASDFASDF
+          </BoundaryCircle>
           <CustomMarker center={[126.840746, 35.190475]}>
             {isShown ? (
               <InnerText isPopup outline>
@@ -118,18 +139,10 @@ function App() {
               </InnerText>
             ) : null}
           </CustomMarker>
-
-          <CustomCircle
-            isDisabledSelection
-            center={[126.841884, 35.191516]}
-            radius={20}
-            color="RED"
-          >
-            <InnerText isPopup>Circle1</InnerText>
-          </CustomCircle>
         </LayerGroup>
-        <LayerGroup zIndex={0}>
+        <LayerGroup zIndex={1}>
           <CustomCircle
+            onClick={() => console.log("click circle")}
             isDisabledSelection
             center={[126.841784, 35.191406]}
             radius={20}
@@ -160,10 +173,6 @@ function App() {
 
         <CustomMultiPoint
           zIndex={10}
-          onClick={(event) => {
-            console.log("raw event ", event);
-            console.log("event", getProfileFromFeature(event.annotation));
-          }}
           positions={[
             [126.840684, 35.190219],
             [126.840476, 35.190219],
@@ -173,9 +182,6 @@ function App() {
         ></CustomMultiPoint>
         <CustomPolygon
           zIndex={10}
-          onClick={(event) =>
-            console.log("event", getProfileFromFeature(event.annotation))
-          }
           positions={[
             [
               [126.840884, 35.190816],

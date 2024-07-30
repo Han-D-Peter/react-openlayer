@@ -14,7 +14,7 @@ export * from "./ImageMarker";
 
 export interface Annotation {
   color?: keyof typeof ANNOTATION_COLOR;
-  properties?: { [key: string]: string | number };
+  properties?: { [key: string]: string | number | boolean };
   onClick?: (event: {
     annotation: FeatureLike;
     properties: Record<string, any>;
@@ -23,6 +23,7 @@ export interface Annotation {
     annotation: FeatureLike;
     properties: Record<string, any>;
   }) => void;
+  onLeave?: () => void;
   zIndex?: number;
   opacity?: 1 | 0.9 | 0.8 | 0.7 | 0.6 | 0.5 | 0.4 | 0.3 | 0.2 | 0.1;
   children?: ReactElement<InnerTextProps, typeof InnerText> | null;

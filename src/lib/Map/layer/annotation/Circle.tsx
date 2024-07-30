@@ -21,6 +21,7 @@ import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
 interface CustomCircleProps extends Annotation {
   center: Location;
   radius: number;
+  colorFill?: boolean;
 }
 
 export const CustomCircle = ({
@@ -30,10 +31,12 @@ export const CustomCircle = ({
   properties = {},
   onClick,
   onHover,
+  onLeave,
   zIndex = 0,
   children,
   opacity = 1,
   isDisabledSelection = false,
+  colorFill = false,
 }: CustomCircleProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Circle>>(
@@ -55,7 +58,9 @@ export const CustomCircle = ({
         width: 2,
       }),
       fill: new Fill({
-        color: ANNOTATION_COLOR[color].fill(opacity),
+        color: colorFill
+          ? ANNOTATION_COLOR[color].stroke(opacity)
+          : ANNOTATION_COLOR[color].fill(opacity),
       }),
       text:
         children && !children.props.isPopup
@@ -64,7 +69,7 @@ export const CustomCircle = ({
               size: children.props.size || 15,
               color: children.props.color ? children.props.color : "black",
               outline: children.props.outline,
-              isMarker: false,
+              isMarker: children.props.upperText,
             })
           : undefined,
     })
@@ -73,7 +78,9 @@ export const CustomCircle = ({
   useEffect(() => {
     annotationStyleRef.current.setFill(
       new Fill({
-        color: ANNOTATION_COLOR[color].fill(opacity),
+        color: colorFill
+          ? ANNOTATION_COLOR[color].stroke(opacity)
+          : ANNOTATION_COLOR[color].fill(opacity),
       })
     );
     annotationStyleRef.current.setStroke(
@@ -82,26 +89,22 @@ export const CustomCircle = ({
         width: 2,
       })
     );
-  }, [opacity, color]);
+  }, [opacity, color, colorFill]);
 
   const onHoverHandler = useCallback(
-    (event: SelectEvent) => {
-      if (event.selected.length > 0) {
+    (feature: Feature) => {
+      if (feature) {
         if (onHover) {
           onHover({ annotation: annotationRef.current, properties });
         }
-      } else {
-        // hover 이벤트에 의해 선택된 Circle이 없는 경우
-        // 선택 해제에 대한 작업 수행
-        // 예: 기본 스타일 복원 등
       }
 
       // 수정중일땐 팝업 관여하지 않음
       if (map.getProperties().isModifying) return;
 
       // Pop up text
-      if (event.selected.length > 0 && children?.props.isPopup) {
-        const hoveredFeature = event.selected[0];
+      if (feature && children?.props.isPopup) {
+        const hoveredFeature = feature;
         const hoveredFeatureStyle = hoveredFeature.getStyle() as Style;
         hoveredFeatureStyle.setText(
           makeText({
@@ -114,7 +117,7 @@ export const CustomCircle = ({
         );
 
         annotationRef.current.setStyle(hoveredFeatureStyle);
-      } else if (event.selected.length === 0 && children?.props.isPopup) {
+      } else if (feature && children?.props.isPopup) {
         const hoveredFeatureStyle = annotationRef.current.getStyle() as Style;
 
         hoveredFeatureStyle.setText(new Text());
@@ -124,27 +127,22 @@ export const CustomCircle = ({
     [children, map, onHover, properties]
   );
 
-  const onClickHandler = useCallback(
-    (event: SelectEvent) => {
-      if (event.selected.length > 0) {
-        // 클릭 이벤트에 의해 선택된 Circle이 있는 경우
-        if (onClick) {
-          onClick({
-            annotation: annotationRef.current,
-            properties,
-          });
-        }
-        // 선택된 Feature에 대한 작업 수행
-        // 예: 스타일 변경, 정보 표시 등
-      }
-    },
-    [onClick, properties]
-  );
+  const onClickHandler = () => {
+    if (onClick) {
+      onClick({
+        annotation: annotationRef.current,
+        properties,
+      });
+    }
+    // 선택된 Feature에 대한 작업 수행
+    // 예: 스타일 변경, 정보 표시 등
+  };
 
   useInteractionEvent({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
     onHover: onHoverHandler,
+    onLeave: onLeave,
     isDisabledSelection,
   });
 
@@ -193,6 +191,6 @@ export const CustomCircle = ({
       annotationLayerRef.current.getSource()?.clear();
       map.removeLayer(annotationLayerRef.current);
     };
-  }, [color, children, map, onHover, properties, onClick]);
+  }, [color, children, map, onHover, properties, onClick, colorFill, zIndex]);
   return <></>;
 };
