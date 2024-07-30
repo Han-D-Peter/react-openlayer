@@ -1,4 +1,5 @@
 import { Feature } from "ol";
+import { all } from "ol/loadingstrategy";
 import { Circle, Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { fromLonLat } from "ol/proj";
@@ -42,7 +43,9 @@ export function BoundaryCircle({
   const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
     new VectorLayer({
       updateWhileAnimating: true,
+      updateWhileInteracting: true,
       source: new VectorSource({
+        strategy: all,
         features: [annotationRef.current],
       }),
     })
