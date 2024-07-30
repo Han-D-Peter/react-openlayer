@@ -54,14 +54,19 @@ export function BoundaryCircle({
         textAlign: "center",
         font: `18px roboto, sans-serif`,
         fill: new Fill({
-          color,
+          color: "black",
         }),
         offsetY: -40,
         overflow: true,
         stroke: new Stroke({
-          color: "black",
-          width: 0.8,
+          color: "white",
+          width: 3,
         }),
+        backgroundFill: new Fill({
+          color: "white",
+        }),
+
+        padding: [2, 3, 1, 5],
       }),
       image: new Icon({
         src: icon.imageCircleMarker[color], // 마커 이미지 경로
