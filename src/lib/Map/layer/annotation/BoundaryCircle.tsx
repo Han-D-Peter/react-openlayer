@@ -42,10 +42,7 @@ export function BoundaryCircle({
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
     new VectorLayer({
-      updateWhileAnimating: true,
-      updateWhileInteracting: true,
       source: new VectorSource({
-        strategy: all,
         features: [annotationRef.current],
       }),
     })
