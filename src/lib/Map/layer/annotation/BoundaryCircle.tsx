@@ -59,8 +59,8 @@ export function BoundaryCircle({
         offsetY: -40,
         overflow: true,
         stroke: new Stroke({
-          color: "white",
-          width: 3,
+          color: "black",
+          width: 0.8,
         }),
       }),
       image: new Icon({
@@ -96,6 +96,19 @@ export function BoundaryCircle({
       geometry.setCoordinates(fromLonLat(center));
     }
   }, [center]);
+
+  useEffect(() => {
+    if (annotationRef.current) {
+      annotationStyleRef.current.setImage(
+        new Icon({
+          src: icon.imageCircleMarker[color], // 마커 이미지 경로
+          scale: 0.25,
+          anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
+        })
+      );
+    }
+    annotationRef.current.setStyle(annotationStyleRef.current);
+  }, [color]);
 
   useEffect(() => {
     annotationRef.current.setStyle(annotationStyleRef.current);
