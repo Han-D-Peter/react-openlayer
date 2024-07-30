@@ -11,6 +11,7 @@ export * from "./PolyLine";
 export * from "./Rectangle";
 export * from "./TextMarker";
 export * from "./ImageMarker";
+export * from "./BoundaryCircle";
 
 export interface Annotation {
   color?: keyof typeof ANNOTATION_COLOR;
