@@ -14,6 +14,9 @@ import { CustomCircle } from "./Circle";
 import { ImageMarker } from "./ImageMarker";
 
 interface BoundaryCircleProps {
+  /**
+   * @description by meter
+   */
   circleRadius: number;
   children: string;
   color: keyof typeof ANNOTATION_COLOR;
@@ -114,7 +117,7 @@ export default function BoundaryCircle({
       onHover={onHoverHandler}
       onLeave={onLeave}
       center={center}
-      radius={circleRadius}
+      radius={circleRadius * 1.25}
       color={color}
       properties={{ notSelectable: true }}
     ></CustomCircle>
