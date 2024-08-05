@@ -92,7 +92,7 @@ export function BoundaryCircle({
   useInteractionEvent({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
-
+    onHover: onHoverHandler,
     onLeave: onLeaveHandler,
   });
 

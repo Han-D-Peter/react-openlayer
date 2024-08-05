@@ -93,7 +93,6 @@ export const CustomCircle = ({
 
   const onHoverHandler = useCallback(
     (feature: Feature) => {
-      console.log("hover handler", feature);
       if (feature) {
         if (onHover) {
           onHover({ annotation: annotationRef.current, properties });
