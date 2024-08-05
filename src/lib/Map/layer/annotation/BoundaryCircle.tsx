@@ -129,7 +129,7 @@ export function BoundaryCircle({
     return () => {
       map.removeLayer(annotationLayerRef.current);
     };
-  }, [map]);
+  }, [map, circleRadius, children, color, center, onClick, onHover, onLeave]);
 
   return (
     <CustomCircle
