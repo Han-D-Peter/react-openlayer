@@ -38,7 +38,7 @@ export function useInteractionEvent({
         if (!feature.getProperties().shape) return;
         // 이미 선택한 마커 또 선택하면 해제
 
-        if (annotation.getSource()?.getFeatures()[0] === feature) {
+        if (annotation?.getSource()?.getFeatures()[0] === feature) {
           onClick && onClick(feature);
         }
       });
@@ -60,8 +60,9 @@ export function useInteractionEvent({
       reversedFeture.forEach((feature) => {
         if (!feature.getProperties().shape) return;
         // 이미 선택한 마커 또 선택하면 해제
-        if (annotation.getSource()?.getFeatures()[0] === feature) {
-          onHover && onHover(feature);
+
+        if (annotation?.getSource()?.getFeatures()[0] === feature) {
+          onHover && onHover(feature as Feature<Geometry>);
         }
       });
     },

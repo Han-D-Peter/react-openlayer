@@ -42,6 +42,7 @@ export function BoundaryCircle({
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
     new VectorLayer({
+      zIndex: 12,
       source: new VectorSource({
         features: [annotationRef.current],
       }),
@@ -133,8 +134,9 @@ export function BoundaryCircle({
 
   return (
     <CustomCircle
-      onHover={onHoverHandler}
-      onLeave={onLeave}
+      // onHover={onHoverHandler}
+      // onLeave={onLeave}
+      zIndex={10}
       center={center}
       radius={circleRadius * 1.25}
       color={color}

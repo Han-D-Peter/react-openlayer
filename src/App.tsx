@@ -111,17 +111,6 @@ function App() {
           ]}
         />
         <LayerGroup zIndex={0}>
-          <CustomCircle
-            onClick={() => console.log("click red circle")}
-            center={[126.841884, 35.191516]}
-            radius={20}
-            color="RED"
-          >
-            <InnerText isPopup>Circle1</InnerText>
-          </CustomCircle>
-          <CustomMarker opacity={0.4} center={[126.840492, 35.190337]}>
-            {isShown ? <InnerText outline>bottom left</InnerText> : null}
-          </CustomMarker>
           <BoundaryCircle
             center={[126.841284, 35.191516]}
             circleRadius={200}
@@ -132,67 +121,7 @@ function App() {
           >
             ASDFASDF
           </BoundaryCircle>
-          <CustomMarker center={[126.840746, 35.190475]}>
-            {isShown ? (
-              <InnerText isPopup outline>
-                top right
-              </InnerText>
-            ) : null}
-          </CustomMarker>
         </LayerGroup>
-        <LayerGroup zIndex={1}>
-          <CustomCircle
-            onClick={() => console.log("click circle")}
-            isDisabledSelection
-            center={[126.841784, 35.191406]}
-            radius={20}
-            color="BLUE"
-          >
-            {isShown ? <InnerText>Circle2</InnerText> : null}
-          </CustomCircle>
-          <CustomPolyLine
-            isDisabledSelection
-            positions={[
-              [126.840684, 35.190816],
-              [126.840476, 35.190419],
-              [126.840604, 35.190333],
-              [126.840868, 35.190581],
-            ]}
-          ></CustomPolyLine>
-          <CustomRectangle
-            positions={[
-              [
-                [126.840684, 35.190219],
-                [126.840476, 35.190219],
-                [126.840476, 35.190133],
-                [126.840684, 35.190133],
-              ],
-            ]}
-          ></CustomRectangle>
-        </LayerGroup>
-
-        <CustomMultiPoint
-          zIndex={10}
-          positions={[
-            [126.840684, 35.190219],
-            [126.840476, 35.190219],
-            [126.840476, 35.190133],
-            [126.840684, 35.190133],
-          ]}
-        ></CustomMultiPoint>
-        <CustomPolygon
-          zIndex={10}
-          positions={[
-            [
-              [126.840884, 35.190816],
-              [126.840676, 35.190419],
-              [126.840804, 35.190333],
-              [126.841068, 35.190581],
-            ],
-          ]}
-        >
-          <InnerText isPopup>hello2</InnerText>
-        </CustomPolygon>
 
         {/* {isShown && (
           <>
