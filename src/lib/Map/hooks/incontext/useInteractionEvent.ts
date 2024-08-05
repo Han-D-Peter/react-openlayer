@@ -58,13 +58,9 @@ export function useInteractionEvent({
         onLeave && onLeave();
       }
       reversedFeture.forEach((feature) => {
-        console.log("reversedFeture", reversedFeture);
         if (!feature.getProperties().shape) return;
         // 이미 선택한 마커 또 선택하면 해제
         if (annotation.getSource()?.getFeatures()[0] === feature) {
-          console.log("get feature", annotation.getSource()?.getFeatures()[0]);
-          console.log("feature", feature);
-          console.log("hover fn", onHover);
           onHover && onHover(feature);
         }
       });
