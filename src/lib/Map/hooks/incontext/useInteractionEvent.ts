@@ -48,6 +48,7 @@ export function useInteractionEvent({
 
   const hoverMap = useCallback(
     (e: MapBrowserEvent<any>) => {
+      console.log("hover map");
       const pixel = e.pixel;
 
       // 겹쳐있는 마커 위에서부터 선택되도록 리버스
