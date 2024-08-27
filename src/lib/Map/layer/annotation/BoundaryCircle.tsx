@@ -68,7 +68,7 @@ export function BoundaryCircle({
           color: "rgba(0,0,0,0.7)",
         }),
 
-        padding: [6, 4, 2, 8],
+        padding: [9, 7, 5, 11],
       }),
       image: new Icon({
         src: icon.imageCircleMarker[color], // 마커 이미지 경로
