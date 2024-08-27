@@ -119,7 +119,7 @@ function App() {
             onHover={() => console.log("boundary hover")}
             onLeave={() => console.log("boundary leave")}
           >
-            ASDFASDF
+            상수도 보호구역
           </BoundaryCircle>
         </LayerGroup>
 

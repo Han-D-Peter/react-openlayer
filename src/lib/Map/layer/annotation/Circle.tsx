@@ -22,6 +22,7 @@ interface CustomCircleProps extends Annotation {
   center: Location;
   radius: number;
   colorFill?: boolean;
+  hasStroke?: boolean;
 }
 
 export const CustomCircle = forwardRef<
@@ -30,6 +31,7 @@ export const CustomCircle = forwardRef<
 >(
   (
     {
+      hasStroke = true,
       center,
       radius,
       color = "BLUE",
@@ -63,7 +65,9 @@ export const CustomCircle = forwardRef<
     const annotationStyleRef = useRef(
       new Style({
         stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(opacity),
+          color: hasStroke
+            ? ANNOTATION_COLOR[color].stroke(opacity)
+            : ANNOTATION_COLOR[color].fill(0.3 * opacity),
           width: 2,
         }),
         fill: new Fill({
@@ -94,11 +98,13 @@ export const CustomCircle = forwardRef<
       );
       annotationStyleRef.current.setStroke(
         new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(opacity),
+          color: hasStroke
+            ? ANNOTATION_COLOR[color].stroke(opacity)
+            : ANNOTATION_COLOR[color].fill(0.3 * opacity),
           width: 2,
         })
       );
-    }, [opacity, color, colorFill]);
+    }, [opacity, color, colorFill, hasStroke]);
 
     const onHoverHandler = (feature: Feature) => {
       if (feature) {

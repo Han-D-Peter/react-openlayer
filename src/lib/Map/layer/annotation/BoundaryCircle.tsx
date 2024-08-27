@@ -54,21 +54,21 @@ export function BoundaryCircle({
       text: new Text({
         text: children,
         textAlign: "center",
-        font: `bold 18px roboto, sans-serif`,
+        font: `16px roboto, sans-serif`,
         fill: new Fill({
-          color: "black",
+          color: "white",
         }),
         offsetY: -40,
         overflow: true,
         stroke: new Stroke({
           color: "white",
-          width: 3,
+          width: 1,
         }),
         backgroundFill: new Fill({
-          color: "white",
+          color: "rgba(0,0,0,0.7)",
         }),
 
-        padding: [2, 3, 0, 5],
+        padding: [5, 4, 4, 7],
       }),
       image: new Icon({
         src: icon.imageCircleMarker[color], // 마커 이미지 경로
@@ -93,8 +93,8 @@ export function BoundaryCircle({
   useInteractionEvent({
     annotation: annotationLayerRef.current,
     onClick: onClickHandler,
-    onHover: onHoverHandler,
-    onLeave: onLeaveHandler,
+    // onHover: onHoverHandler,
+    // onLeave: onLeaveHandler,
   });
 
   useEffect(() => {
@@ -134,8 +134,9 @@ export function BoundaryCircle({
 
   return (
     <CustomCircle
-      // onHover={onHoverHandler}
-      // onLeave={onLeave}
+      hasStroke={false}
+      onHover={onHoverHandler}
+      onLeave={onLeaveHandler}
       zIndex={10}
       center={center}
       radius={circleRadius * 1.25}
