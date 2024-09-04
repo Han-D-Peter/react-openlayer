@@ -77,6 +77,7 @@ export function FeatureStore({
 
   useEffect(() => {
     const feature = selectedFeature as Feature<Geometry>;
+
     // 선택 해제
     if (!feature) {
       if (isArray(selectedFeatureStyleRef.current.currentFeature)) {

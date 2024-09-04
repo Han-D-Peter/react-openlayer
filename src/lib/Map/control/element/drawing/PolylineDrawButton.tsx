@@ -18,6 +18,7 @@ import { useControlSection } from "../../layout";
 import { LineSegment } from "@phosphor-icons/react";
 import { InnerButton } from "../InnerButton";
 import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
+import { ANNOTATION_COLOR } from "src/lib/Map/constants";
 
 export interface PolylineDrawButtonProps extends ButtonProps {
   /**
@@ -35,6 +36,7 @@ export interface PolylineDrawButtonProps extends ButtonProps {
    * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
    */
   onCanvas?: boolean;
+  color?: keyof typeof ANNOTATION_COLOR;
 }
 
 export function PolylineDrawButton({
@@ -42,6 +44,7 @@ export function PolylineDrawButton({
   onClick,
   onCanvas = false,
   onStart,
+  color = "BLUE",
   ...props
 }: PolylineDrawButtonProps) {
   const map = useMap();
@@ -58,11 +61,11 @@ export function PolylineDrawButton({
       type: "LineString",
       style: new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 26, 255, 0.3)",
+          color: ANNOTATION_COLOR[color].fill(1),
         }),
         // image: new Icon({
         //   src: "/images/polyline.svg", // 마커 이미지 경로
@@ -78,11 +81,11 @@ export function PolylineDrawButton({
       type: "LineString",
       style: new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 26, 255, 0.3)",
+          color: ANNOTATION_COLOR[color].fill(1),
         }),
         // image: new Icon({
         //   src: "/images/polyline.svg", // 마커 이미지 경로
@@ -90,7 +93,7 @@ export function PolylineDrawButton({
         // }),
       }),
     });
-  }, [onCanvas]);
+  }, [onCanvas, color]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -116,11 +119,11 @@ export function PolylineDrawButton({
     feature.setStyle(
       new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 26, 255, 0.3)",
+          color: ANNOTATION_COLOR[color].fill(1),
         }),
         text: makeText({
           text: "unknown",

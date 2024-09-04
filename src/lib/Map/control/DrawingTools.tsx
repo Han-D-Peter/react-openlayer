@@ -23,6 +23,7 @@ import { TranslateEvent } from "ol/interaction/Translate";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { useMap } from "../hooks";
 import VectorSource from "ol/source/Vector";
+import { ANNOTATION_COLOR } from "../constants";
 
 export interface DrawingToolsProps {
   multiMarker?: boolean;
@@ -34,6 +35,7 @@ export interface DrawingToolsProps {
   target?: Feature<Geometry> | null;
   edit?: boolean;
   movement?: boolean;
+  color?: keyof typeof ANNOTATION_COLOR;
   remove?: boolean;
   onDrawStart?: () => void;
   onDelete?: (event: SelectEvent) => void;
@@ -45,6 +47,7 @@ export interface DrawingToolsProps {
 }
 
 export function DrawingTools({
+  color = "BLUE",
   target = null,
   multiMarker = true,
   marker = true,
@@ -116,6 +119,7 @@ export function DrawingTools({
         )}
         {polyline && (
           <PolylineDrawButton
+            color={color}
             // isActive={isSelected === "2"}
             // onClick={() => {
             //   switchControl("2");
@@ -126,6 +130,7 @@ export function DrawingTools({
         )}
         {rectangle && (
           <RectangleDrawButton
+            color={color}
             // isActive={isSelected === "3"}
             // onClick={() => {
             //   switchControl("3");
@@ -136,6 +141,7 @@ export function DrawingTools({
         )}
         {polygon && (
           <PolygonDrawButton
+            color={color}
             // isActive={isSelected === "4"}
             // onClick={() => {
             //   switchControl("4");

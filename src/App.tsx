@@ -173,6 +173,7 @@ function App() {
           <ZoomFeature />
           <FullScreenFeature />
           <DrawingTools
+            color="RED"
             onCanvas
             onDrawEnd={(e) => {
               if (!_.isArray(e)) {

@@ -18,6 +18,7 @@ import { useControlSection } from "../../layout";
 import { BoundingBox } from "@phosphor-icons/react";
 import { InnerButton } from "../InnerButton";
 import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
+import { ANNOTATION_COLOR } from "src/lib/Map/constants";
 
 export interface PolygonDrawButtonProps extends ButtonProps {
   /**
@@ -35,6 +36,7 @@ export interface PolygonDrawButtonProps extends ButtonProps {
    * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
    */
   onCanvas?: boolean;
+  color?: keyof typeof ANNOTATION_COLOR;
 }
 
 export function PolygonDrawButton({
@@ -42,6 +44,7 @@ export function PolygonDrawButton({
   onStart,
   onClick,
   onCanvas = false,
+  color = "BLUE",
   ...props
 }: PolygonDrawButtonProps) {
   const map = useMap();
@@ -60,11 +63,11 @@ export function PolygonDrawButton({
       type: "Polygon",
       style: new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 26, 255, 0.3)",
+          color: ANNOTATION_COLOR[color].fill(1),
         }),
         // image: new Icon({
         //   src: "/images/polygon.svg", // 마커 이미지 경로
@@ -80,11 +83,11 @@ export function PolygonDrawButton({
       type: "Polygon",
       style: new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 26, 255, 0.3)",
+          color: ANNOTATION_COLOR[color].fill(1),
         }),
         // image: new Icon({
         //   src: "/images/polygon.svg", // 마커 이미지 경로
@@ -92,7 +95,7 @@ export function PolygonDrawButton({
         // }),
       }),
     });
-  }, [onCanvas]);
+  }, [onCanvas, color]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -128,11 +131,11 @@ export function PolygonDrawButton({
     feature.setStyle(
       new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 27, 255, 0.1)",
+          color: ANNOTATION_COLOR[color].fill(0.1),
         }),
         text: makeText({
           text: "unknown",

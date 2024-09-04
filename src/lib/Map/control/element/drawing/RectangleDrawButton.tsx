@@ -17,6 +17,7 @@ import { RectangleIcon } from "../../../constants/icons/RectangleIcon";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
 import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
+import { ANNOTATION_COLOR } from "src/lib/Map/constants";
 
 export interface RectangleDrawButtonProps extends ButtonProps {
   /**
@@ -33,6 +34,7 @@ export interface RectangleDrawButtonProps extends ButtonProps {
    * @description Well... Sometimes you need this drawing tool with using server waht containes DB. if 'onCanvas' set false, react-openlayer will not draw feature on canvas.
    */
   onCanvas?: boolean;
+  color?: keyof typeof ANNOTATION_COLOR;
 }
 
 export function RectangleDrawButton({
@@ -40,6 +42,7 @@ export function RectangleDrawButton({
   onClick,
   onCanvas = false,
   onStart,
+  color = "BLUE",
   ...props
 }: RectangleDrawButtonProps) {
   const map = useMap();
@@ -57,11 +60,11 @@ export function RectangleDrawButton({
       geometryFunction: createBox(),
       style: new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 26, 255, 0.3)",
+          color: ANNOTATION_COLOR[color].fill(1),
         }),
       }),
     })
@@ -74,15 +77,15 @@ export function RectangleDrawButton({
       geometryFunction: createBox(),
       style: new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 26, 255, 0.3)",
+          color: ANNOTATION_COLOR[color].fill(1),
         }),
       }),
     });
-  }, [onCanvas]);
+  }, [onCanvas, color, drawVectorSource]);
 
   const startDrawing = () => {
     if (onClick) {
@@ -107,11 +110,11 @@ export function RectangleDrawButton({
     event.feature.setStyle(
       new Style({
         stroke: new Stroke({
-          color: "rgb(2, 26, 255)",
+          color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
         }),
         fill: new Fill({
-          color: "rgba(2, 26, 255, 0.3)",
+          color: ANNOTATION_COLOR[color].fill(0.1),
         }),
         text: makeText({
           text: "unknown",
