@@ -22,6 +22,7 @@ interface BoundaryCircleProps {
   children: string;
   color: keyof typeof ANNOTATION_COLOR;
   center: Location;
+  hasStroke?: boolean;
   onClick?: () => void;
   onHover?: () => void;
   onLeave?: () => void;
@@ -32,6 +33,7 @@ export function BoundaryCircle({
   children,
   color = "ROYAL_BLUE",
   center,
+  hasStroke = true,
   onClick,
   onHover,
   onLeave,
@@ -134,7 +136,7 @@ export function BoundaryCircle({
 
   return (
     <CustomCircle
-      hasStroke={false}
+      hasStroke={hasStroke}
       onHover={onHoverHandler}
       onLeave={onLeaveHandler}
       zIndex={10}
