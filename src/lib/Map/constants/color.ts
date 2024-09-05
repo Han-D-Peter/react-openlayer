@@ -28,7 +28,7 @@ export const ANNOTATION_COLOR = {
     stroke: (opacity: number) => `rgba(65, 105, 225, ${opacity})`,
   },
   SELECT: {
-    fill: () => "rgba(1, 1, 1, 0.2)",
+    fill: () => "rgba(1, 1, 1, 0.4)",
     stroke: () => "rgb(1, 1, 1)",
   },
 };

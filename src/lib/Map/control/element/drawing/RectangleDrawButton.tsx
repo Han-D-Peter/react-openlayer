@@ -52,13 +52,14 @@ export function RectangleDrawButton({
   const { selectFeature } = useFeatureStore();
   const isActive = buttonId === selectedButtonId;
   const { drawVectorSource } = useDrawSource();
-  const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
+  const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1000 }));
   const drawRef = useRef(
     new Draw({
       source: onCanvas ? drawVectorSource : undefined,
       type: "Circle",
       geometryFunction: createBox(),
       style: new Style({
+        zIndex: 1000,
         stroke: new Stroke({
           color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
@@ -76,6 +77,7 @@ export function RectangleDrawButton({
       type: "Circle",
       geometryFunction: createBox(),
       style: new Style({
+        zIndex: 1000,
         stroke: new Stroke({
           color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
@@ -109,6 +111,7 @@ export function RectangleDrawButton({
 
     event.feature.setStyle(
       new Style({
+        zIndex: 1000,
         stroke: new Stroke({
           color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,

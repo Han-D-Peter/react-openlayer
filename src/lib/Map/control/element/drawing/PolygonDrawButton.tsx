@@ -56,12 +56,13 @@ export function PolygonDrawButton({
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
   const { drawVectorSource } = useDrawSource();
-  const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
+  const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1000 }));
   const drawRef = useRef(
     new Draw({
       source: onCanvas ? drawVectorSource : undefined,
       type: "Polygon",
       style: new Style({
+        zIndex: 1000,
         stroke: new Stroke({
           color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
@@ -82,6 +83,7 @@ export function PolygonDrawButton({
       source: onCanvas ? drawVectorSource : undefined,
       type: "Polygon",
       style: new Style({
+        zIndex: 1000,
         stroke: new Stroke({
           color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
@@ -130,6 +132,7 @@ export function PolygonDrawButton({
 
     feature.setStyle(
       new Style({
+        zIndex: 1000,
         stroke: new Stroke({
           color: ANNOTATION_COLOR[color].stroke(1),
           width: 2,
