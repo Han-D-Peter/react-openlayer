@@ -28,7 +28,7 @@ interface ImageMapForPixelProps {
   onClick?: (pixel: { x: number; y: number }) => void;
 }
 
-export default function ImageMapForPixel({
+export function ImageMapForPixel({
   height,
   image,
   width,
