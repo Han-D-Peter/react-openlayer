@@ -6,4 +6,5 @@ export * from "./MapContainer";
 export * from "./Text";
 export * from "./FeatureStore";
 export * from "./SyncMapGroup";
+export * from "./ImageMapForPixel";
 export { fromLonLat, toLonLat } from "ol/proj";
