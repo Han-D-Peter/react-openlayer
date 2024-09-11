@@ -1,10 +1,17 @@
 import { Map, MapBrowserEvent, View } from "ol";
-import { ReactNode, useEffect, useId, useState, useRef } from "react";
+import {
+  ReactNode,
+  useEffect,
+  useId,
+  useState,
+  useRef,
+  useLayoutEffect,
+} from "react";
 import { defaults as defaultControls } from "ol/control";
 import TileLayer from "ol/layer/Tile";
 import { ImageStatic, OSM } from "ol/source";
 import { fromLonLat } from "ol/proj";
-import { Image } from "ol/layer";
+import { Image as OlImage } from "ol/layer";
 
 interface ImageMapForPixelProps {
   /**
@@ -12,11 +19,7 @@ interface ImageMapForPixelProps {
    */
   height?: string;
 
-  image: {
-    src: string;
-    width: number;
-    height: number;
-  };
+  imageSrc: string;
 
   /**
    * @default "1000px"
@@ -29,9 +32,9 @@ interface ImageMapForPixelProps {
 }
 
 export function ImageMapForPixel({
-  height,
-  image,
+  imageSrc,
   width,
+  height,
   fullscreenControl,
   children,
   onClick,
@@ -61,9 +64,31 @@ export function ImageMapForPixel({
     null
   );
 
+  const [imgSize, setImgSize] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
+
   if (imagePixel && onClick) {
     onClick(imagePixel);
   }
+
+  function getImageDimensions(src: string) {
+    const img = new Image();
+    img.onload = function () {
+      const width = img.width;
+      const height = img.height;
+      setImgSize({ width, height });
+    };
+    img.onerror = function () {
+      console.error("이미지 로드 실패", src);
+    };
+    img.src = src;
+  }
+
+  useLayoutEffect(() => {
+    getImageDimensions(imageSrc);
+  }, [imageSrc]);
 
   useEffect(() => {
     const mapRef = mapObj.current;
@@ -71,27 +96,28 @@ export function ImageMapForPixel({
     mapRef.setTarget(mapId);
 
     function getImagePixel(event: MapBrowserEvent<any>) {
+      if (!imgSize) return;
       // 클릭한 포인트의 좌표를 얻음
       var clickedCoordinate = event.coordinate;
 
       // 포인트 좌표를 픽셀 좌표로 변환
       var clickedPixel = clickedCoordinate;
 
-      const heightdigit = `${image.height}`;
+      const heightdigit = `${imgSize.height}`;
       const heightbycount = heightdigit.length - 2;
-      const rightdigit = `${image.width}`;
+      const rightdigit = `${imgSize.width}`;
       const rightbycount = rightdigit.length - 2;
       // 픽셀 좌표 출력
 
       const xPosition = (clickedPixel[0] * 10 ** rightbycount).toFixed(0);
       const yPosition = (
-        image.height -
+        imgSize.height -
         clickedPixel[1] * 10 ** heightbycount
       ).toFixed(0);
 
       if (
-        Number(xPosition) <= image.width &&
-        Number(yPosition) <= image.height &&
+        Number(xPosition) <= imgSize.width &&
+        Number(yPosition) <= imgSize.height &&
         Number(xPosition) > 0 &&
         Number(yPosition) > 0
       ) {
@@ -109,30 +135,31 @@ export function ImageMapForPixel({
       mapRef.setLayers([]);
       mapRef.un("click", getImagePixel);
     };
-  }, [image.height, image.width, mapId]);
+  }, [imgSize, mapId]);
 
   useEffect(() => {
+    if (!imgSize) return;
     const mapRef = mapObj.current;
 
     // image.height는 3648
-    const heightdigit = `${image.height}`;
+    const heightdigit = `${imgSize.height}`;
     const heightbycount = heightdigit.length - 2;
 
     const bottomPosition = Number(
-      (image.height / 10 ** heightbycount).toFixed(heightbycount)
+      (imgSize.height / 10 ** heightbycount).toFixed(heightbycount)
     );
 
     // image.width는 5472
-    const rightdigit = `${image.width}`;
+    const rightdigit = `${imgSize.width}`;
     const rightbycount = rightdigit.length - 2;
     const rightPosition = Number(
-      (image.width / 10 ** rightbycount).toFixed(rightbycount)
+      (imgSize.width / 10 ** rightbycount).toFixed(rightbycount)
     );
 
-    const imageLayer = new Image({
+    const imageLayer = new OlImage({
       source: new ImageStatic({
-        url: image.src,
-        imageSize: [image.width, image.height],
+        url: imageSrc,
+        imageSize: [imgSize.width, imgSize.height],
         imageExtent: [0, 0, rightPosition, bottomPosition],
       }),
     });
@@ -144,7 +171,7 @@ export function ImageMapForPixel({
     return () => {
       mapRef.removeLayer(imageLayer);
     };
-  }, [image]);
+  }, [imageSrc, imgSize]);
 
   return (
     <div

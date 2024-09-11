@@ -77,11 +77,7 @@ const TestField = () => {
 
   return (
     <ImageMapForPixel
-      image={{
-        src: "/images/12314.JPG",
-        width: 5472,
-        height: 3648,
-      }}
+      imageSrc="/images/12314.JPG"
       height="500px"
       width="500px"
       fullscreenControl
