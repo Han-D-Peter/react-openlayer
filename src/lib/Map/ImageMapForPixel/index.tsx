@@ -156,5 +156,3 @@ export function ImageMapForPixel({
     </div>
   );
 }
-
-ImageMapForPixel.name = "ImageMapFromPixel";
