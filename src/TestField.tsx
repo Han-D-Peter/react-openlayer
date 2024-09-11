@@ -1,6 +1,6 @@
 import React from "react";
 import { useMapEventHandler } from "./lib";
-import ImageMapForPixel from "./lib/Map/ImageMapForPixel/index";
+import { ImageMapForPixel } from "./lib/Map/ImageMapForPixel";
 
 const TestField = () => {
   // useMapEventHandler({
