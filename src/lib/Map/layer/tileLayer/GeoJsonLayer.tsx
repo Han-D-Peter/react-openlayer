@@ -149,6 +149,6 @@ export function GeoJsonLayer({
       features.forEach((feat) => drawVectorSource.removeFeature(feat));
       map.removeInteraction(snap);
     };
-  }, [map, geoJson, color]);
+  }, [map, geoJson, color, projectionCode]);
   return <></>;
 }
