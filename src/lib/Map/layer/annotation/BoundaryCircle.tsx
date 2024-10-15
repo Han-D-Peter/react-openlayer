@@ -56,9 +56,9 @@ export function BoundaryCircle({
       text: new Text({
         text: children,
         textAlign: "center",
-        font: `200 16px roboto, sans-serif`,
+        font: `500 16px roboto, sans-serif`,
         fill: new Fill({
-          color: "white",
+          color: "black",
         }),
         offsetY: -40,
         overflow: true,
@@ -67,10 +67,10 @@ export function BoundaryCircle({
           width: 1,
         }),
         backgroundFill: new Fill({
-          color: "rgba(0,0,0,0.7)",
+          color: "rgba(255,255,255,0.7)",
         }),
 
-        padding: [9, 7, 5, 11],
+        padding: [7, 7, 4, 11],
       }),
       image: new Icon({
         src: icon.imageCircleMarker[color], // 마커 이미지 경로
