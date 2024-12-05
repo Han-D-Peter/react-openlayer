@@ -48,12 +48,14 @@ export function useInteractionEvent({
 
   const hoverMap = useCallback(
     (e: MapBrowserEvent<any>) => {
+      if (!onHover) return;
       const pixel = e.pixel;
 
       // 겹쳐있는 마커 위에서부터 선택되도록 리버스
       const reversedFeture: FeatureLike[] = map
         .getFeaturesAtPixel(pixel)
         .reverse();
+
       if (reversedFeture.length === 0) {
         onLeave && onLeave();
       }
@@ -62,7 +64,7 @@ export function useInteractionEvent({
         // 이미 선택한 마커 또 선택하면 해제
 
         if (annotation?.getSource()?.getFeatures()[0] === feature) {
-          onHover && onHover(feature as Feature<Geometry>);
+          onHover(feature as Feature<Geometry>);
         }
       });
     },
