@@ -215,6 +215,7 @@ export const MapContainer = memo(
         }
         mapRef.setTarget(mapId);
         return () => {
+          mapRef.dispose();
           mapRef.setTarget(undefined);
           mapRef.setLayers([]);
         };
