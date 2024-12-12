@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   CustomCircle,
   CustomMarker,
@@ -23,6 +23,7 @@ import {
   MapContainer,
   TileLayer,
   fromLonLat,
+  TileMatrix,
 } from "./lib/Map";
 import { DrawingTools } from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";
@@ -66,6 +67,10 @@ function App() {
 
   const [mapSize, setMapSize] = useState({ width: "1000px", height: "100vh" });
 
+  const [tileMatrix, setTileMatrix] = useState<TileMatrix>();
+
+  console.log("tileMatrix", tileMatrix);
+
   function off() {
     console.log(isShown);
     if (isShown) {
@@ -77,6 +82,12 @@ function App() {
 
   const ref = useRef<Map>(null);
   const imageRef = useRef<ImageOverlayRef>(null);
+
+  useEffect(() => {
+    fetch("/tile_matrix.json")
+      .then((res) => res.json())
+      .then((res) => setTileMatrix(res));
+  }, []);
 
   return (
     <div className="App">
@@ -90,6 +101,8 @@ function App() {
       <TestField />
 
       <MapContainer
+        center={[126.529692, 35.935785]}
+        zoomLevel={17}
         height={mapSize.height}
         width={mapSize.width}
         ref={ref}
@@ -100,7 +113,8 @@ function App() {
         <TileLayer
           maxZoom={23}
           crossOrigin={"anonymous"}
-          url="https://d3ma6smoldwaof.cloudfront.net/1/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
+          tileMatrix={tileMatrix}
+          url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/16/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
         />
         <ImageOverlay
           ref={imageRef}

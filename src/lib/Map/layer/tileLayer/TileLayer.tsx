@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useEffect } from "react";
 import { useMap } from "../../hooks";
 import OlTileLayer from "ol/layer/Tile";
 import { TileUrl } from "../../utils/utils";
 import { XYZ } from "ol/source";
+
+export type TileMatrix = {
+  [zoomLevel: number]: {
+    minX: number;
+    maxX: number;
+    minY: number;
+    maxY: number;
+  };
+};
 
 export interface TileLayerProps {
   url: string;
@@ -31,6 +40,10 @@ The crossOrigin attribute for loaded images. Note that you must provide a crossO
   crossOrigin?: null | string | undefined;
 
   errorTileUrl?: string;
+  /**
+   * @desciprtion this is tile position values to be optimized.
+   */
+  tileMatrix?: TileMatrix;
 }
 
 export const TileLayer = ({
@@ -40,8 +53,11 @@ export const TileLayer = ({
   minZoom = 0,
   crossOrigin = null,
   errorTileUrl,
+  tileMatrix,
 }: TileLayerProps) => {
   const map = useMap();
+
+  const tileRef = useRef<OlTileLayer<XYZ> | null>(null);
 
   useEffect(() => {
     const customTmsSource = new XYZ({
@@ -54,20 +70,42 @@ export const TileLayer = ({
         const x = tileCoord[1];
         const y = Math.pow(2, z) - tileCoord[2] - 1;
         const tileImageUrl = tileUrl.getUrlFromPosition(z, x, y);
-        return tileImageUrl || errorTileUrl || ""; // 에러 타일 URL 반환
+
+        const boundary = tileMatrix?.[z];
+
+        if (
+          boundary &&
+          x >= boundary.minX &&
+          x <= boundary.maxX &&
+          tileCoord[2] >= boundary.minY &&
+          tileCoord[2] <= boundary.maxY
+        ) {
+          return tileImageUrl;
+        }
+
+        return; // 에러 타일 URL 반환
       },
     });
 
-    const customTmsLayer = new OlTileLayer({
+    tileRef.current = new OlTileLayer({
       source: customTmsSource,
       zIndex,
     });
-
-    map.addLayer(customTmsLayer);
+    map.addLayer(tileRef.current);
 
     return () => {
-      map.removeLayer(customTmsLayer);
+      tileRef.current && map.removeLayer(tileRef.current);
+      tileRef.current = null;
     };
-  }, [map, errorTileUrl, zIndex, maxZoom, minZoom, crossOrigin, url]);
+  }, [
+    map,
+    errorTileUrl,
+    zIndex,
+    maxZoom,
+    minZoom,
+    crossOrigin,
+    url,
+    tileMatrix,
+  ]);
   return <></>;
 };
