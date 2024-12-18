@@ -70,12 +70,10 @@ export const TileLayer = ({
         const x = tileCoord[1];
         const y = Math.pow(2, z) - tileCoord[2] - 1;
         const tileImageUrl = tileUrl.getUrlFromPosition(z, x, y);
-        console.log("tileMatrix", tileMatrix);
+
         if (!tileMatrix) return tileImageUrl;
 
         const boundary = tileMatrix?.[z];
-
-        console.log("boundary", boundary);
 
         if (
           boundary &&
@@ -84,7 +82,6 @@ export const TileLayer = ({
           tileCoord[2] >= boundary.minY &&
           tileCoord[2] <= boundary.maxY
         ) {
-          console.log("pass");
           return tileImageUrl;
         }
 
