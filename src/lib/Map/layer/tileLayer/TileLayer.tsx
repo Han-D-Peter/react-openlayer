@@ -84,7 +84,7 @@ export const TileLayer = ({
           return tileImageUrl;
         }
 
-        return; // 에러 타일 URL 반환
+        return errorTileUrl;
       },
     });
 
