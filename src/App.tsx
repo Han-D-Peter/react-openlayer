@@ -113,7 +113,7 @@ function App() {
         <TileLayer
           maxZoom={23}
           crossOrigin={"anonymous"}
-          // tileMatrix={tileMatrix}
+          tileMatrix={tileMatrix}
           url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/16/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
         />
         <ImageOverlay
