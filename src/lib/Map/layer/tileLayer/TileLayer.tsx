@@ -84,7 +84,7 @@ export const TileLayer = ({
           return tileImageUrl;
         }
 
-        return errorTileUrl;
+        return;
       },
     });
 
