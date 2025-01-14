@@ -38,7 +38,7 @@ export function CustomMultiPoint({
   );
   const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
     new VectorLayer({
-      source: new VectorSource({}),
+      source: new VectorSource({ wrapX: false }),
     })
   );
 

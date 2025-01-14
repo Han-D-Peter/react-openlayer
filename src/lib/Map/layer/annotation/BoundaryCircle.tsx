@@ -1,6 +1,5 @@
 import { Feature } from "ol";
-import { all } from "ol/loadingstrategy";
-import { Circle, Point } from "ol/geom";
+import { Point } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import { fromLonLat } from "ol/proj";
 import VectorSource from "ol/source/Vector";
@@ -9,10 +8,8 @@ import { useEffect, useRef } from "react";
 import { ANNOTATION_COLOR } from "../../constants";
 import { useInteractionEvent, useMap } from "../../hooks";
 import { Location } from "../../MapContainer";
-import { InnerText } from "../../Text";
-import { icon, makeText } from "../../utils";
+import { icon } from "../../utils";
 import { CustomCircle } from "./Circle";
-import { ImageMarker } from "./ImageMarker";
 
 interface BoundaryCircleProps {
   /**
@@ -46,6 +43,7 @@ export function BoundaryCircle({
     new VectorLayer({
       zIndex: 12,
       source: new VectorSource({
+        wrapX: false,
         features: [annotationRef.current],
       }),
     })
@@ -120,17 +118,20 @@ export function BoundaryCircle({
   }, [color]);
 
   useEffect(() => {
+    const annotationLayerCurrent = annotationLayerRef.current;
+    const sourceInAnnotation = annotationLayerCurrent.getSource();
     annotationRef.current.setStyle(annotationStyleRef.current);
     annotationRef.current.setProperties({
       shape: "Marker",
       isModifying: false,
-      source: annotationLayerRef.current.getSource(),
-      layer: annotationLayerRef.current,
+      source: sourceInAnnotation,
+      layer: annotationLayerCurrent,
       hasPopup: false,
     });
-    map.addLayer(annotationLayerRef.current);
+    map.addLayer(annotationLayerCurrent);
     return () => {
-      map.removeLayer(annotationLayerRef.current);
+      sourceInAnnotation?.clear();
+      map.removeLayer(annotationLayerCurrent);
     };
   }, [map, circleRadius, children, color, center, onClick, onHover, onLeave]);
 

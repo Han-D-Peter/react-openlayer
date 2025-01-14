@@ -143,7 +143,9 @@ export const MapContainer = memo(
         })
       );
 
-      const drawVectorSource = useRef<VectorSource>(new VectorSource());
+      const drawVectorSource = useRef<VectorSource>(
+        new VectorSource({ wrapX: false })
+      );
 
       useEffect(() => {
         if (isShownOsm) {
@@ -215,6 +217,7 @@ export const MapContainer = memo(
         }
         mapRef.setTarget(mapId);
         return () => {
+          drawVectorSource.current?.clear();
           mapRef.dispose();
           mapRef.setTarget(undefined);
           mapRef.setLayers([]);

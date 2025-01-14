@@ -55,6 +55,7 @@ export const CustomCircle = forwardRef<
     const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
       new VectorLayer({
         source: new VectorSource({
+          wrapX: false,
           features: [annotationRef.current],
         }),
       })
@@ -184,24 +185,25 @@ export const CustomCircle = forwardRef<
         }),
       });
       annotationLayerRef.current = newLayer;
+      const annotationLayerCurrent = annotationLayerRef.current;
       annotationRef.current.setStyle(annotationStyleRef.current);
 
       annotationRef.current.setProperties({
         ...properties,
         shape: "Circle",
         isModifying: false,
-        source: annotationLayerRef.current.getSource(),
-        layer: annotationLayerRef.current,
+        source: annotationLayerCurrent.getSource(),
+        layer: annotationLayerCurrent,
         hasPopup: children ? children?.props.isPopup : false,
       });
 
-      annotationLayerRef.current.setZIndex(zIndex);
+      annotationLayerCurrent.setZIndex(zIndex);
 
-      map.addLayer(annotationLayerRef.current);
+      map.addLayer(annotationLayerCurrent);
 
       return () => {
-        annotationLayerRef.current.getSource()?.clear();
-        map.removeLayer(annotationLayerRef.current);
+        annotationLayerCurrent.getSource()?.clear();
+        map.removeLayer(annotationLayerCurrent);
       };
     }, [color, children, map, onHover, properties, onClick, colorFill, zIndex]);
     return <></>;

@@ -128,6 +128,7 @@ export function ImageMarker({
   const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
     new VectorLayer({
       source: new VectorSource({
+        wrapX: false,
         features: [annotationRef.current],
       }),
     })
@@ -283,11 +284,12 @@ export function ImageMarker({
   }, [selected, grade, pointScale]);
 
   useEffect(() => {
-    map.addLayer(annotationLayerRef.current);
+    const annotationLayerCurrent = annotationLayerRef.current;
+    map.addLayer(annotationLayerCurrent);
     map.on("click", onClickHandler);
 
     return () => {
-      map.removeLayer(annotationLayerRef.current);
+      map.removeLayer(annotationLayerCurrent);
       map.removeOverlay(popupOverlayRef.current);
       map.un("click", onClickHandler);
     };

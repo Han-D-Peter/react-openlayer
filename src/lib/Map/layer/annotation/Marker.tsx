@@ -40,6 +40,7 @@ export const CustomMarker = ({
   const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
     new VectorLayer({
       source: new VectorSource({
+        wrapX: false,
         features: [annotationRef.current],
       }),
     })
@@ -182,11 +183,12 @@ export const CustomMarker = ({
   }, [properties]);
 
   useEffect(() => {
-    map.addLayer(annotationLayerRef.current);
+    const annotationLayerCurrent = annotationLayerRef.current;
+    map.addLayer(annotationLayerCurrent);
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      map.removeLayer(annotationLayerRef.current);
-      // annotationLayerRef.current.getSource()?.clear();
+      annotationLayerCurrent.getSource()?.clear();
+      map.removeLayer(annotationLayerCurrent);
     };
   }, [map]);
   return <></>;

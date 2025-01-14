@@ -43,6 +43,7 @@ export const CustomRectangle = ({
   const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
     new VectorLayer({
       source: new VectorSource({
+        wrapX: false,
         features: [annotationRef.current],
       }),
     })

@@ -16,7 +16,7 @@ export interface SelectedFeatureProps {
 
 export function SelectedFeature({ feature }: SelectedFeatureProps) {
   const map = useMap();
-  const markerSourceRef = useRef(new VectorSource());
+  const markerSourceRef = useRef(new VectorSource({ wrapX: false }));
   const markerLayerRef = useRef<VectorLayer<VectorSource<Geometry>>>(
     new VectorLayer({
       zIndex: 1000,
