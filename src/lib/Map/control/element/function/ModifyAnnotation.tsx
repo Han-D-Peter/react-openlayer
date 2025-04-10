@@ -209,7 +209,7 @@ export function ModifyAnnotation({
     <Button
       id={buttonId}
       isDisabled={disabled}
-      disabled
+      disabled={disabled}
       hasPopup
       popupText="Modify"
       onClick={() => {

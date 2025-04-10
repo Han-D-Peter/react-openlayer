@@ -217,7 +217,7 @@ export function PolygonDrawButton({
     <Button
       id={buttonId}
       isDisabled={disabled}
-      disabled
+      disabled={disabled}
       hasPopup
       popupText="Polygon"
       onClick={() => {

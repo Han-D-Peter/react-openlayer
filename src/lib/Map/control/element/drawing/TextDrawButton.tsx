@@ -175,7 +175,7 @@ export function TextDrawButton({
       id={buttonId}
       hasPopup
       isDisabled={disabled}
-      disabled
+      disabled={disabled}
       popupText="Text"
       onClick={() => {
         if (isActive) {

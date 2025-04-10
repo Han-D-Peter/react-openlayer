@@ -184,7 +184,7 @@ export function RectangleDrawButton({
     <Button
       id={buttonId}
       hasPopup
-      disabled
+      disabled={disabled}
       isDisabled={disabled}
       popupText="Rectangle"
       onClick={() => {

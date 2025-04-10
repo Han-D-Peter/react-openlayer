@@ -202,7 +202,7 @@ export function PolylineDrawButton({
     <Button
       id={buttonId}
       isDisabled={disabled}
-      disabled
+      disabled={disabled}
       hasPopup
       popupText="Polyline"
       onClick={() => {

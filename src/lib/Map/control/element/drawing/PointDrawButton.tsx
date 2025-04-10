@@ -176,7 +176,7 @@ export function PointDrawButton({
     <Button
       id={buttonId}
       isDisabled={disabled}
-      disabled
+      disabled={disabled}
       hasPopup
       popupText="Point"
       onClick={() => {

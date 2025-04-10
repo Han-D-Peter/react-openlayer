@@ -156,7 +156,7 @@ export function MultiPointDrawButton({
   return (
     <Button
       isDisabled={disabled}
-      disabled
+      disabled={disabled}
       id={buttonId}
       hasPopup
       popupText="Multi Point"

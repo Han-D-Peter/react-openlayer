@@ -62,7 +62,7 @@ export function MoveAnnotation({
       id={buttonId}
       hasPopup
       isDisabled={disabled}
-      disabled
+      disabled={disabled}
       popupText="Move"
       onClick={() => {
         if (isActive) {

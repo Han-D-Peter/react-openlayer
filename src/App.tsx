@@ -195,15 +195,7 @@ function App() {
           <FullScreenFeature />
           <DrawingTools
             marker="disabled"
-            multiMarker="disabled"
-            polyline="disabled"
-            rectangle="disabled"
-            polygon="disabled"
             color="RED"
-            text="disabled"
-            edit="disabled"
-            movement="disabled"
-            remove="disabled"
             onCanvas
             onDrawEnd={(e) => {
               if (!_.isArray(e)) {

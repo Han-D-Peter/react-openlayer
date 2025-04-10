@@ -81,7 +81,7 @@ export function DeleteAnnotation({
       id={buttonId}
       hasPopup
       isDisabled={disabled}
-      disabled
+      disabled={disabled}
       popupText="Delete"
       onClick={() => {
         if (!isActive) {
