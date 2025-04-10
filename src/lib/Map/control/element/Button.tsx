@@ -63,6 +63,8 @@ const StyledButton = styled.button<{
   border: 0;
   border-radius: ${(props) => getborderRadiusBySide(props.side)};
   box-shadow: 0px 3px 4px 0px #959595;
+  cursor: ${({ isDisabled }) => (isDisabled ? "not-allowed" : "pointer")};
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.6 : 1)};
 `;
 
 const ButtonContainer = styled.div`

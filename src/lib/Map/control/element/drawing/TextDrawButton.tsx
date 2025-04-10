@@ -35,6 +35,7 @@ export function TextDrawButton({
   onEnd,
   onClick,
   onCanvas = false,
+  disabled,
   ...props
 }: TextDrawButtonProps) {
   const map = useMap();
@@ -173,6 +174,8 @@ export function TextDrawButton({
     <Button
       id={buttonId}
       hasPopup
+      isDisabled={disabled}
+      disabled
       popupText="Text"
       onClick={() => {
         if (isActive) {

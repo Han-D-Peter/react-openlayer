@@ -18,6 +18,7 @@ export interface MoveAnnotationProps extends ButtonProps {
 export function MoveAnnotation({
   onMoveChange,
   target,
+  disabled,
   ...props
 }: MoveAnnotationProps) {
   const translateInteractionRef = useRef<Translate | null>(null);
@@ -60,6 +61,8 @@ export function MoveAnnotation({
     <Button
       id={buttonId}
       hasPopup
+      isDisabled={disabled}
+      disabled
       popupText="Move"
       onClick={() => {
         if (isActive) {

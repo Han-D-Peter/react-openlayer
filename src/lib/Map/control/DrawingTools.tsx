@@ -25,18 +25,19 @@ import { useMap } from "../hooks";
 import VectorSource from "ol/source/Vector";
 import { ANNOTATION_COLOR } from "../constants";
 
+type FeatureMode = boolean | "disabled";
 export interface DrawingToolsProps {
-  multiMarker?: boolean;
-  marker?: boolean;
-  polyline?: boolean;
-  rectangle?: boolean;
-  polygon?: boolean;
-  text?: boolean;
+  multiMarker?: FeatureMode;
+  marker?: FeatureMode;
+  polyline?: FeatureMode;
+  rectangle?: FeatureMode;
+  polygon?: FeatureMode;
+  text?: FeatureMode;
   target?: Feature<Geometry> | null;
-  edit?: boolean;
-  movement?: boolean;
+  edit?: FeatureMode;
+  movement?: FeatureMode;
   color?: keyof typeof ANNOTATION_COLOR;
-  remove?: boolean;
+  remove?: FeatureMode;
   onDrawStart?: () => void;
   onDelete?: (event: SelectEvent) => void;
   onMove?: (event: TranslateEvent) => void;
@@ -97,7 +98,7 @@ export function DrawingTools({
   return (
     <>
       <ControlGroup>
-        {multiMarker && (
+        {multiMarker === true && (
           <MultiPointDrawButton
             // isActive={isSelected === "0"}
             onEnd={endDrawing}
@@ -107,7 +108,18 @@ export function DrawingTools({
             onCanvas={onCanvas}
           />
         )}
-        {marker && (
+        {multiMarker === "disabled" && (
+          <MultiPointDrawButton
+            disabled
+            // isActive={isSelected === "0"}
+            onEnd={endDrawing}
+            // onClick={() => {
+            //   switchControl("0");
+            // }}
+            onCanvas={onCanvas}
+          />
+        )}
+        {marker === true && (
           <PointDrawButton
             // isActive={isSelected === "1"}
             onEnd={endDrawing}
@@ -117,7 +129,18 @@ export function DrawingTools({
             onCanvas={onCanvas}
           />
         )}
-        {polyline && (
+        {marker === "disabled" && (
+          <PointDrawButton
+            disabled
+            // isActive={isSelected === "1"}
+            onEnd={endDrawing}
+            // onClick={() => {
+            //   switchControl("1");
+            // }}
+            onCanvas={onCanvas}
+          />
+        )}
+        {polyline === true && (
           <PolylineDrawButton
             color={color}
             // isActive={isSelected === "2"}
@@ -128,7 +151,19 @@ export function DrawingTools({
             onCanvas={onCanvas}
           />
         )}
-        {rectangle && (
+        {polyline === "disabled" && (
+          <PolylineDrawButton
+            disabled
+            color={color}
+            // isActive={isSelected === "2"}
+            // onClick={() => {
+            //   switchControl("2");
+            // }}
+            onEnd={endDrawing}
+            onCanvas={onCanvas}
+          />
+        )}
+        {rectangle === true && (
           <RectangleDrawButton
             color={color}
             // isActive={isSelected === "3"}
@@ -139,7 +174,19 @@ export function DrawingTools({
             onCanvas={onCanvas}
           />
         )}
-        {polygon && (
+        {rectangle === "disabled" && (
+          <RectangleDrawButton
+            disabled
+            color={color}
+            // isActive={isSelected === "3"}
+            // onClick={() => {
+            //   switchControl("3");
+            // }}
+            onEnd={endDrawing}
+            onCanvas={onCanvas}
+          />
+        )}
+        {polygon === true && (
           <PolygonDrawButton
             color={color}
             // isActive={isSelected === "4"}
@@ -150,8 +197,31 @@ export function DrawingTools({
             onCanvas={onCanvas}
           />
         )}
-        {text && (
+        {polygon === "disabled" && (
+          <PolygonDrawButton
+            disabled
+            color={color}
+            // isActive={isSelected === "4"}
+            // onClick={() => {
+            //   switchControl("4");
+            // }}
+            onEnd={endDrawing}
+            onCanvas={onCanvas}
+          />
+        )}
+        {text === true && (
           <TextDrawButton
+            // isActive={isSelected === "5"}
+            // onClick={() => {
+            //   switchControl("5");
+            // }}
+            onEnd={endDrawing}
+            onCanvas={onCanvas}
+          />
+        )}
+        {text === "disabled" && (
+          <TextDrawButton
+            disabled
             // isActive={isSelected === "5"}
             // onClick={() => {
             //   switchControl("5");
@@ -162,7 +232,7 @@ export function DrawingTools({
         )}
       </ControlGroup>
       <ControlGroup>
-        {edit && (
+        {edit === true && (
           <ModifyAnnotation
             target={target}
             // isActive={isSelected === "6"}
@@ -172,7 +242,18 @@ export function DrawingTools({
             onModifyChange={onModify}
           />
         )}
-        {movement && (
+        {edit === "disabled" && (
+          <ModifyAnnotation
+            disabled
+            target={target}
+            // isActive={isSelected === "6"}
+            // onClick={() => {
+            //   switchControl("6");
+            // }}
+            onModifyChange={onModify}
+          />
+        )}
+        {movement === true && (
           <MoveAnnotation
             target={target}
             // isActive={isSelected === "7"}
@@ -182,8 +263,29 @@ export function DrawingTools({
             onMoveChange={onMove}
           />
         )}
-        {remove && (
+        {movement === "disabled" && (
+          <MoveAnnotation
+            disabled
+            target={target}
+            // isActive={isSelected === "7"}
+            // onClick={() => {
+            //   switchControl("7");
+            // }}
+            onMoveChange={onMove}
+          />
+        )}
+        {remove === true && (
           <DeleteAnnotation
+            // isActive={isSelected === "8"}
+            // onClick={() => {
+            //   switchControl("8");
+            // }}
+            onDeleteChange={onDelete}
+          />
+        )}
+        {remove === "disabled" && (
+          <DeleteAnnotation
+            disabled
             // isActive={isSelected === "8"}
             // onClick={() => {
             //   switchControl("8");

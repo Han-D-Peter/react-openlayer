@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  BoundaryCircle,
   CustomCircle,
   CustomMarker,
   CustomPolyLine,
   CustomPolygon,
   CustomRectangle,
   ImageMarker,
-  BoundaryCircle,
 } from "./lib/Map/layer/annotation";
 import { InnerText } from "./lib/Map/Text";
 import { FullScreenFeature } from "./lib/Map/control/FullScreenFeature";
@@ -136,8 +136,15 @@ function App() {
             상수도 보호구역
           </BoundaryCircle>
         </LayerGroup>
+        <CustomMarker
+          center={[126.529692, 35.935785]}
+          color="SKYBLUE"
+          onClick={() => console.log("boundary")}
+          onHover={() => console.log("boundary hover")}
+          onLeave={() => console.log("boundary leave")}
+        ></CustomMarker>
 
-        {/* {isShown && (
+        {isShown && (
           <>
             <LayerGroup zIndex={2}>
               <CustomPolygon
@@ -180,14 +187,23 @@ function App() {
               </CustomRectangle>
             </LayerGroup>
           </>
-        )} */}
+        )}
 
         <CompassWheel />
         <ControlSection>
           <ZoomFeature />
           <FullScreenFeature />
           <DrawingTools
+            marker="disabled"
+            multiMarker="disabled"
+            polyline="disabled"
+            rectangle="disabled"
+            polygon="disabled"
             color="RED"
+            text="disabled"
+            edit="disabled"
+            movement="disabled"
+            remove="disabled"
             onCanvas
             onDrawEnd={(e) => {
               if (!_.isArray(e)) {

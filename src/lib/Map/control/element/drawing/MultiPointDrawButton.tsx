@@ -39,6 +39,7 @@ export function MultiPointDrawButton({
   onClick,
   onCanvas = false,
   onStart,
+  disabled,
   ...props
 }: MultiPointDrawButtonProps) {
   const map = useMap();
@@ -154,6 +155,8 @@ export function MultiPointDrawButton({
 
   return (
     <Button
+      isDisabled={disabled}
+      disabled
       id={buttonId}
       hasPopup
       popupText="Multi Point"

@@ -45,6 +45,7 @@ export function PolygonDrawButton({
   onClick,
   onCanvas = false,
   color = "BLUE",
+  disabled,
   ...props
 }: PolygonDrawButtonProps) {
   const map = useMap();
@@ -215,6 +216,8 @@ export function PolygonDrawButton({
   return (
     <Button
       id={buttonId}
+      isDisabled={disabled}
+      disabled
       hasPopup
       popupText="Polygon"
       onClick={() => {

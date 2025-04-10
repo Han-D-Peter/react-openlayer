@@ -45,6 +45,7 @@ export function PolylineDrawButton({
   onCanvas = false,
   onStart,
   color = "BLUE",
+  disabled,
   ...props
 }: PolylineDrawButtonProps) {
   const map = useMap();
@@ -200,6 +201,8 @@ export function PolylineDrawButton({
   return (
     <Button
       id={buttonId}
+      isDisabled={disabled}
+      disabled
       hasPopup
       popupText="Polyline"
       onClick={() => {

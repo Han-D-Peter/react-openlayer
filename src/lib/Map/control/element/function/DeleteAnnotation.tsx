@@ -17,6 +17,7 @@ export interface DeleteAnnotationProps extends ButtonProps {
 
 export function DeleteAnnotation({
   onDeleteChange,
+  disabled,
   ...props
 }: DeleteAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
@@ -79,6 +80,8 @@ export function DeleteAnnotation({
     <Button
       id={buttonId}
       hasPopup
+      isDisabled={disabled}
+      disabled
       popupText="Delete"
       onClick={() => {
         if (!isActive) {

@@ -39,6 +39,7 @@ export function PointDrawButton({
   onClick,
   onCanvas = false,
   onStart,
+  disabled,
   ...props
 }: PointDrawButtonProps) {
   const map = useMap();
@@ -174,6 +175,8 @@ export function PointDrawButton({
   return (
     <Button
       id={buttonId}
+      isDisabled={disabled}
+      disabled
       hasPopup
       popupText="Point"
       onClick={() => {

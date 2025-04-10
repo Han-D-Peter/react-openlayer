@@ -19,6 +19,7 @@ export interface ModifyAnnotationProps extends ButtonProps {
 export function ModifyAnnotation({
   onModifyChange,
   target,
+  disabled,
   ...props
 }: ModifyAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
@@ -207,6 +208,8 @@ export function ModifyAnnotation({
   return (
     <Button
       id={buttonId}
+      isDisabled={disabled}
+      disabled
       hasPopup
       popupText="Modify"
       onClick={() => {

@@ -43,6 +43,7 @@ export function RectangleDrawButton({
   onCanvas = false,
   onStart,
   color = "BLUE",
+  disabled,
   ...props
 }: RectangleDrawButtonProps) {
   const map = useMap();
@@ -183,6 +184,8 @@ export function RectangleDrawButton({
     <Button
       id={buttonId}
       hasPopup
+      disabled
+      isDisabled={disabled}
       popupText="Rectangle"
       onClick={() => {
         if (isActive) {
