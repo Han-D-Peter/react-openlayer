@@ -40,6 +40,7 @@ import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
 import TestField from "./TestField";
 import json from "./sample.json";
+import { IssueGeoJsonLayer } from "./lib/Map/layer/tileLayer/IssueGeoJsonLayer";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
@@ -101,20 +102,21 @@ function App() {
       <TestField />
 
       <MapContainer
-        center={[126.529692, 35.935785]}
+        center={[126.576601, 36.88147]}
         zoomLevel={17}
         height={mapSize.height}
         width={mapSize.width}
         ref={ref}
         isAbledSelection
       >
-        <GeoJsonLayer geoJson={json} color="red" />
+        {/* <GeoJsonLayer geoJson={json} color="red" projectionCode="WGS:84" /> */}
+        <IssueGeoJsonLayer geoJson={json} projectionCode="WGS:84" />
 
         <TileLayer
           maxZoom={23}
           crossOrigin={"anonymous"}
           tileMatrix={tileMatrix}
-          url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/16/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
+          url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1070/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
         />
         <ImageOverlay
           ref={imageRef}

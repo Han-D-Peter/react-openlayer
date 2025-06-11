@@ -14,7 +14,6 @@ import { Button, ButtonProps } from "../Button";
 import { MultiPointIcon } from "../../../constants/icons/MultiPointIcon";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
-import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
 
 export interface MultiPointDrawButtonProps extends ButtonProps {
   /**
