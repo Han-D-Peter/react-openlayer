@@ -128,7 +128,7 @@ function App() {
           <BoundaryCircle
             center={[126.841284, 35.191516]}
             circleRadius={200}
-            color="SKYBLUE"
+            color="RED"
             onClick={() => console.log("boundary")}
             onHover={() => console.log("boundary hover")}
             onLeave={() => console.log("boundary leave")}

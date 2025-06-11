@@ -16,6 +16,7 @@ interface BoundaryCircleProps {
    * @description by meter
    */
   circleRadius: number;
+  circleColor?: keyof typeof ANNOTATION_COLOR;
   children: string;
   color: keyof typeof ANNOTATION_COLOR;
   center: Location;
@@ -29,6 +30,7 @@ export function BoundaryCircle({
   circleRadius,
   children,
   color = "ROYAL_BLUE",
+  circleColor = "ROYAL_BLUE",
   center,
   hasStroke = true,
   onClick,
