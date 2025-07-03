@@ -7,7 +7,6 @@ import VectorLayer from "ol/layer/Vector";
 import { useMap } from "../../hooks";
 import { register } from "ol/proj/proj4";
 import { Fill, Stroke, Style, Text } from "ol/style";
-import { Feature } from "ol";
 import { Snap } from "ol/interaction";
 import useDrawSource from "../../hooks/incontext/useDrawSource";
 

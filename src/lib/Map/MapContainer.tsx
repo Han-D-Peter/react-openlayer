@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  memo,
-  useContext,
-  useEffect,
-  useId,
-} from "react";
+import React, { memo, useEffect, useId } from "react";
 import {
   ReactNode,
   useLayoutEffect,
@@ -19,21 +13,14 @@ import { Tile as TileLayer } from "ol/layer";
 import { OSM } from "ol/source";
 import { MapContext } from "./MapContext";
 import { useHoverCursor } from "./hooks/incontext/useHoverCursor";
-import { FeatureStore } from "./FeatureStore";
 import { boundingExtent } from "ol/extent";
 import "ol/ol.css";
 import { DoubleClickZoom } from "ol/interaction";
-import { ZoomFeature } from "./control/ZoomFeature";
-import VectorSource from "ol/source/Vector";
 
 export type Lng = number;
 export type Lat = number;
 
 export type Location = [Lng, Lat];
-
-export const ControlContext = createContext<{
-  drawVectorSource: VectorSource;
-} | null>(null);
 
 export interface MapProps {
   scrollWheelZoom?: boolean;
@@ -94,7 +81,6 @@ export interface MapProps {
    * @default false
    * @description If you set this property to 'true', you can see selection of annotations.
    */
-  isAbledSelection?: boolean;
 
   children?: ReactNode;
 }
@@ -114,7 +100,6 @@ export const MapContainer = memo(
         height = "1000px",
         width = "1000px",
         isShownOsm = true,
-        isAbledSelection = false,
       },
       ref
     ) => {
@@ -141,10 +126,6 @@ export const MapContainer = memo(
             rotate: isRotateAbled,
           }).extend([]),
         })
-      );
-
-      const drawVectorSource = useRef<VectorSource>(
-        new VectorSource({ wrapX: false })
       );
 
       useEffect(() => {
@@ -217,7 +198,6 @@ export const MapContainer = memo(
         }
         mapRef.setTarget(mapId);
         return () => {
-          drawVectorSource.current?.clear();
           mapRef.dispose();
           mapRef.setTarget(undefined);
           mapRef.setLayers([]);
@@ -227,19 +207,13 @@ export const MapContainer = memo(
       // MapContext.Provider 에 객체 저장
       return (
         <MapContext.Provider value={mapObj.current}>
-          <ControlContext.Provider
-            value={{ drawVectorSource: drawVectorSource.current }}
+          <div
+            id={mapId}
+            className="react-openlayers-map-container"
+            style={{ width, height }}
           >
-            <FeatureStore isAbledSelection={isAbledSelection}>
-              <div
-                id={mapId}
-                className="react-openlayers-map-container"
-                style={{ width, height }}
-              >
-                {children}
-              </div>
-            </FeatureStore>
-          </ControlContext.Provider>
+            {children}
+          </div>
         </MapContext.Provider>
       );
     }

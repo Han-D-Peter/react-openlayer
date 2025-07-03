@@ -4,7 +4,6 @@ import { useMap } from "../hooks";
 import ImageLayer from "ol/layer/Image";
 import { ImageStatic } from "ol/source";
 import { Location } from "../MapContainer";
-import { Map } from "ol";
 
 export interface ImageOverlayProps {
   imageUrl: string;

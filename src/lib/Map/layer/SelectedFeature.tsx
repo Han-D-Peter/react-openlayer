@@ -9,12 +9,14 @@ import { isArray } from "lodash";
 import { makeSelectedFeature } from "src/lib/utils/feature";
 import { Coordinate } from "ol/coordinate";
 import BaseEvent from "ol/events/Event";
+import { FeatureFromGeojson } from "../FeaturesStore";
+import GeoJSON from "ol/format/GeoJSON";
 
 export interface SelectedFeatureProps {
-  feature: Feature<Geometry> | Feature<Geometry>[] | null;
+  featureGeoJson: FeatureFromGeojson;
 }
 
-export function SelectedFeature({ feature }: SelectedFeatureProps) {
+export function SelectedFeature({ featureGeoJson }: SelectedFeatureProps) {
   const map = useMap();
   const markerSourceRef = useRef(new VectorSource({ wrapX: false }));
   const markerLayerRef = useRef<VectorLayer<VectorSource<Geometry>>>(
@@ -26,6 +28,22 @@ export function SelectedFeature({ feature }: SelectedFeatureProps) {
   );
 
   const [coordinates, setCoordinates] = useState<Coordinate[] | null>(null);
+  const [feature, setFeature] = useState<
+    Feature<Geometry> | Feature<Geometry>[] | null
+  >(null);
+
+  useEffect(() => {
+    if (featureGeoJson) {
+      // GeoJSON을 OpenLayers Feature로 변환
+      const format = new GeoJSON({ extractGeometryName: true });
+      const olFeature = format.readFeature(featureGeoJson, {
+        featureProjection: map.getView().getProjection(),
+      });
+      setFeature(olFeature);
+    } else {
+      setFeature(null);
+    }
+  }, [featureGeoJson]);
 
   // 선택된 피처가 없을 때 레이어 제거 로직
   useEffect(() => {
@@ -49,6 +67,7 @@ export function SelectedFeature({ feature }: SelectedFeatureProps) {
   useEffect(() => {
     const onChange = (e: BaseEvent) => {
       const targetFeature = e.target as Feature;
+
       const targetGeometry = targetFeature.getGeometry() as Geometry;
       let nomalizedCoordinates;
 
@@ -87,14 +106,7 @@ export function SelectedFeature({ feature }: SelectedFeatureProps) {
       const geometryType = feature.getGeometry()?.getType();
       const geometry = feature.getGeometry();
 
-      if (feature?.getProperties().shape === "Polygon") {
-        const coordinates = (geometry as Polygon).getCoordinates();
-        coordinates[0].pop();
-        nomalizedCoordinates = coordinates[0];
-        setCoordinates(nomalizedCoordinates);
-      }
-
-      if (feature?.getProperties().shape === "Rectangle") {
+      if (geometryType === "Polygon") {
         const coordinates = (geometry as Polygon).getCoordinates();
         coordinates[0].pop();
         nomalizedCoordinates = coordinates[0];

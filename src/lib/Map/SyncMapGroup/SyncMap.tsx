@@ -1,6 +1,5 @@
 import {
   ReactNode,
-  TouchEvent,
   useCallback,
   useEffect,
   useId,
@@ -8,7 +7,7 @@ import {
   useRef,
 } from "react";
 import { defaults as defaultControls } from "ol/control";
-import { ControlContext, Location } from "../MapContainer";
+import { Location } from "../MapContainer";
 import { Map, MapBrowserEvent, MapEvent, View } from "ol";
 import { fromLonLat, toLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
@@ -139,22 +138,18 @@ export const SyncMap = ({
 
   return (
     <MapContext.Provider value={mapObj.current}>
-      <ControlContext.Provider
-        value={{ drawVectorSource: drawVectorSource.current }}
+      <div
+        id={mapId}
+        onWheel={(e) => onWheelHandler(e, mapObj.current)}
+        onMouseUp={onMouseUpOnMap}
+        onTouchEnd={(e) => {
+          onMouseUpOnMap();
+        }}
+        className="react-openlayers-map-container"
+        style={{ width, height }}
       >
-        <div
-          id={mapId}
-          onWheel={(e) => onWheelHandler(e, mapObj.current)}
-          onMouseUp={onMouseUpOnMap}
-          onTouchEnd={(e) => {
-            onMouseUpOnMap();
-          }}
-          className="react-openlayers-map-container"
-          style={{ width, height }}
-        >
-          {children}
-        </div>
-      </ControlContext.Provider>
+        {children}
+      </div>
     </MapContext.Provider>
   );
 };

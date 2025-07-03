@@ -10,7 +10,6 @@ import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { SelectEvent } from "ol/interaction/Select";
 import { useMap } from "../../hooks/incontext/useMap";
 import { makeText } from "../../utils/object";
 import { ANNOTATION_COLOR } from "../../constants/color";

@@ -1,5 +1,6 @@
 import { uniqueId } from "lodash";
 import { Coordinate } from "ol/coordinate";
+import { FeatureFromGeojson } from "../Map/FeaturesStore";
 
 export type GeometryType = "Point" | "MultiPoint" | "LineString" | "Polygon";
 
@@ -9,7 +10,7 @@ export type PointGeometry = {
 };
 
 export type Geometry = {
-  type: Omit<GeometryType, "Point">;
+  type: "MultiPoint" | "LineString" | "Polygon";
   coordinates: Coordinate[];
 };
 
@@ -22,14 +23,11 @@ type makeGeojsonShapeProperties = Record<string, unknown>;
 export function makeGeojsonShape(
   { type, coordinates }: MakeGeojsonShapeArgs,
   properties: makeGeojsonShapeProperties
-) {
+): FeatureFromGeojson {
   return {
     type: "Feature",
     id: uniqueId(),
-    geometry: {
-      type,
-      coordinates,
-    },
+    geometry: { type, coordinates } as MakeGeojsonShape,
     properties,
   };
 }

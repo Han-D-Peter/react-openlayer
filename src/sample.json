@@ -598,7 +598,7 @@
         "issueDegree": "심각도",
         "issue": "균열",
         "issueGrade": 0,
-        "type": "Marker",
+        "type": "marker",
         "created": "2025/04/18 11:14:05",
         "original_type": "marker"
       }

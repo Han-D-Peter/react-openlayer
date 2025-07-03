@@ -1,30 +1,29 @@
-import React, { useId } from "react";
+import React, { useCallback, useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
-import { Draw, Snap } from "ol/interaction";
+import { Draw } from "ol/interaction";
 import { useFeatureStore, useMap } from "../../../hooks";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
-import { makeText } from "../../../utils/object";
 import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
-import Icon from "ol/style/Icon";
-import { Geometry, LineString } from "ol/geom";
-import { Feature } from "ol";
-import { PolylineIcon } from "../../../constants/icons/PolylineIcon";
 import { useControlSection } from "../../layout";
 import { LineSegment } from "@phosphor-icons/react";
 import { InnerButton } from "../InnerButton";
-import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
 import { ANNOTATION_COLOR } from "src/lib/Map/constants";
+import {
+  FeatureFromGeojson,
+  useFeaturesStore,
+} from "src/lib/Map/FeaturesStore";
+import { positionsFromFeature } from "src/lib/utils";
+import { Coordinate } from "ol/coordinate";
+import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
 
 export interface PolylineDrawButtonProps extends ButtonProps {
   /**
    * @description You can get Multipoint feature what was made by callback function.
    */
-  onEnd?: (features: Feature<Geometry>) => void;
+  onEnd?: (features: FeatureFromGeojson) => void;
 
   /**
    * @description You can set callback Fn on 'start' event.
@@ -54,11 +53,12 @@ export function PolylineDrawButton({
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
-  const { drawVectorSource } = useDrawSource();
-  const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
+
+  const { addGeoJson } = useFeaturesStore();
+
   const drawRef = useRef(
     new Draw({
-      source: onCanvas ? drawVectorSource : undefined,
+      source: undefined,
       type: "LineString",
       style: new Style({
         stroke: new Stroke({
@@ -78,7 +78,7 @@ export function PolylineDrawButton({
 
   useEffect(() => {
     drawRef.current = new Draw({
-      source: onCanvas ? drawVectorSource : undefined,
+      source: undefined,
       type: "LineString",
       style: new Style({
         stroke: new Stroke({
@@ -108,53 +108,55 @@ export function PolylineDrawButton({
     map.addInteraction(drawRef.current);
   };
 
-  const finishDrawingByRightClick = (e: MouseEvent) => {
-    e.preventDefault();
-    drawRef.current.finishDrawing();
-    map.getViewport().style.cursor = "pointer";
-  };
+  const finishDrawingByRightClick = useCallback(
+    (e: MouseEvent) => {
+      e.preventDefault();
+      drawRef.current.finishDrawing();
+      map.getViewport().style.cursor = "pointer";
+    },
+    [map]
+  );
 
-  const drawing = (event: DrawEvent) => {
-    const feature = event.feature;
-    const geometry = feature.getGeometry() as LineString;
-    feature.setStyle(
-      new Style({
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(1),
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill(1),
-        }),
-        text: makeText({
-          text: "unknown",
-          size: 15,
-          color: "black",
-          outline: true,
-          isMarker: true,
-        }),
-      })
-    );
-    feature.setProperties({
-      shape: "Polyline",
-      isModifying: false,
-      source: drawVectorSource,
-      layer: vectorLayerRef.current,
-      positions: geometry.getCoordinates(),
-    });
+  const drawing = useCallback(
+    (event: DrawEvent) => {
+      const feature = event.feature;
+      const newPosition = positionsFromFeature(feature, true) as Coordinate[];
 
-    selectButton("");
-    map.getViewport().style.cursor = "pointer";
-    map.removeInteraction(drawRef.current);
+      const newGeoJson = makeGeojsonShape(
+        {
+          type: "LineString",
+          coordinates: newPosition,
+        },
+        {
+          title: "unknown",
+          comment: "",
+          issueDegree: "심각도",
+          issue: "이슈 사항",
+          issueGrade: 1,
+          type: "line",
+          color: "blue",
+          opacity: 1,
+          fontSize: 12,
+          original_type: "line",
+          isSelected: true,
+        }
+      );
 
-    if (onEnd) {
-      onEnd(feature);
-    }
-    if (onCanvas) {
-      selectFeature(feature);
-    }
-    setTimeout(() => map.setProperties({ isDrawing: false }), 100);
-  };
+      selectButton("");
+      map.getViewport().style.cursor = "pointer";
+      map.removeInteraction(drawRef.current);
+
+      if (onEnd) {
+        onEnd(newGeoJson);
+      }
+      if (onCanvas) {
+        addGeoJson(newGeoJson);
+        selectFeature(newGeoJson);
+      }
+      setTimeout(() => map.setProperties({ isDrawing: false }), 100);
+    },
+    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+  );
 
   useEffect(() => {
     if (selectedButtonId !== buttonId) {
@@ -174,29 +176,13 @@ export function PolylineDrawButton({
         .getViewport()
         .removeEventListener("contextmenu", finishDrawingByRightClick);
     };
-  }, []);
+  }, [drawing, finishDrawingByRightClick, map]);
 
   useEffect(() => {
     if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-    const snap = new Snap({
-      source: drawVectorSource,
-    });
-    map.addInteraction(snap);
-    return () => {
-      map.removeInteraction(snap);
-    };
   }, [isActive, map]);
-
-  useEffect(() => {
-    vectorLayerRef.current.setSource(drawVectorSource);
-    if (onCanvas) {
-      map.addLayer(vectorLayerRef.current);
-    } else {
-      map.removeLayer(vectorLayerRef.current);
-    }
-  }, [onCanvas, map]);
 
   return (
     <Button

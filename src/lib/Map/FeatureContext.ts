@@ -1,12 +1,9 @@
-import { Feature } from "ol";
-import { Geometry } from "ol/geom";
 import { createContext } from "react";
+import { FeatureFromGeojson } from "./FeaturesStore";
 
 export interface FeatureContextItems {
-  selectedFeature: Feature<Geometry> | Feature<Geometry>[] | null;
-  selectFeature: (
-    feature: Feature<Geometry> | Feature<Geometry>[] | null
-  ) => void;
+  selectedFeature: FeatureFromGeojson | null;
+  selectFeature: (feature: FeatureFromGeojson | null) => void;
   unSelectFeature: () => void;
 }
 

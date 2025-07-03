@@ -11,7 +11,6 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Circle, Fill, Stroke, Style } from "ol/style";
 import { makeText } from "../../utils/object";
-import { SelectEvent } from "ol/interaction/Select";
 import { Annotation } from ".";
 import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
 

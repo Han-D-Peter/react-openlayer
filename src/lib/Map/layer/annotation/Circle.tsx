@@ -1,5 +1,5 @@
 /* eslint-disable no-self-assign */
-import React, { forwardRef, useCallback, useImperativeHandle } from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import { useEffect, useRef } from "react";
 import { Feature } from "ol";
 import Circle from "ol/geom/Circle";
@@ -9,7 +9,6 @@ import VectorSource from "ol/source/Vector";
 import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import { fromLonLat } from "ol/proj";
-import { SelectEvent } from "ol/interaction/Select";
 import { Text } from "ol/style";
 import { useMap } from "../../hooks/incontext/useMap";
 import { Location } from "../../MapContainer";

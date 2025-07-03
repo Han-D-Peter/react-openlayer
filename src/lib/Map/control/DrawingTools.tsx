@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useRef,
-} from "react";
+import React, { ReactNode, useEffect } from "react";
 import { ControlGroup } from "./layout/ControlGroup";
 import { useState } from "react";
 import { PointDrawButton } from "./element/drawing/PointDrawButton";
@@ -18,12 +12,11 @@ import { DeleteAnnotation } from "./element/function/DeleteAnnotation";
 import { MultiPointDrawButton } from "./element/drawing/MultiPointDrawButton";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import { SelectEvent } from "ol/interaction/Select";
 import { TranslateEvent } from "ol/interaction/Translate";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { useMap } from "../hooks";
-import VectorSource from "ol/source/Vector";
 import { ANNOTATION_COLOR } from "../constants";
+import { FeatureFromGeojson } from "../FeaturesStore";
 
 type FeatureMode = boolean | "disabled";
 export interface DrawingToolsProps {
@@ -39,10 +32,10 @@ export interface DrawingToolsProps {
   color?: keyof typeof ANNOTATION_COLOR;
   remove?: FeatureMode;
   onDrawStart?: () => void;
-  onDelete?: (event: SelectEvent) => void;
+  onDelete?: (event: FeatureFromGeojson | undefined) => void;
   onMove?: (event: TranslateEvent) => void;
   onModify?: (event: ModifyEvent) => void;
-  onDrawEnd?: (event: Feature<Geometry> | Feature<Geometry>[]) => void;
+  onDrawEnd?: (event: FeatureFromGeojson) => void;
   onCanvas?: boolean;
   children?: ReactNode;
 }
@@ -82,7 +75,7 @@ export function DrawingTools({
     }
   };
 
-  const endDrawing = (event: Feature<Geometry> | Feature<Geometry>[]) => {
+  const endDrawing = (event: FeatureFromGeojson) => {
     if (onDrawEnd) {
       onDrawEnd(event);
     }

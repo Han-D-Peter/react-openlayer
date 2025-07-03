@@ -27,6 +27,7 @@ export function IssueGeoJsonLayer({
   projectionCode = "EPSG:5186",
 }: IssueGeoJsonLayerProps) {
   const map = useMap();
+
   const geoJsonLayer = useRef<VectorLayer<VectorSource> | null>(null);
 
   const fromProjection = projectionCode;
@@ -63,20 +64,25 @@ export function IssueGeoJsonLayer({
         const properties = feature.getProperties();
         const type = properties["type"] as string;
         const title = properties["title"] as string;
+        const isSelected = properties["isSelected"] as boolean;
         const color = properties["color"]
           ? ((
               properties["color"] as string
             ).toUpperCase() as keyof typeof ANNOTATION_COLOR)
           : "BLUE";
         const opacity = (properties["opacity"] as number) ?? 1;
-        if (type !== "marker") {
+        if (type !== "marker" && type !== "text") {
           return new Style({
             stroke: new Stroke({
-              color: ANNOTATION_COLOR[color].stroke(opacity),
+              color: isSelected
+                ? "rgba(0, 0, 0, 1)"
+                : ANNOTATION_COLOR[color].stroke(opacity),
               width: 2,
             }),
             fill: new Fill({
-              color: ANNOTATION_COLOR[color].fill(opacity),
+              color: isSelected
+                ? "rgba(0, 0, 0, 0.6)"
+                : ANNOTATION_COLOR[color].fill(opacity),
             }),
             text: new Text({
               text: title,
@@ -89,6 +95,12 @@ export function IssueGeoJsonLayer({
           return new Style({
             stroke: new Stroke({
               color: feature.getProperties()["color"],
+            }),
+            text: new Text({
+              text: title,
+              font: "12px Calibri,sans-serif",
+              fill: new Fill({ color: "#000" }),
+              stroke: new Stroke({ color: "#fff", width: 3 }),
             }),
           });
         }

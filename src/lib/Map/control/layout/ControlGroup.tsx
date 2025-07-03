@@ -1,5 +1,3 @@
-import VectorSource from "ol/source/Vector";
-import React, { createContext, useRef } from "react";
 import { Children, ReactElement, cloneElement } from "react";
 import { Button } from "../element/Button";
 

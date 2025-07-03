@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMap } from "../hooks";
 import { Size } from "ol/size";
 
@@ -14,7 +14,7 @@ export const CaptureMap = ({ onCaptured }: CaptureMapProps) => {
     if (onCaptured && imageSrc) {
       onCaptured(imageSrc);
     }
-  }, [imageSrc]);
+  }, [imageSrc, onCaptured]);
 
   useEffect(() => {
     const capture = () => {

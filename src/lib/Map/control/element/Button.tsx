@@ -1,6 +1,5 @@
 import React, { ButtonHTMLAttributes, MouseEvent, useState } from "react";
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import { ReactNode, forwardRef } from "react";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

@@ -3,16 +3,18 @@ import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Select } from "ol/interaction";
 import { SelectEvent } from "ol/interaction/Select";
-import VectorSource from "ol/source/Vector";
 import { BiSolidEraser } from "react-icons/bi";
 import { useMap, useSelectAnnotation } from "../../../hooks";
 import { useFeatureStore } from "src/lib/Map/hooks/incontext/useFeatureStore";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
-import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
+import {
+  FeatureFromGeojson,
+  useFeaturesStore,
+} from "src/lib/Map/FeaturesStore";
 
 export interface DeleteAnnotationProps extends ButtonProps {
-  onDeleteChange?: (e: SelectEvent) => void;
+  onDeleteChange?: (e: FeatureFromGeojson | undefined) => void;
 }
 
 export function DeleteAnnotation({
@@ -22,11 +24,11 @@ export function DeleteAnnotation({
 }: DeleteAnnotationProps) {
   const clickedAnnotation = useSelectAnnotation();
   const { selectFeature } = useFeatureStore();
+  const { geoJson, removeGeoJson, getGeoJsonElement } = useFeaturesStore();
   const map = useMap();
   const id = useId();
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
-  const { drawVectorSource } = useDrawSource();
   const isActive = buttonId === selectedButtonId;
   const selectInteractionRef = useRef<Select | null>(null);
 
@@ -40,16 +42,23 @@ export function DeleteAnnotation({
       );
 
       if (target) {
-        const vectorSource = target.getProperties().source as VectorSource;
-        vectorSource.removeFeature(target);
+        const targetId = target.getId();
+
+        removeGeoJson(String(targetId));
         if (onDeleteChange) {
-          onDeleteChange(event);
+          onDeleteChange(getGeoJsonElement(String(targetId)));
         }
-        drawVectorSource.removeFeature(target);
+
         selectButton("");
       }
     },
-    [onDeleteChange, selectFeature]
+    [
+      getGeoJsonElement,
+      onDeleteChange,
+      removeGeoJson,
+      selectButton,
+      selectFeature,
+    ]
   );
 
   useEffect(() => {

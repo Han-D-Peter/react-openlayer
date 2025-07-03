@@ -1,16 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import styled from "@emotion/styled";
 import { MapBrowserEvent, Overlay } from "ol";
 import { Coordinate } from "ol/coordinate";
 import Feature, { FeatureLike } from "ol/Feature";
 import { Point } from "ol/geom";
-import { SelectEvent } from "ol/interaction/Select";
 import VectorLayer from "ol/layer/Vector";
 import { fromLonLat } from "ol/proj";
 import VectorSource from "ol/source/Vector";
 import { Icon, Style } from "ol/style";
-import { useEffect, useLayoutEffect, useRef, useState, useId } from "react";
-import { useDidUpdate, useInteractionEvent, useMap } from "../../hooks";
+import { useEffect, useLayoutEffect, useRef, useId } from "react";
+import { useInteractionEvent, useMap } from "../../hooks";
 import { icon } from "../../utils";
 
 interface ImageMarkerProps {

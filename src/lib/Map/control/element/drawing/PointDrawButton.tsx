@@ -1,26 +1,28 @@
-import React, { useId } from "react";
+import React, { useCallback, useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
-import { Draw, Snap } from "ol/interaction";
+import { Draw } from "ol/interaction";
 import { useFeatureStore, useMap } from "../../../hooks";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
 import { icon, makeText } from "../../../utils/object";
 import Icon from "ol/style/Icon";
 import { DrawEvent } from "ol/interaction/Draw";
-import { Geometry, Point } from "ol/geom";
-import { Feature } from "ol";
 import { PointIcon } from "../../../constants/icons/PointIcon";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
-import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
+import { positionsFromFeature } from "src/lib/utils";
+import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
+import { Coordinate } from "ol/coordinate";
+import {
+  FeatureFromGeojson,
+  useFeaturesStore,
+} from "src/lib/Map/FeaturesStore";
 
 export interface PointDrawButtonProps extends ButtonProps {
   /**
    * @description You can get Multipoint feature what was made by callback function.
    */
-  onEnd: (feature: Feature<Geometry>) => void;
+  onEnd: (feature: FeatureFromGeojson) => void;
 
   /**
    * @description You can set callback Fn on 'start' event.
@@ -48,11 +50,11 @@ export function PointDrawButton({
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
-  const { drawVectorSource } = useDrawSource();
-  const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
+  const { addGeoJson } = useFeaturesStore();
+
   const drawRef = useRef(
     new Draw({
-      source: onCanvas ? drawVectorSource : undefined,
+      source: undefined,
       type: "Point",
       style: new Style({
         text: makeText({
@@ -73,7 +75,7 @@ export function PointDrawButton({
 
   useEffect(() => {
     drawRef.current = new Draw({
-      source: onCanvas ? drawVectorSource : undefined,
+      source: undefined,
       type: "Point",
       style: new Style({
         text: makeText({
@@ -102,43 +104,46 @@ export function PointDrawButton({
     map.addInteraction(drawRef.current);
   };
 
-  const drawing = (event: DrawEvent) => {
-    const feature = event.feature;
-    const geometry = feature.getGeometry() as Point;
-    feature.setStyle(
-      new Style({
-        text: makeText({
-          text: "unknown",
-          size: 15,
-          color: "black",
-          outline: true,
-          isMarker: true,
-        }),
-        image: new Icon({
-          scale: 0.07,
-          src: icon.marker, // 마커 이미지 경로
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        }),
-      })
-    );
-    feature.setProperties({
-      shape: "Point",
-      isModifying: false,
-      source: drawVectorSource,
-      layer: vectorLayerRef.current,
-      positions: geometry.getCoordinates(),
-    });
-    selectButton("");
+  const drawing = useCallback(
+    (event: DrawEvent) => {
+      const feature = event.feature;
 
-    map.removeInteraction(drawRef.current);
-    if (onEnd) {
-      onEnd(feature);
-    }
-    if (onCanvas) {
-      selectFeature(feature);
-    }
-    setTimeout(() => map.setProperties({ isDrawing: false }), 100);
-  };
+      const newPosition = positionsFromFeature(feature, true) as Coordinate;
+
+      const newGeoJson = makeGeojsonShape(
+        {
+          type: "Point",
+          coordinates: newPosition,
+        },
+        {
+          title: "unknown",
+          comment: "",
+          issueDegree: "심각도",
+          issue: "이슈 사항",
+          issueGrade: 1,
+          type: "marker",
+          color: "blue",
+          opacity: 1,
+          fontSize: 12,
+          original_type: "point",
+          isSelected: true,
+        }
+      );
+
+      selectButton("");
+
+      map.removeInteraction(drawRef.current);
+      if (onEnd) {
+        onEnd(newGeoJson);
+      }
+      if (onCanvas) {
+        addGeoJson(newGeoJson);
+        selectFeature(newGeoJson);
+      }
+      setTimeout(() => map.setProperties({ isDrawing: false }), 100);
+    },
+    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+  );
 
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -147,30 +152,13 @@ export function PointDrawButton({
     return () => {
       drawingInstance.un("drawend", drawing);
     };
-  }, []);
+  }, [drawing]);
 
   useEffect(() => {
     if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-    const snap = new Snap({
-      source: drawVectorSource,
-    });
-    map.addInteraction(snap);
-    return () => {
-      map.removeInteraction(snap);
-    };
   }, [isActive, map]);
-
-  useEffect(() => {
-    vectorLayerRef.current.setSource(drawVectorSource);
-
-    if (onCanvas) {
-      map.addLayer(vectorLayerRef.current);
-    } else {
-      map.removeLayer(vectorLayerRef.current);
-    }
-  }, [onCanvas, map]);
 
   return (
     <Button

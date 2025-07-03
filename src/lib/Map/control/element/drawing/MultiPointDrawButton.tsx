@@ -1,25 +1,25 @@
-import React, { useId } from "react";
-import { useEffect, useRef, useState } from "react";
+import React, { useCallback, useId } from "react";
+import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
-import Style from "ol/style/Style";
 import { DrawEvent } from "ol/interaction/Draw";
-import { Feature } from "ol";
-import { Geometry, Point } from "ol/geom";
-import { Text, Fill, Stroke, Circle } from "ol/style";
-import { ANNOTATION_COLOR } from "../../../constants/color";
-import { useMap } from "../../../hooks";
+import { useFeatureStore, useMap } from "../../../hooks";
 import { Button, ButtonProps } from "../Button";
 import { MultiPointIcon } from "../../../constants/icons/MultiPointIcon";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
+import {
+  FeatureFromGeojson,
+  useFeaturesStore,
+} from "src/lib/Map/FeaturesStore";
+import { positionsFromFeature } from "src/lib/utils";
+import { Coordinate } from "ol/coordinate";
+import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
 
 export interface MultiPointDrawButtonProps extends ButtonProps {
   /**
    * @description You can get Multipoint feature what was made by callback function.
    */
-  onEnd?: (features: Feature<Geometry>[]) => void;
+  onEnd?: (features: FeatureFromGeojson) => void;
 
   /**
    * @description You can set callback Fn on 'start' event.
@@ -47,22 +47,15 @@ export function MultiPointDrawButton({
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
-  const drawVectorSource = useRef(new VectorSource({}));
-  const vectorLayerRef = useRef(
-    new VectorLayer({
-      zIndex: 10,
-      source: drawVectorSource.current,
-    })
-  );
+  const { addGeoJson } = useFeaturesStore();
+  const { selectFeature } = useFeatureStore();
+
   const drawRef = useRef(
     new Draw({
-      source: drawVectorSource.current,
+      source: undefined,
       type: "MultiPoint",
     })
   );
-
-  const [features, setFeatures] = useState<Feature<Geometry>[]>([]);
-  // const [isDrawing, setIsDrawing] = useState(false);
 
   const startDrawing = () => {
     if (onClick) {
@@ -76,30 +69,45 @@ export function MultiPointDrawButton({
     map.addInteraction(drawRef.current);
   };
 
-  const drawing = (event: DrawEvent) => {
-    const feature = event.feature;
-    const geometry = feature.getGeometry() as Point;
-    feature.setProperties({
-      shape: "MultiPoint",
-      isModifying: false,
-      source: drawVectorSource.current,
-      layer: vectorLayerRef.current,
-      positions: geometry.getCoordinates(),
-    });
-    setFeatures([...features, feature]);
-  };
+  const drawing = useCallback(
+    (event: DrawEvent) => {
+      const feature = event.feature;
+      const newPosition = positionsFromFeature(feature, true) as Coordinate[];
 
-  const completeDrawing = () => {
-    if (onEnd && features.length > 0) {
-      onEnd(features);
-    }
-    if (!onCanvas) {
-      drawVectorSource.current.clear();
-    }
-    setFeatures([]);
-    map.removeInteraction(drawRef.current);
-    setTimeout(() => map.setProperties({ isDrawing: false }), 100);
-  };
+      const newGeoJson = makeGeojsonShape(
+        {
+          type: "MultiPoint",
+          coordinates: newPosition,
+        },
+        {
+          title: "unknown",
+          comment: "",
+          issueDegree: "심각도",
+          issue: "이슈 사항",
+          issueGrade: 1,
+          type: "multipoint",
+          color: "blue",
+          opacity: 1,
+          fontSize: 12,
+          original_type: "multipoint",
+          isSelected: true,
+        }
+      );
+      selectButton("");
+      map.getViewport().style.cursor = "pointer";
+      drawRef.current.setActive(true);
+      if (onEnd) {
+        onEnd(newGeoJson);
+      }
+      if (onCanvas) {
+        addGeoJson(newGeoJson);
+        selectFeature(newGeoJson);
+      }
+
+      setTimeout(() => map.setProperties({ isDrawing: false }), 100);
+    },
+    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+  );
 
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -109,48 +117,13 @@ export function MultiPointDrawButton({
     return () => {
       drawingInstance.un("drawend", drawing);
     };
-  }, [features]);
+  }, [drawing]);
 
   useEffect(() => {
     if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
   }, [isActive, map]);
-
-  useEffect(() => {
-    map.addLayer(vectorLayerRef.current);
-  }, [map]);
-
-  useEffect(() => {
-    features.forEach((feature, index) => {
-      const style = new Style({
-        image: new Circle({
-          radius: 10,
-          fill: new Fill({
-            color: ANNOTATION_COLOR.BLUE.fill(1), // 원의 색상
-          }),
-          stroke: new Stroke({
-            color: ANNOTATION_COLOR.BLUE.stroke(1), // 테두리 선의 색상
-            width: 2,
-          }),
-        }),
-        text: new Text({
-          text: String(1 + index), // 포인트의 순번 값을 텍스트로 표시
-          font: "bold 15px sans-serif",
-          textAlign: "center",
-
-          fill: new Fill({
-            color: "#000",
-          }),
-          stroke: new Stroke({
-            color: "#fff",
-            width: 3,
-          }),
-        }),
-      });
-      feature.setStyle(style);
-    });
-  }, [features]);
 
   return (
     <Button
@@ -164,7 +137,6 @@ export function MultiPointDrawButton({
           startDrawing();
           selectButton(buttonId);
         } else {
-          completeDrawing();
           selectButton("");
         }
       }}

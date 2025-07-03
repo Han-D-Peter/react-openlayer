@@ -2,7 +2,7 @@ import React from "react";
 import styled from "@emotion/styled";
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks";
-import { Control, FullScreen } from "ol/control";
+import { FullScreen } from "ol/control";
 import { ControlGroup } from "./layout/ControlGroup";
 import { Button } from "./element/Button";
 import { useEffectIfMounted } from "../hooks/useEffectIfMounted";

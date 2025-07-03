@@ -1,28 +1,29 @@
 import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
-import { Draw, Snap } from "ol/interaction";
+import { Draw } from "ol/interaction";
 import { useFeatureStore, useMap } from "../../../hooks";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
 import Style from "ol/style/Style";
 import { DrawEvent } from "ol/interaction/Draw";
 import Fill from "ol/style/Fill";
 import Text from "ol/style/Text";
 import Stroke from "ol/style/Stroke";
-import { Geometry, Point } from "ol/geom";
-import { Feature } from "ol";
-import { TextIcon } from "../../../constants/icons/TextIcon";
 import { useControlSection } from "../../layout";
 import { RxText } from "react-icons/rx";
 import { InnerButton } from "../InnerButton";
-import useDrawSource from "src/lib/Map/hooks/incontext/useDrawSource";
+import {
+  FeatureFromGeojson,
+  useFeaturesStore,
+} from "src/lib/Map/FeaturesStore";
+import { positionsFromFeature } from "src/lib/utils";
+import { Coordinate } from "ol/coordinate";
+import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
 
 export interface TextDrawButtonProps extends ButtonProps {
   /**
    * @description You can get Multipoint feature what was made by callback function.
    */
-  onEnd?: (features: Feature<Geometry>) => void;
+  onEnd?: (features: FeatureFromGeojson) => void;
 
   /**
    * @default false
@@ -44,11 +45,11 @@ export function TextDrawButton({
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
   const { selectFeature } = useFeatureStore();
-  const { drawVectorSource } = useDrawSource();
-  const vectorLayerRef = useRef(new VectorLayer({ zIndex: 1 }));
+  const { addGeoJson } = useFeaturesStore();
+
   const drawRef = useRef(
     new Draw({
-      source: onCanvas ? drawVectorSource : undefined,
+      source: undefined,
       type: "Point",
       style: new Style({
         text: new Text({
@@ -71,7 +72,7 @@ export function TextDrawButton({
 
   useEffect(() => {
     drawRef.current = new Draw({
-      source: onCanvas ? drawVectorSource : undefined,
+      source: undefined,
       type: "Point",
       style: new Style({
         text: new Text({
@@ -100,44 +101,44 @@ export function TextDrawButton({
     map.addInteraction(drawRef.current);
   };
 
-  const drawing = (event: DrawEvent) => {
-    const feature = event.feature;
-    const geometry = feature.getGeometry() as Point;
-    feature.setStyle(
-      new Style({
-        text: new Text({
-          text: "unknown",
-          font: "15px Arial",
-          fill: new Fill({
-            color: "black",
-          }),
-          overflow: true,
-          offsetX: 0,
-          offsetY: -15,
-          stroke: new Stroke({
-            color: "white",
-            width: 3,
-          }),
-        }),
-      })
-    );
-    feature.setProperties({
-      shape: "TextMarker",
-      isModifying: false,
-      source: drawVectorSource,
-      layer: vectorLayerRef.current,
-      positions: geometry.getCoordinates(),
-    });
-    selectButton("");
-    map.removeInteraction(drawRef.current);
-    if (onEnd) {
-      onEnd(feature);
-    }
-    if (onCanvas) {
-      selectFeature(feature);
-    }
-    setTimeout(() => map.setProperties({ isDrawing: false }), 100);
-  };
+  const drawing = React.useCallback(
+    (event: DrawEvent) => {
+      const feature = event.feature;
+      const newPosition = positionsFromFeature(feature, true) as Coordinate;
+
+      const newGeoJson = makeGeojsonShape(
+        {
+          type: "Point",
+          coordinates: newPosition,
+        },
+        {
+          title: "unknown",
+          comment: "",
+          issueDegree: "심각도",
+          issue: "이슈 사항",
+          issueGrade: 1,
+          type: "marker",
+          color: "blue",
+          opacity: 1,
+          fontSize: 12,
+          original_type: "point",
+          isSelected: true,
+        }
+      );
+
+      selectButton("");
+      map.removeInteraction(drawRef.current);
+      if (onEnd) {
+        onEnd(newGeoJson);
+      }
+      if (onCanvas) {
+        addGeoJson(newGeoJson);
+        selectFeature(newGeoJson);
+      }
+      setTimeout(() => map.setProperties({ isDrawing: false }), 100);
+    },
+    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+  );
 
   useEffect(() => {
     const drawingInstance = drawRef.current;
@@ -146,29 +147,13 @@ export function TextDrawButton({
     return () => {
       drawingInstance.un("drawend", drawing);
     };
-  }, []);
+  }, [drawing]);
 
   useEffect(() => {
     if (!isActive) {
       map.removeInteraction(drawRef.current);
     }
-    const snap = new Snap({
-      source: drawVectorSource,
-    });
-    map.addInteraction(snap);
-    return () => {
-      map.removeInteraction(snap);
-    };
   }, [isActive, map]);
-
-  useEffect(() => {
-    vectorLayerRef.current.setSource(drawVectorSource);
-    if (onCanvas) {
-      map.addLayer(vectorLayerRef.current);
-    } else {
-      map.removeLayer(vectorLayerRef.current);
-    }
-  }, [onCanvas, map]);
 
   return (
     <Button

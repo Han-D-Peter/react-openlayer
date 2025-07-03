@@ -24,6 +24,7 @@ import {
   TileLayer,
   fromLonLat,
   TileMatrix,
+  SelectedFeatureStore,
 } from "./lib/Map";
 import { DrawingTools } from "./lib/Map/control/DrawingTools";
 import { getProfileFromFeature } from "./lib/Map/utils/utils";
@@ -39,8 +40,9 @@ import { SyncMapGroup } from "../src/lib/Map/SyncMapGroup";
 import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 import _ from "lodash";
 import TestField from "./TestField";
+
 import json from "./sample.json";
-import { IssueGeoJsonLayer } from "./lib/Map/layer/tileLayer/IssueGeoJsonLayer";
+import { FeatureCollection, FeaturesStore } from "./lib/Map/FeaturesStore";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";
@@ -70,10 +72,7 @@ function App() {
 
   const [tileMatrix, setTileMatrix] = useState<TileMatrix>();
 
-  console.log("tileMatrix", tileMatrix);
-
   function off() {
-    console.log(isShown);
     if (isShown) {
       setIsShown(false);
     } else {
@@ -99,115 +98,110 @@ function App() {
       >
         off
       </button>
-      <TestField />
+      {/* <TestField /> */}
 
       <MapContainer
         center={[126.576601, 36.88147]}
-        zoomLevel={17}
+        zoomLevel={15}
         height={mapSize.height}
         width={mapSize.width}
         ref={ref}
-        isAbledSelection
       >
         {/* <GeoJsonLayer geoJson={json} color="red" projectionCode="WGS:84" /> */}
-        <IssueGeoJsonLayer geoJson={json} projectionCode="WGS:84" />
+        <FeaturesStore
+          geoJson={json as FeatureCollection}
+          projectionCode="WGS:84"
+        >
+          <SelectedFeatureStore isAbledSelection={true}>
+            <TileLayer
+              maxZoom={23}
+              crossOrigin={"anonymous"}
+              tileMatrix={tileMatrix}
+              url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1070/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
+            />
+            <ImageOverlay
+              ref={imageRef}
+              imageUrl="images/compass.png"
+              bounds={[
+                [126.841384, 35.191316],
+                [126.841584, 35.191516],
+              ]}
+            />
+            {/* <LayerGroup zIndex={0}>
+            <BoundaryCircle
+              center={[126.841284, 35.191516]}
+              circleRadius={200}
+              color="RED"
+              onClick={() => console.log("boundary")}
+              onHover={() => console.log("boundary hover")}
+              onLeave={() => console.log("boundary leave")}
+            >
+              상수도 보호구역
+            </BoundaryCircle>
+          </LayerGroup>
+          */}
 
-        <TileLayer
-          maxZoom={23}
-          crossOrigin={"anonymous"}
-          tileMatrix={tileMatrix}
-          url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1070/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
-        />
-        <ImageOverlay
-          ref={imageRef}
-          imageUrl="images/compass.png"
-          bounds={[
-            [126.841384, 35.191316],
-            [126.841584, 35.191516],
-          ]}
-        />
-        <LayerGroup zIndex={0}>
-          <BoundaryCircle
-            center={[126.841284, 35.191516]}
-            circleRadius={200}
-            color="RED"
-            onClick={() => console.log("boundary")}
-            onHover={() => console.log("boundary hover")}
-            onLeave={() => console.log("boundary leave")}
-          >
-            상수도 보호구역
-          </BoundaryCircle>
-        </LayerGroup>
-        <CustomMarker
-          center={[126.529692, 35.935785]}
-          color="SKYBLUE"
-          onClick={() => console.log("boundary")}
-          onHover={() => console.log("boundary hover")}
-          onLeave={() => console.log("boundary leave")}
-        ></CustomMarker>
-
-        {isShown && (
-          <>
-            <LayerGroup zIndex={2}>
-              <CustomPolygon
-                onClick={(event) =>
-                  console.log("event", getProfileFromFeature(event.annotation))
-                }
-                positions={[
-                  [
-                    [126.840884, 35.190816],
-                    [126.840676, 35.190419],
-                    [126.840804, 35.190333],
-                    [126.841068, 35.190581],
-                    [126.840884, 35.190816],
-                  ],
-                ]}
-              >
-                <InnerText isPopup>hello2</InnerText>
-              </CustomPolygon>
-              <CustomPolyLine
-                positions={[
-                  [126.840684, 35.190816],
-                  [126.840476, 35.190419],
-                  [126.840604, 35.190333],
-                  [126.840868, 35.190581],
-                ]}
-              >
-                <InnerText isPopup>hello2</InnerText>
-              </CustomPolyLine>
-              <CustomRectangle
-                positions={[
-                  [
-                    [126.840684, 35.190219],
-                    [126.840476, 35.190219],
-                    [126.840476, 35.190133],
-                    [126.840684, 35.190133],
-                  ],
-                ]}
-              >
-                <InnerText isPopup>hello2</InnerText>
-              </CustomRectangle>
-            </LayerGroup>
-          </>
-        )}
-
-        <CompassWheel />
-        <ControlSection>
-          <ZoomFeature />
-          <FullScreenFeature />
-          <DrawingTools
-            marker="disabled"
-            color="RED"
-            onCanvas
-            onDrawEnd={(e) => {
-              if (!_.isArray(e)) {
-                console.log(positionsFromFeature(e));
-              } else {
-                console.log(positionsFromMultiPointFeatures(e));
-              }
-            }}
-          />
-        </ControlSection>
+            {/* {isShown && (
+              <LayerGroup zIndex={2}>
+                <CustomPolygon
+                  onClick={(event) =>
+                    console.log(
+                      "event",
+                      getProfileFromFeature(event.annotation)
+                    )
+                  }
+                  positions={[
+                    [
+                      [126.840884, 35.190816],
+                      [126.840676, 35.190419],
+                      [126.840804, 35.190333],
+                      [126.841068, 35.190581],
+                      [126.840884, 35.190816],
+                    ],
+                  ]}
+                >
+                  <InnerText isPopup>hello2</InnerText>
+                </CustomPolygon>
+                <CustomPolyLine
+                  positions={[
+                    [126.840684, 35.190816],
+                    [126.840476, 35.190419],
+                    [126.840604, 35.190333],
+                    [126.840868, 35.190581],
+                  ]}
+                >
+                  <InnerText isPopup>hello2</InnerText>
+                </CustomPolyLine>
+                <CustomRectangle
+                  positions={[
+                    [
+                      [126.840684, 35.190219],
+                      [126.840476, 35.190219],
+                      [126.840476, 35.190133],
+                      [126.840684, 35.190133],
+                    ],
+                  ]}
+                >
+                  <InnerText isPopup>hello2</InnerText>
+                </CustomRectangle>
+              </LayerGroup>
+            )} */}
+            <CustomMarker
+              center={[126.529692, 35.935785]}
+              color="SKYBLUE"
+              onClick={() => console.log("boundary")}
+              onHover={() => console.log("boundary hover")}
+              onLeave={() => console.log("boundary leave")}
+            ></CustomMarker>
+            <CompassWheel />
+            <ControlSection>
+              <ZoomFeature />
+              <FullScreenFeature />
+              <DrawingTools color="RED" onCanvas onDrawEnd={(e) => {}} />
+            </ControlSection>
+          </SelectedFeatureStore>
+        </FeaturesStore>
+        {/* <CaptureMap onCaptured={(img) => console.log("img", img)} /> */}
       </MapContainer>
       <input
         type="range"
