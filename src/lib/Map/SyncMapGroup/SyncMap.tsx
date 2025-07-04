@@ -84,7 +84,6 @@ export const SyncMap = ({
       }),
     })
   );
-  const drawVectorSource = useRef<VectorSource>(new VectorSource());
 
   const { adjustCenter, onWheelHandler, onZoomHandler, adjustRotate } =
     useSyncMapContext();
@@ -94,7 +93,7 @@ export const SyncMap = ({
       const current = mapObj.current.getView().getCenter();
       adjustCenter(toLonLat(current as Coordinate) as Location);
     }
-  }, [isDecoupled]);
+  }, [adjustCenter, isDecoupled]);
 
   useEffect(() => {
     mapObj.current.getView().setCenter(fromLonLat(center));
