@@ -1,7 +1,6 @@
-import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-import typescript from '@rollup/plugin-typescript';
+import typescript from 'rollup-plugin-typescript2';
 import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import postcss from 'rollup-plugin-postcss';
 import copy from 'rollup-plugin-copy';
@@ -39,14 +38,12 @@ const config = {
         ],
         plugins: [
             nodeResolve({ extensions }),
-            babel({
-                exclude: 'node_modules/**',
-                extensions,
-                babelHelpers: 'bundled',
-            }),
             commonjs(),
             peerDepsExternal(),
-            typescript({ tsconfig: './tsconfig.json' }),
+            typescript({
+                tsconfig: './tsconfig.json',
+                useTsconfigDeclarationDir: true
+            }),
             postcss({ 
                 extract: true,      
                 autoModules:true
