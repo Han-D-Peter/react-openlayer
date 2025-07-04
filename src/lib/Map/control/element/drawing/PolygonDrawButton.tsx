@@ -133,7 +133,7 @@ export function PolygonDrawButton({
     (event: DrawEvent) => {
       const feature = event.feature;
 
-      const newPosition = positionsFromFeature(feature, true) as Coordinate[];
+      const newPosition = positionsFromFeature(feature, true) as Coordinate[][];
 
       const newGeoJson = makeGeojsonShape(
         {

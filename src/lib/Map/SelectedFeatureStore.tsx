@@ -17,11 +17,14 @@ export interface SelectedFeatureStoreProps {
   isAbledSelection?: boolean;
 
   children?: ReactNode;
+
+  onSelect?: (value: FeatureFromGeojson | null) => void;
 }
 
 export function SelectedFeatureStore({
   isAbledSelection = false,
   children,
+  onSelect,
 }: SelectedFeatureStoreProps) {
   const map = useMap();
 
@@ -30,9 +33,17 @@ export function SelectedFeatureStore({
   const [selectedFeature, selectFeature, unSelectFeature] =
     useResetabledState<FeatureFromGeojson>();
 
+  const select = React.useCallback(
+    (value: FeatureFromGeojson | null) => {
+      onSelect && onSelect(value);
+      selectFeature(value);
+    },
+    [onSelect, selectFeature]
+  );
+
   const providerValue = useMemo(
-    () => ({ selectedFeature, selectFeature, unSelectFeature }),
-    [selectedFeature, selectFeature, unSelectFeature]
+    () => ({ selectedFeature, selectFeature: select, unSelectFeature }),
+    [selectedFeature, select, unSelectFeature]
   );
 
   const onClick = React.useCallback(
