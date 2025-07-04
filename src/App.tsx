@@ -213,7 +213,20 @@ function App() {
         }}
       />
       <SyncMapGroup rotate={rotate}>
-        <SyncMap></SyncMap>
+        <SyncMap>
+          <FeaturesStore
+            geoJson={json as FeatureCollection}
+            projectionCode="WGS:84"
+          >
+            <SelectedFeatureStore isAbledSelection={true}>
+              <ControlSection>
+                <ZoomFeature />
+                <FullScreenFeature />
+                <DrawingTools color="RED" onCanvas onDrawEnd={(e) => {}} />
+              </ControlSection>
+            </SelectedFeatureStore>
+          </FeaturesStore>
+        </SyncMap>
         <SyncMap></SyncMap>
         <SyncMap></SyncMap>
       </SyncMapGroup>

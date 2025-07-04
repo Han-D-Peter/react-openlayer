@@ -16,7 +16,7 @@ export type FeatureFromGeojson = {
   type: "Feature";
   id: string;
   geometry: MakeGeojsonShape;
-  properties: Object;
+  properties: Record<string, any>;
 };
 
 export type FeatureCollection = {
@@ -69,9 +69,13 @@ export function FeaturesStore({
 
   const addGeoJson = useCallback(
     (newGeoJson: FeatureFromGeojson) => {
+      const unSelectedFeatures = geoJsonState.features.map((feature) => {
+        feature.properties["isSelected"] = false;
+        return feature;
+      });
       setGeoJson({
         type: "FeatureCollection",
-        features: [...geoJsonState.features, newGeoJson],
+        features: [...unSelectedFeatures, newGeoJson],
       });
     },
     [geoJsonState]
