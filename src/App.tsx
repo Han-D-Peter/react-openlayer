@@ -218,9 +218,36 @@ function App() {
         }}
       />
       <SyncMapGroup rotate={rotate}>
-        <SyncMap></SyncMap>
-        <SyncMap></SyncMap>
-        <SyncMap></SyncMap>
+        <SyncMap>
+          <FeaturesStore
+            geoJson={jsonState}
+            projectionCode="WGS:84"
+            onChange={setJsonState}
+          >
+            <SelectedFeatureStore isAbledSelection={true}>
+              <CompassWheel />
+              <ControlSection>
+                <ZoomFeature />
+                <FullScreenFeature />
+                <DrawingTools color="RED" onCanvas onDrawEnd={(e) => {}} />
+              </ControlSection>
+            </SelectedFeatureStore>
+          </FeaturesStore>
+        </SyncMap>
+        <SyncMap>
+          <FeaturesStore geoJson={jsonState} projectionCode="WGS:84">
+            <SelectedFeatureStore
+              isAbledSelection={true}
+            ></SelectedFeatureStore>
+          </FeaturesStore>
+        </SyncMap>
+        <SyncMap>
+          <FeaturesStore geoJson={jsonState} projectionCode="WGS:84">
+            <SelectedFeatureStore
+              isAbledSelection={true}
+            ></SelectedFeatureStore>
+          </FeaturesStore>
+        </SyncMap>
       </SyncMapGroup>
     </div>
   );

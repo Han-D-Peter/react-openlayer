@@ -9,12 +9,17 @@ export type PointGeometry = {
   coordinates: Coordinate;
 };
 
-export type Geometry = {
-  type: "MultiPoint" | "LineString" | "Polygon";
+export type LineGeometry = {
+  type: "MultiPoint" | "LineString";
   coordinates: Coordinate[];
 };
 
-export type MakeGeojsonShape = PointGeometry | Geometry;
+export type PolygonGeometry = {
+  type: "Polygon";
+  coordinates: Coordinate[][];
+};
+
+export type MakeGeojsonShape = PointGeometry | LineGeometry | PolygonGeometry;
 
 type MakeGeojsonShapeArgs = MakeGeojsonShape;
 
