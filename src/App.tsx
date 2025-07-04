@@ -72,6 +72,10 @@ function App() {
 
   const [tileMatrix, setTileMatrix] = useState<TileMatrix>();
 
+  const [jsonState, setJsonState] = useState<FeatureCollection>(
+    json as FeatureCollection
+  );
+
   function off() {
     if (isShown) {
       setIsShown(false);
@@ -109,8 +113,9 @@ function App() {
       >
         {/* <GeoJsonLayer geoJson={json} color="red" projectionCode="WGS:84" /> */}
         <FeaturesStore
-          geoJson={json as FeatureCollection}
+          geoJson={jsonState}
           projectionCode="WGS:84"
+          onChange={setJsonState}
         >
           <SelectedFeatureStore isAbledSelection={true}>
             <TileLayer
@@ -213,20 +218,7 @@ function App() {
         }}
       />
       <SyncMapGroup rotate={rotate}>
-        <SyncMap>
-          <FeaturesStore
-            geoJson={json as FeatureCollection}
-            projectionCode="WGS:84"
-          >
-            <SelectedFeatureStore isAbledSelection={true}>
-              <ControlSection>
-                <ZoomFeature />
-                <FullScreenFeature />
-                <DrawingTools color="RED" onCanvas onDrawEnd={(e) => {}} />
-              </ControlSection>
-            </SelectedFeatureStore>
-          </FeaturesStore>
-        </SyncMap>
+        <SyncMap></SyncMap>
         <SyncMap></SyncMap>
         <SyncMap></SyncMap>
       </SyncMapGroup>

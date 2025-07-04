@@ -38,6 +38,7 @@ interface FeaturesGeoJsonStore {
 
 interface FeaturesStoreProps {
   geoJson: FeatureCollection;
+  onChange?: (geoJson: FeatureCollection) => void;
   projectionCode: Coordinate;
   children?: ReactNode;
 }
@@ -53,6 +54,7 @@ export function FeaturesStore({
   children,
   geoJson,
   projectionCode,
+  onChange,
 }: FeaturesStoreProps) {
   const [geoJsonState, setGeoJson] = useState<FeatureCollection>({
     type: "FeatureCollection",
@@ -63,9 +65,16 @@ export function FeaturesStore({
     setGeoJson(geoJson);
   }, [geoJson]);
 
-  const changeGeoJson = useCallback((geoJsonForReplace: FeatureCollection) => {
-    setGeoJson(geoJsonForReplace);
-  }, []);
+  const changeGeoJson = useCallback(
+    (geoJsonForReplace: FeatureCollection) => {
+      if (onChange) {
+        onChange(geoJsonForReplace);
+      } else {
+        setGeoJson(geoJsonForReplace);
+      }
+    },
+    [onChange]
+  );
 
   const addGeoJson = useCallback(
     (newGeoJson: FeatureFromGeojson) => {
@@ -73,12 +82,18 @@ export function FeaturesStore({
         feature.properties["isSelected"] = false;
         return feature;
       });
-      setGeoJson({
+      const addedGeoJson: FeatureCollection = {
         type: "FeatureCollection",
         features: [...unSelectedFeatures, newGeoJson],
-      });
+      };
+
+      if (onChange) {
+        onChange(addedGeoJson);
+      } else {
+        setGeoJson(addedGeoJson);
+      }
     },
-    [geoJsonState]
+    [geoJsonState.features, onChange]
   );
 
   const updateGeoJson = useCallback(
@@ -96,12 +111,18 @@ export function FeaturesStore({
         properties: { ...target.properties, ...updatedGeoJson.properties },
       };
 
-      setGeoJson({
+      const updatedMadeGeoJson: FeatureCollection = {
         type: "FeatureCollection",
         features: [...filtered, updated],
-      });
+      };
+
+      if (onChange) {
+        onChange(updatedMadeGeoJson);
+      } else {
+        setGeoJson(updatedMadeGeoJson);
+      }
     },
-    [geoJsonState]
+    [geoJsonState.features, onChange]
   );
 
   const removeGeoJson = useCallback(
@@ -110,9 +131,18 @@ export function FeaturesStore({
         return feature.id !== geoJsonId;
       });
 
-      setGeoJson({ ...geoJsonState, features: filtered });
+      const removedMadeGeoJson: FeatureCollection = {
+        ...geoJsonState,
+        features: filtered,
+      };
+
+      if (onChange) {
+        onChange(removedMadeGeoJson);
+      } else {
+        setGeoJson(removedMadeGeoJson);
+      }
     },
-    [geoJsonState]
+    [geoJsonState, onChange]
   );
 
   const getGeoJsonElement = useCallback(
