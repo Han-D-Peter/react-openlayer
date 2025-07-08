@@ -31,7 +31,7 @@ export function makeGeojsonShape(
 ): FeatureFromGeojson {
   return {
     type: "Feature",
-    id: uniqueId(),
+    id: uniqueId("drawing-"),
     geometry: { type, coordinates } as MakeGeojsonShape,
     properties,
   };
