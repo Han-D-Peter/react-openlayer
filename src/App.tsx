@@ -103,7 +103,6 @@ function App() {
         off
       </button>
       {/* <TestField /> */}
-
       <MapContainer
         center={[126.576601, 36.88147]}
         zoomLevel={15}
@@ -115,7 +114,8 @@ function App() {
         <FeaturesStore
           geoJson={jsonState}
           projectionCode="WGS:84"
-          onChange={setJsonState}
+          // onChange={setJsonState}
+          onChange={(value) => console.log("value", value)}
         >
           <SelectedFeatureStore isAbledSelection={true}>
             <TileLayer

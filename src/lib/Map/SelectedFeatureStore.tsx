@@ -36,7 +36,7 @@ export function SelectedFeatureStore({
   const select = React.useCallback(
     (value: FeatureFromGeojson | null) => {
       onSelect && onSelect(value);
-      selectFeature(value);
+      // selectFeature(value);
     },
     [onSelect, selectFeature]
   );
@@ -68,6 +68,7 @@ export function SelectedFeatureStore({
         const target = geoJson.features.find((item) => item.id === featureId);
         if (!target) continue;
 
+        onSelect && onSelect(target);
         const isAlreadySelected =
           selectedFeature && selectedFeature.id === target.id;
 
