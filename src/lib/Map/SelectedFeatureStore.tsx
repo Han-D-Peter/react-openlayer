@@ -68,32 +68,34 @@ export function SelectedFeatureStore({
         const target = geoJson.features.find((item) => item.id === featureId);
         if (!target) continue;
 
-        onSelect && onSelect(target);
-        const isAlreadySelected =
-          selectedFeature && selectedFeature.id === target.id;
+        if (onSelect) {
+          onSelect(target);
+          const isAlreadySelected =
+            selectedFeature && selectedFeature.id === target.id;
 
-        const updatedGeoJson = {
-          ...geoJson,
-          features: geoJson.features.map((item) => ({
-            ...item,
-            properties: {
-              ...item.properties,
-              isSelected: item.id === target.id ? !isAlreadySelected : false,
-            },
-          })),
-        };
+          const updatedGeoJson = {
+            ...geoJson,
+            features: geoJson.features.map((item) => ({
+              ...item,
+              properties: {
+                ...item.properties,
+                isSelected: item.id === target.id ? !isAlreadySelected : false,
+              },
+            })),
+          };
 
-        changeGeoJson(updatedGeoJson);
+          changeGeoJson(updatedGeoJson);
 
-        if (isAlreadySelected) {
-          unSelectFeature();
+          if (isAlreadySelected) {
+            unSelectFeature();
+          }
         }
 
         // 한 번만 처리하고 break (겹친 feature 중 최상위만 선택)
         break;
       }
     },
-    [map, geoJson, selectedFeature, changeGeoJson, unSelectFeature]
+    [map, geoJson, onSelect, selectedFeature, changeGeoJson, unSelectFeature]
   );
   useEffect(() => {
     map.on("click", onClick);
