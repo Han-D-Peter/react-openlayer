@@ -131,7 +131,6 @@ export function ModifyAnnotation({
     onModifyStart,
     isActive,
     target,
-    onModifyChange,
   ]);
 
   useEffect(() => {
