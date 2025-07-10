@@ -82,7 +82,13 @@ export function ModifyAnnotation({
   }, [isActive, map]);
 
   useEffect(() => {
-    if (clickedAnnotation && selectedFeature && !target && isActive) {
+    if (
+      clickedAnnotation &&
+      selectedFeature &&
+      !target &&
+      isActive &&
+      onModifyChange
+    ) {
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
           features: new Collection([clickedAnnotation]),
@@ -127,6 +133,7 @@ export function ModifyAnnotation({
     onModifyStart,
     isActive,
     target,
+    onModifyChange,
   ]);
 
   useEffect(() => {

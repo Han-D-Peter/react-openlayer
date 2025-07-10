@@ -114,8 +114,8 @@ function App() {
         <FeaturesStore
           geoJson={jsonState}
           projectionCode="WGS:84"
-          // onChange={setJsonState}
-          onChange={(value) => console.log("value", value)}
+          onChange={setJsonState}
+          // onChange={(value) => console.log("value", value)}
         >
           <SelectedFeatureStore isAbledSelection={true}>
             <TileLayer
