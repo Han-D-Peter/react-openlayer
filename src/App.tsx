@@ -202,7 +202,12 @@ function App() {
             <ControlSection>
               <ZoomFeature />
               <FullScreenFeature />
-              <DrawingTools color="RED" onCanvas onDrawEnd={(e) => {}} />
+              <DrawingTools
+                color="RED"
+                onCanvas
+                onModify={() => {}}
+                onDrawEnd={(e) => {}}
+              />
             </ControlSection>
           </SelectedFeatureStore>
         </FeaturesStore>

@@ -36,7 +36,7 @@ export function SelectedFeatureStore({
   const select = React.useCallback(
     (value: FeatureFromGeojson | null) => {
       onSelect && onSelect(value);
-      // selectFeature(value);
+      !onSelect && selectFeature(value);
     },
     [onSelect, selectFeature]
   );
@@ -70,27 +70,26 @@ export function SelectedFeatureStore({
 
         if (onSelect) {
           onSelect(target);
-          const isAlreadySelected =
-            selectedFeature && selectedFeature.id === target.id;
-
-          const updatedGeoJson = {
-            ...geoJson,
-            features: geoJson.features.map((item) => ({
-              ...item,
-              properties: {
-                ...item.properties,
-                isSelected: item.id === target.id ? !isAlreadySelected : false,
-              },
-            })),
-          };
-
-          changeGeoJson(updatedGeoJson);
-
-          if (isAlreadySelected) {
-            unSelectFeature();
-          }
         }
+        const isAlreadySelected =
+          selectedFeature && selectedFeature.id === target.id;
 
+        const updatedGeoJson = {
+          ...geoJson,
+          features: geoJson.features.map((item) => ({
+            ...item,
+            properties: {
+              ...item.properties,
+              isSelected: item.id === target.id ? !isAlreadySelected : false,
+            },
+          })),
+        };
+
+        changeGeoJson(updatedGeoJson);
+
+        if (isAlreadySelected) {
+          unSelectFeature();
+        }
         // 한 번만 처리하고 break (겹친 feature 중 최상위만 선택)
         break;
       }
