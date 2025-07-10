@@ -82,13 +82,8 @@ export function ModifyAnnotation({
   }, [isActive, map]);
 
   useEffect(() => {
-    if (
-      clickedAnnotation &&
-      selectedFeature &&
-      !target &&
-      isActive &&
-      onModifyChange
-    ) {
+    if (onModifyChange) return;
+    if (clickedAnnotation && selectedFeature && !target && isActive) {
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
           features: new Collection([clickedAnnotation]),
