@@ -109,7 +109,7 @@ export function ModifyAnnotation({
         modifyInteractionRef.current.on("modifyend", (event: ModifyEvent) => {
           onModifyChange &&
             clickedAnnotation.setGeometry(originalGeometry.clone());
-          onModifyChange && onModifyChange(event);
+
           onModifyEnd(event);
         });
 
