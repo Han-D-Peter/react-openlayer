@@ -64,11 +64,11 @@ export function ModifyAnnotation({
               type: targetGeoJson.geometry.type,
               coordinates: newPosition as Coordinate[],
             };
-      if (!onModifyChange)
-        updateGeoJson(targetId, {
-          ...targetGeoJson,
-          geometry: newGeometry as MakeGeojsonShape,
-        });
+
+      updateGeoJson(targetId, {
+        ...targetGeoJson,
+        geometry: newGeometry as MakeGeojsonShape,
+      });
       if (onModifyChange) {
         onModifyChange(event);
       }
@@ -88,9 +88,6 @@ export function ModifyAnnotation({
   useEffect(() => {
     if (clickedAnnotation && selectedFeature && !target && isActive) {
       if (!modifyInteractionRef.current) {
-        // Store original geometry to restore after drag
-        let originalGeometry = clickedAnnotation.getGeometry()!.clone();
-
         modifyInteractionRef.current = new Modify({
           features: new Collection([clickedAnnotation]),
           deleteCondition: altShiftKeysOnly,
@@ -99,24 +96,22 @@ export function ModifyAnnotation({
           features: new Collection([clickedAnnotation]),
         });
 
-        // On drag start, save the original geometry
-        modifyInteractionRef.current.on("modifystart", () => {
-          originalGeometry = clickedAnnotation.getGeometry()!.clone();
-          onModifyStart();
-        });
-
-        // On drag end, restore the original geometry and call onModifyChange
-        modifyInteractionRef.current.on("modifyend", (event: ModifyEvent) => {
-          onModifyChange &&
-            clickedAnnotation.setGeometry(originalGeometry.clone());
-
-          onModifyEnd(event);
-        });
-
+        modifyInteractionRef.current.on("modifystart", onModifyStart);
+        modifyInteractionRef.current.on("modifyend", onModifyEnd);
         map.addInteraction(snapInteractionRef.current);
         map.addInteraction(modifyInteractionRef.current);
       }
     }
+    // else {
+    //   if (modifyInteractionRef.current && snapInteractionRef.current) {
+    //     modifyInteractionRef.current.un("modifystart", onModifyStart);
+    //     modifyInteractionRef.current.un("modifyend", onModifyEnd);
+    //     map.removeInteraction(modifyInteractionRef.current);
+    //     modifyInteractionRef.current = null;
+    //     map.removeInteraction(snapInteractionRef.current);
+    //     snapInteractionRef.current = null;
+    //   }
+    // }
 
     return () => {
       if (modifyInteractionRef.current && snapInteractionRef.current) {
