@@ -64,15 +64,19 @@ export function ModifyAnnotation({
               type: targetGeoJson.geometry.type,
               coordinates: newPosition as Coordinate[],
             };
-      updateGeoJson(targetId, {
-        ...targetGeoJson,
-        geometry: newGeometry as MakeGeojsonShape,
-      });
+      if (!onModifyChange)
+        updateGeoJson(targetId, {
+          ...targetGeoJson,
+          geometry: newGeometry as MakeGeojsonShape,
+        });
       if (onModifyChange) {
         onModifyChange(event);
       }
+
+      const existMapProperties = map.getProperties();
+      map.setProperties({ ...existMapProperties, isModifying: false });
     },
-    [getGeoJsonElement, onModifyChange, updateGeoJson]
+    [getGeoJsonElement, map, onModifyChange, updateGeoJson]
   );
 
   // 수정중임을 map 에 명시
@@ -82,7 +86,6 @@ export function ModifyAnnotation({
   }, [isActive, map]);
 
   useEffect(() => {
-    if (onModifyChange) return;
     if (clickedAnnotation && selectedFeature && !target && isActive) {
       if (!modifyInteractionRef.current) {
         modifyInteractionRef.current = new Modify({
