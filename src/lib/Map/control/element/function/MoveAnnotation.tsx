@@ -72,13 +72,16 @@ export function MoveAnnotation({
       if (onMoveChange) {
         onMoveChange(event);
       }
+      const existMapProperties = map.getProperties();
+      map.setProperties({ ...existMapProperties, isModifying: false });
     },
     [
       getGeoJsonElement,
-      onMoveChange,
-      selectButton,
       updateGeoJson,
       unSelectFeature,
+      selectButton,
+      onMoveChange,
+      map,
     ]
   );
 
