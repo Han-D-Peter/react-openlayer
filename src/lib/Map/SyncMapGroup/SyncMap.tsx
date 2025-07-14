@@ -52,7 +52,13 @@ export interface SyncMapProps {
 
   children?: ReactNode;
 
-  onClick?: (lonlat: Coordinate) => void;
+  onClick?: ({
+    event,
+    lonlat,
+  }?: {
+    event: MapBrowserEvent<any>;
+    lonlat: Coordinate;
+  }) => void;
 }
 
 export const SyncMap = ({
@@ -95,9 +101,17 @@ export const SyncMap = ({
     if (!isDecoupled) {
       const current = mapObj.current.getView().getCenter();
       adjustCenter(toLonLat(current as Coordinate) as Location);
-      onClick && onClick(toLonLat(current as Coordinate));
     }
   }, [adjustCenter, isDecoupled]);
+
+  const clickEventHandler = useCallback(
+    (event: MapBrowserEvent<any>) => {
+      if (onClick) {
+        onClick({ event, lonlat: toLonLat(event.coordinate) });
+      }
+    },
+    [onClick]
+  );
 
   useEffect(() => {
     mapObj.current.getView().setCenter(fromLonLat(center));
@@ -126,6 +140,14 @@ export const SyncMap = ({
       map.un("pointerdrag", zoomHandler);
     };
   }, [onZoomHandler]);
+
+  useEffect(() => {
+    const map = mapObj.current;
+    map.on("singleclick", clickEventHandler);
+    return () => {
+      map.un("singleclick", clickEventHandler);
+    };
+  }, [clickEventHandler]);
 
   useLayoutEffect(() => {
     mapObj.current.addLayer(osmRef.current);
