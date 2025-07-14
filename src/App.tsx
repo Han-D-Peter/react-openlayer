@@ -203,6 +203,7 @@ function App() {
               <ZoomFeature />
               <FullScreenFeature />
               <DrawingTools
+                arrange="horizontal"
                 color="RED"
                 onCanvas
                 onModify={() => {}}

@@ -38,6 +38,7 @@ export interface DrawingToolsProps {
   onDrawEnd?: (event: FeatureFromGeojson) => void;
   onCanvas?: boolean;
   children?: ReactNode;
+  arrange?: "vertical" | "horizontal";
 }
 
 export function DrawingTools({
@@ -59,6 +60,7 @@ export function DrawingTools({
   onModify,
   onDrawStart,
   children,
+  arrange = "vertical",
 }: DrawingToolsProps) {
   const [isSelected, setIsSelected] = useState<string | null>(null);
   const map = useMap();
@@ -89,7 +91,9 @@ export function DrawingTools({
   }, [isSelected, map]);
 
   return (
-    <>
+    <div
+      style={arrange === "horizontal" ? { display: "flex", gap: "10px" } : {}}
+    >
       <ControlGroup>
         {multiMarker === true && (
           <MultiPointDrawButton
@@ -287,6 +291,6 @@ export function DrawingTools({
           />
         )}
       </ControlGroup>
-    </>
+    </div>
   );
 }
