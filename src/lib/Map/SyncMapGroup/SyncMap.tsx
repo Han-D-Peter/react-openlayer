@@ -51,6 +51,8 @@ export interface SyncMapProps {
   rotate?: number;
 
   children?: ReactNode;
+
+  onClick?: (lonlat: Coordinate) => void;
 }
 
 export const SyncMap = ({
@@ -61,6 +63,7 @@ export const SyncMap = ({
   children,
   height = "500px",
   width = "500px",
+  onClick,
 }: SyncMapProps) => {
   const id = useId();
   const mapId = `react-openlayers-map-${id}`;
@@ -92,6 +95,7 @@ export const SyncMap = ({
     if (!isDecoupled) {
       const current = mapObj.current.getView().getCenter();
       adjustCenter(toLonLat(current as Coordinate) as Location);
+      onClick && onClick(toLonLat(current as Coordinate));
     }
   }, [adjustCenter, isDecoupled]);
 
