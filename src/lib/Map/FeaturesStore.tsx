@@ -41,6 +41,7 @@ interface FeaturesStoreProps {
   onChange?: (geoJson: FeatureCollection) => void;
   projectionCode: Coordinate;
   children?: ReactNode;
+  zIndex?: number;
 }
 
 export const FeaturesStoreContext = createContext<FeaturesGeoJsonStore | null>(
@@ -55,6 +56,7 @@ export function FeaturesStore({
   geoJson,
   projectionCode,
   onChange,
+  zIndex = 1,
 }: FeaturesStoreProps) {
   const [geoJsonState, setGeoJson] = useState<FeatureCollection>({
     type: "FeatureCollection",
@@ -178,6 +180,7 @@ export function FeaturesStore({
   return (
     <FeaturesStoreContext.Provider value={provideValues}>
       <IssueGeoJsonLayer
+        zIndex={zIndex}
         geoJson={geoJsonState}
         projectionCode={projectionCode}
       />
