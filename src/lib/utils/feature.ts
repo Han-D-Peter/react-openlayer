@@ -49,7 +49,9 @@ export const positionsFromFeature = (
   const geometry = feature.getGeometry();
   if (geometry instanceof Polygon) {
     if (lonlat) {
-      return [geometry.getCoordinates()[0].map((coord) => toLonLat(coord))];
+      return geometry
+        .getCoordinates()
+        .map((group) => group.map((coord) => toLonLat(coord)));
     }
     return geometry.getCoordinates();
   }
