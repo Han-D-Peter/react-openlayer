@@ -117,7 +117,7 @@ function App() {
           onChange={setJsonState}
           // onChange={(value) => console.log("value", value)}
         >
-          <SelectedFeatureStore isAbledSelection={true}>
+          <SelectedFeatureStore isMovable isAbledSelection={true}>
             <TileLayer
               maxZoom={23}
               crossOrigin={"anonymous"}

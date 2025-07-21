@@ -23,7 +23,7 @@ export interface SelectedFeatureStoreProps {
   onSelect?: (value: FeatureFromGeojson | null) => void;
 
   /**
-   * @default false
+   * @default true
    * @description If you set this property to 'true', you can see selection of annotations
    */
   isMovable?: boolean;
@@ -33,7 +33,7 @@ export function SelectedFeatureStore({
   isAbledSelection = false,
   children,
   onSelect,
-  isMovable = false,
+  isMovable = true,
 }: Readonly<SelectedFeatureStoreProps>) {
   const map = useMap();
 
