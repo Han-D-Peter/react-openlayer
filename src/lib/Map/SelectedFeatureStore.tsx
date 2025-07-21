@@ -96,12 +96,6 @@ export function SelectedFeatureStore({
 
         changeGeoJson(updatedGeoJson);
 
-        console.log("selectedFeature", isAlreadySelected, feature);
-        if (!isAlreadySelected && feature && isMovable) {
-          console.log("fitFeatureToView", feature);
-          fitFeatureToView(map, feature as Feature<Geometry>);
-        }
-
         if (isAlreadySelected) {
           unSelectFeature();
         }
@@ -109,15 +103,7 @@ export function SelectedFeatureStore({
         break;
       }
     },
-    [
-      map,
-      geoJson,
-      onSelect,
-      selectedFeature,
-      changeGeoJson,
-      unSelectFeature,
-      isMovable,
-    ]
+    [map, geoJson, onSelect, selectedFeature, changeGeoJson, unSelectFeature]
   );
   useEffect(() => {
     map.on("click", onClick);
@@ -137,9 +123,27 @@ export function SelectedFeatureStore({
       return isSelected;
     });
 
-    if (selected) return selectFeature(selected);
+    if (selected) {
+      if (isMovable) {
+        // Convert GeoJSON geometry to OL Geometry
+        // You may need to import 'ol/format/GeoJSON' at the top if not already imported
+        // import GeoJSON from 'ol/format/GeoJSON';
+        const GeoJSON = require("ol/format/GeoJSON").default;
+        const olGeometry = new GeoJSON().readGeometry(selected.geometry, {
+          dataProjection: "EPSG:4326",
+          featureProjection: map.getView().getProjection(),
+        });
+
+        const feature = new Feature({
+          geometry: olGeometry,
+          ...selected.properties,
+        });
+        fitFeatureToView(map, feature as Feature<Geometry>);
+      }
+      return selectFeature(selected);
+    }
     unSelectFeature();
-  }, [geoJson, selectFeature, unSelectFeature]);
+  }, [geoJson, selectFeature, unSelectFeature, isMovable, map]);
 
   return (
     <FeatureContext.Provider value={providerValue}>

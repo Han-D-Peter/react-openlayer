@@ -88,7 +88,7 @@ export function fitFeatureToView(map: Map, feature: Feature<Geometry>) {
   const extent = geometry.getExtent();
 
   map.getView().fit(extent, {
-    padding: [20, 20, 20, 20],
-    duration: 1000,
+    padding: [200, 200, 200, 200],
+    duration: 500,
   });
 }
