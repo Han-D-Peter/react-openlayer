@@ -10,6 +10,7 @@ import Feature, { FeatureLike } from "ol/Feature";
 import { FeatureFromGeojson, useFeaturesStore } from "./FeaturesStore";
 import { fitFeatureToView } from "../utils";
 import { Geometry } from "ol/geom";
+import GeoJSON from "ol/format/GeoJSON";
 
 export interface SelectedFeatureStoreProps {
   /**
@@ -128,7 +129,7 @@ export function SelectedFeatureStore({
         // Convert GeoJSON geometry to OL Geometry
         // You may need to import 'ol/format/GeoJSON' at the top if not already imported
         // import GeoJSON from 'ol/format/GeoJSON';
-        const GeoJSON = require("ol/format/GeoJSON").default;
+
         const olGeometry = new GeoJSON().readGeometry(selected.geometry, {
           dataProjection: "EPSG:4326",
           featureProjection: map.getView().getProjection(),
