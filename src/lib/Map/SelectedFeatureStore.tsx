@@ -96,7 +96,9 @@ export function SelectedFeatureStore({
 
         changeGeoJson(updatedGeoJson);
 
+        console.log("selectedFeature", isAlreadySelected, feature);
         if (!isAlreadySelected && feature && isMovable) {
+          console.log("fitFeatureToView", feature);
           fitFeatureToView(map, feature as Feature<Geometry>);
         }
 
