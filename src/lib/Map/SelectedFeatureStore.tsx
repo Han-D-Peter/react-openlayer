@@ -6,8 +6,10 @@ import { FeatureContext } from "./FeatureContext";
 import { useMap } from "./hooks";
 import { useResetabledState } from "./hooks/useResetableState";
 import { SelectedFeature } from "./layer/SelectedFeature";
-import { FeatureLike } from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import { FeatureFromGeojson, useFeaturesStore } from "./FeaturesStore";
+import { fitFeatureToView } from "../utils";
+import { Geometry } from "ol/geom";
 
 export interface SelectedFeatureStoreProps {
   /**
@@ -19,13 +21,20 @@ export interface SelectedFeatureStoreProps {
   children?: ReactNode;
 
   onSelect?: (value: FeatureFromGeojson | null) => void;
+
+  /**
+   * @default false
+   * @description If you set this property to 'true', you can see selection of annotations
+   */
+  isMovable?: boolean;
 }
 
 export function SelectedFeatureStore({
   isAbledSelection = false,
   children,
   onSelect,
-}: SelectedFeatureStoreProps) {
+  isMovable = false,
+}: Readonly<SelectedFeatureStoreProps>) {
   const map = useMap();
 
   const { geoJson, updateGeoJson, changeGeoJson } = useFeaturesStore();
@@ -87,6 +96,10 @@ export function SelectedFeatureStore({
 
         changeGeoJson(updatedGeoJson);
 
+        if (!isAlreadySelected && feature && isMovable) {
+          fitFeatureToView(map, feature as Feature<Geometry>);
+        }
+
         if (isAlreadySelected) {
           unSelectFeature();
         }
@@ -94,7 +107,15 @@ export function SelectedFeatureStore({
         break;
       }
     },
-    [map, geoJson, onSelect, selectedFeature, changeGeoJson, unSelectFeature]
+    [
+      map,
+      geoJson,
+      onSelect,
+      selectedFeature,
+      changeGeoJson,
+      unSelectFeature,
+      isMovable,
+    ]
   );
   useEffect(() => {
     map.on("click", onClick);

@@ -1,4 +1,4 @@
-import { Feature } from "ol";
+import { Feature, Map } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { Geometry, LineString, MultiPoint, Point, Polygon } from "ol/geom";
 import { Circle, Fill, Stroke, Style } from "ol/style";
@@ -80,3 +80,15 @@ export const positionsFromMultiPointFeatures = (
 ) => {
   return features.map((feat) => positionsFromFeature(feat));
 };
+
+export function fitFeatureToView(map: Map, feature: Feature<Geometry>) {
+  const geometry = feature.getGeometry();
+  if (!geometry) return;
+
+  const extent = geometry.getExtent();
+
+  map.getView().fit(extent, {
+    padding: [20, 20, 20, 20],
+    duration: 1000,
+  });
+}
