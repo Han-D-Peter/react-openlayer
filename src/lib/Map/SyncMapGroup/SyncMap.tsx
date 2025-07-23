@@ -55,7 +55,7 @@ export interface SyncMapProps {
   onClick?: ({
     event,
     lonlat,
-  }?: {
+  }: {
     event: MapBrowserEvent<any>;
     lonlat: Coordinate;
   }) => void;

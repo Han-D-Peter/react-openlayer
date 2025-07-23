@@ -55,7 +55,7 @@ export const SyncMapContext = createContext<SyncMapContextProps | null>(null);
 export const SyncMapGroup = ({
   center = [127.9745613, 37.3236563],
   zoomLevel = 15,
-  children,
+  children = [],
   rotate = 0,
 }: SyncMapGroupProps) => {
   const [controlledCenter, setControlledCenter] = useState(center);
