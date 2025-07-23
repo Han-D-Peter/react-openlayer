@@ -21,7 +21,7 @@ export function SelectedFeature({ featureGeoJson }: SelectedFeatureProps) {
   const markerSourceRef = useRef(new VectorSource({ wrapX: false }));
   const markerLayerRef = useRef<VectorLayer<VectorSource<Geometry>>>(
     new VectorLayer({
-      zIndex: 1000,
+      zIndex: 50000,
       source: markerSourceRef.current,
       // Add your desired style for the markers here
     })
