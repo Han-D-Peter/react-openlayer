@@ -13,6 +13,7 @@ import {
   useRef,
   WheelEvent,
   useEffect,
+  ReactNode,
 } from "react";
 import { Location } from "../MapContainer";
 import { SyncMap, SyncMapProps } from "./SyncMap";
@@ -37,12 +38,13 @@ export interface SyncMapGroupProps {
    */
   rotate?: number;
 
-  children: ReactElement<SyncMapProps, typeof SyncMap>[];
+  children?: ReactNode;
 }
 
 export interface SyncMapContextProps {
   controlledCenter: Location;
   controlledZoomLevel: number;
+  controlledRotation: number;
   adjustCenter: (location: Location) => void;
   adjustZoomLevel: (level: number) => void;
   onWheelHandler: (event: WheelEvent<HTMLDivElement>, map: Map) => void;
@@ -55,7 +57,7 @@ export const SyncMapContext = createContext<SyncMapContextProps | null>(null);
 export const SyncMapGroup = ({
   center = [127.9745613, 37.3236563],
   zoomLevel = 15,
-  children = [],
+  children,
   rotate = 0,
 }: SyncMapGroupProps) => {
   const [controlledCenter, setControlledCenter] = useState(center);
@@ -101,6 +103,7 @@ export const SyncMapGroup = ({
     () => ({
       controlledCenter,
       controlledZoomLevel,
+      controlledRotation,
       adjustCenter,
       adjustZoomLevel,
       onWheelHandler,
@@ -108,6 +111,7 @@ export const SyncMapGroup = ({
       adjustRotate,
     }),
     [
+      controlledRotation,
       controlledCenter,
       controlledZoomLevel,
       adjustCenter,
@@ -118,24 +122,7 @@ export const SyncMapGroup = ({
     ]
   );
 
-  const syncChildren = useMemo(() => {
-    return Children.map(children, (child) => {
-      if (child.props.isDecoupled) {
-        return child;
-      }
-      const adjustedChild = createElement(SyncMap, {
-        ...child.props,
-        center: controlledCenter,
-        zoomLevel: controlledZoomLevel,
-        rotate: controlledRotation,
-      });
-      return adjustedChild;
-    });
-  }, [children, controlledCenter, controlledZoomLevel, controlledRotation]);
-
   return (
-    <SyncMapContext.Provider value={value}>
-      {syncChildren}
-    </SyncMapContext.Provider>
+    <SyncMapContext.Provider value={value}>{children}</SyncMapContext.Provider>
   );
 };

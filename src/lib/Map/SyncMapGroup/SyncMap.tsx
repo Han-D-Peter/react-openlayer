@@ -24,14 +24,6 @@ export interface SyncMapProps {
    * @description When you want to control map out
    */
   isDecoupled?: boolean;
-  /**
-   * @default [127.9745613, 37.3236563]
-   */
-  center?: Location;
-  /**
-   * @default 15
-   */
-  zoomLevel?: number;
 
   /**
    * @default "1000px"
@@ -44,11 +36,6 @@ export interface SyncMapProps {
    * @description This value set width css value of style. (ex. 100%, 100px, 100vw)
    */
   width?: string;
-
-  /**
-   * @default 0
-   */
-  rotate?: number;
 
   children?: ReactNode;
 
@@ -63,14 +50,20 @@ export interface SyncMapProps {
 
 export const SyncMap = ({
   isDecoupled = false,
-  center = [127.9745613, 37.3236563],
-  zoomLevel = 15,
-  rotate = 0,
   children,
   height = "500px",
   width = "500px",
   onClick,
 }: SyncMapProps) => {
+  const {
+    adjustCenter,
+    onWheelHandler,
+    onZoomHandler,
+    adjustRotate,
+    controlledCenter,
+    controlledZoomLevel,
+    controlledRotation,
+  } = useSyncMapContext();
   const id = useId();
   const mapId = `react-openlayers-map-${id}`;
   const osmRef = useRef<TileLayer<OSM>>(
@@ -89,13 +82,10 @@ export const SyncMap = ({
         rotate: true,
       }).extend([]),
       view: new View({
-        zoom: zoomLevel,
+        zoom: controlledZoomLevel,
       }),
     })
   );
-
-  const { adjustCenter, onWheelHandler, onZoomHandler, adjustRotate } =
-    useSyncMapContext();
 
   const onMouseUpOnMap = useCallback(() => {
     if (!isDecoupled) {
@@ -114,16 +104,16 @@ export const SyncMap = ({
   );
 
   useEffect(() => {
-    mapObj.current.getView().setCenter(fromLonLat(center));
-  }, [center]);
+    mapObj.current.getView().setCenter(fromLonLat(controlledCenter));
+  }, [controlledCenter]);
 
   useEffect(() => {
-    mapObj.current?.getView().setZoom(zoomLevel);
-  }, [zoomLevel]);
+    mapObj.current?.getView().setZoom(controlledZoomLevel);
+  }, [controlledZoomLevel]);
 
   useEffect(() => {
-    mapObj.current?.getView().setRotation((rotate * Math.PI) / 180);
-  }, [rotate]);
+    mapObj.current?.getView().setRotation((controlledRotation * Math.PI) / 180);
+  }, [controlledRotation]);
 
   useEffect(() => {
     const map = mapObj.current;
