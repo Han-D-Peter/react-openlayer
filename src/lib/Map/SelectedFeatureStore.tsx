@@ -3,7 +3,7 @@ import React, { ReactNode, useEffect } from "react";
 import { useMemo } from "react";
 import MapBrowserEvent from "ol/MapBrowserEvent";
 import { FeatureContext } from "./FeatureContext";
-import { useMap } from "./hooks";
+import { useDidUpdate, useMap } from "./hooks";
 import { useResetabledState } from "./hooks/useResetableState";
 import { SelectedFeature } from "./layer/SelectedFeature";
 import Feature, { FeatureLike } from "ol/Feature";
@@ -113,7 +113,7 @@ export function SelectedFeatureStore({
     };
   }, [map, onClick, selectedFeature, updateGeoJson]);
 
-  useEffect(() => {
+  useDidUpdate(() => {
     const selected = geoJson.features.find((feature) => {
       const isSelected = (
         feature.properties as {
