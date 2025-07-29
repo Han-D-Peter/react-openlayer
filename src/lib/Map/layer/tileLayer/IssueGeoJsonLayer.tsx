@@ -131,6 +131,6 @@ export function IssueGeoJsonLayer({
       map.removeLayer(vectorLayer);
       map.removeInteraction(snap);
     };
-  }, [map, geoJson, projectionCode]);
+  }, [map, geoJson, projectionCode, fromProjection, toProjection, zIndex]);
   return <></>;
 }

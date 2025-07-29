@@ -81,10 +81,13 @@ export function FeaturesStore({
 
   const addGeoJson = useCallback(
     (newGeoJson: FeatureFromGeojson) => {
-      const unSelectedFeatures = geoJsonState.features.map((feature) => {
-        feature.properties["isSelected"] = false;
-        return feature;
-      });
+      const unSelectedFeatures = geoJsonState.features.map((feature) => ({
+        ...feature,
+        properties: {
+          ...feature.properties,
+          isSelected: false,
+        },
+      }));
       const addedGeoJson: FeatureCollection = {
         type: "FeatureCollection",
         features: [...unSelectedFeatures, newGeoJson],
@@ -92,6 +95,7 @@ export function FeaturesStore({
 
       if (onChange) {
         onChange(addedGeoJson);
+        setGeoJson(addedGeoJson);
       } else {
         setGeoJson(addedGeoJson);
       }
