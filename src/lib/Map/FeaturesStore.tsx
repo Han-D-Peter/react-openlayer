@@ -3,6 +3,7 @@ import {
   ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useLayoutEffect,
   useMemo,
   useState,
@@ -63,7 +64,7 @@ export function FeaturesStore({
     features: [],
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     console.log("store render", geoJson);
     setGeoJson(geoJson);
   }, [geoJson]);
@@ -81,13 +82,10 @@ export function FeaturesStore({
 
   const addGeoJson = useCallback(
     (newGeoJson: FeatureFromGeojson) => {
-      const unSelectedFeatures = geoJsonState.features.map((feature) => ({
-        ...feature,
-        properties: {
-          ...feature.properties,
-          isSelected: false,
-        },
-      }));
+      const unSelectedFeatures = geoJsonState.features.map((feature) => {
+        feature.properties["isSelected"] = false;
+        return feature;
+      });
       const addedGeoJson: FeatureCollection = {
         type: "FeatureCollection",
         features: [...unSelectedFeatures, newGeoJson],
@@ -95,7 +93,6 @@ export function FeaturesStore({
 
       if (onChange) {
         onChange(addedGeoJson);
-        setGeoJson(addedGeoJson);
       } else {
         setGeoJson(addedGeoJson);
       }
