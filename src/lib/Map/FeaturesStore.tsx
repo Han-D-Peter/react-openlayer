@@ -65,7 +65,6 @@ export function FeaturesStore({
   });
 
   useEffect(() => {
-    console.log("store render", geoJson);
     setGeoJson(geoJson);
   }, [geoJson]);
 
@@ -178,8 +177,6 @@ export function FeaturesStore({
       getGeoJsonElement,
     ]
   );
-
-  console.log("inner store", geoJsonState);
 
   return (
     <FeaturesStoreContext.Provider value={provideValues}>
