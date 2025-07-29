@@ -41,7 +41,9 @@ export function IssueGeoJsonLayer({
 
   useEffect(() => {
     const geoJsonFormat = new GeoJSON({ extractGeometryName: true });
-    const features = geoJsonFormat.readFeatures(geoJson);
+    const features = geoJsonFormat
+      .readFeatures(geoJson)
+      .filter((feature) => feature.getProperties()["isShown"] === true);
 
     features.forEach((feature) => {
       const geoMetry = feature.getGeometry();
