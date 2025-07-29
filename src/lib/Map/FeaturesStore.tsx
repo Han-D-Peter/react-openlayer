@@ -64,6 +64,7 @@ export function FeaturesStore({
   });
 
   useLayoutEffect(() => {
+    console.log("store render", geoJson);
     setGeoJson(geoJson);
   }, [geoJson]);
 
