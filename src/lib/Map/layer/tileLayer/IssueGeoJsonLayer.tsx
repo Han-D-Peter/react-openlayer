@@ -8,9 +8,10 @@ import { Fill, Stroke, Style, Text } from "ol/style";
 import { Snap } from "ol/interaction";
 import { ANNOTATION_COLOR } from "../../constants";
 import { Coordinate } from "./GeoJsonLayer";
+import { FeatureCollection } from "../..";
 
 export interface IssueGeoJsonLayerProps {
-  geoJson: Record<string, any>;
+  geoJson: FeatureCollection;
 
   /**
    * @default "EPSG:5186"
@@ -40,10 +41,14 @@ export function IssueGeoJsonLayer({
   }, [zIndex]);
 
   useEffect(() => {
+    const showingFiltered: FeatureCollection = {
+      type: "FeatureCollection",
+      features: geoJson.features.filter(
+        (feature) => feature.properties["isShown"] === true
+      ),
+    };
     const geoJsonFormat = new GeoJSON({ extractGeometryName: true });
-    const features = geoJsonFormat
-      .readFeatures(geoJson)
-      .filter((feature) => feature.getProperties()["isShown"] === true);
+    const features = geoJsonFormat.readFeatures(showingFiltered);
 
     features.forEach((feature) => {
       const geoMetry = feature.getGeometry();
