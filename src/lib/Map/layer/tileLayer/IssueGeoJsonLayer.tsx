@@ -29,6 +29,8 @@ export function IssueGeoJsonLayer({
 }: IssueGeoJsonLayerProps) {
   const map = useMap();
 
+  console.log("inner issue layer", geoJson);
+
   const geoJsonLayer = useRef<VectorLayer<VectorSource> | null>(null);
 
   const fromProjection = projectionCode;

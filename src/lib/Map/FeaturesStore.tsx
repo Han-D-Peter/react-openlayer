@@ -177,6 +177,8 @@ export function FeaturesStore({
     ]
   );
 
+  console.log("inner store", geoJsonState);
+
   return (
     <FeaturesStoreContext.Provider value={provideValues}>
       <IssueGeoJsonLayer
