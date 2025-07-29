@@ -47,6 +47,8 @@ export function IssueGeoJsonLayer({
         (feature) => feature.properties["isShown"] === true
       ),
     };
+
+    console.log("showingFiltered", showingFiltered);
     const geoJsonFormat = new GeoJSON({ extractGeometryName: true });
     const features = geoJsonFormat.readFeatures(showingFiltered);
 
