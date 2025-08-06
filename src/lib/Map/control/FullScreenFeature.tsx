@@ -1,5 +1,5 @@
 import React from "react";
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks";
 import { FullScreen } from "ol/control";
@@ -13,7 +13,7 @@ interface FullScreenFeatureProps {
   onChange?: (isFull: boolean) => void;
 }
 
-const InnerButton = styled.div`
+const innerButtonStyle = css`
   min-width: 30px;
   min-height: 30px;
   display: flex;
@@ -85,13 +85,13 @@ export const FullScreenFeature = ({ onChange }: FullScreenFeatureProps) => {
   return (
     <ControlGroup>
       <Button ref={ref} onClick={toggleFullScreen}>
-        <InnerButton>
+        <div css={innerButtonStyle}>
           {isFull ? (
             <FullScreenExitIcon size={16} />
           ) : (
             <FullScreenIcon size={16} />
           )}
-        </InnerButton>
+        </div>
       </Button>
     </ControlGroup>
   );

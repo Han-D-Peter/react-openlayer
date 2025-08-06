@@ -1,23 +1,28 @@
 import { css } from "@emotion/react";
-import styled from "@emotion/styled";
 import { ReactNode } from "react";
 
-export const InnerButton = styled.div<{
-  isActive?: boolean;
-  children: ReactNode;
-}>`
+const getInnerButtonStyle = (isActive?: boolean) => css`
   display: flex;
   justify-content: center;
   align-items: center;
   min-width: 30px;
   min-height: 30px;
   border-radius: 5px;
-  ${({ isActive }) =>
-    isActive &&
-    css`
-      background-color: black;
-    `}
+  ${isActive &&
+  css`
+    background-color: black;
+  `}
   &:hover {
-    background-color: ${({ isActive }) => (isActive ? "black" : "#eeeeee")};
+    background-color: ${isActive ? "black" : "#eeeeee"};
   }
 `;
+
+export const InnerButton = ({
+  isActive,
+  children,
+}: {
+  isActive?: boolean;
+  children: ReactNode;
+}) => {
+  return <div css={getInnerButtonStyle(isActive)}>{children}</div>;
+};

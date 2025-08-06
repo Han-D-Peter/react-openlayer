@@ -1,5 +1,5 @@
 import React, { ButtonHTMLAttributes, MouseEvent, useState } from "react";
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { ReactNode, forwardRef } from "react";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -47,29 +47,30 @@ const buttonSize = {
   xlg: "50px",
 };
 
-const StyledButton = styled.button<{
-  side: "top" | "bottom" | "middle" | "solo";
-  size: "xs" | "sm" | "md" | "lg" | "xlg";
-  isDisabled: boolean;
-  active?: boolean;
-}>`
+const getStyledButtonStyle = (
+  side: "top" | "bottom" | "middle" | "solo",
+  size: "xs" | "sm" | "md" | "lg" | "xlg",
+  isDisabled: boolean,
+  active?: boolean
+) => css`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: ${({ size }) => buttonSize[size]};
-  height: ${({ size }) => buttonSize[size]};
+  width: ${buttonSize[size]};
+  height: ${buttonSize[size]};
   background: white;
   border: 0;
-  border-radius: ${(props) => getborderRadiusBySide(props.side)};
+  border-radius: ${getborderRadiusBySide(side)};
   box-shadow: 0px 3px 4px 0px #959595;
-  cursor: ${({ isDisabled }) => (isDisabled ? "not-allowed" : "pointer")};
-  opacity: ${({ isDisabled }) => (isDisabled ? 0.6 : 1)};
+  cursor: ${isDisabled ? "not-allowed" : "pointer"};
+  opacity: ${isDisabled ? 0.6 : 1};
 `;
 
-const ButtonContainer = styled.div`
+const buttonContainerStyle = css`
   position: relative;
 `;
-const ButtonPopup = styled.div`
+
+const buttonPopupStyle = css`
   opacity: 0.7;
   font-size: 12px;
   display: flex;
@@ -111,22 +112,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     return (
-      <ButtonContainer>
-        <StyledButton
+      <div css={buttonContainerStyle}>
+        <button
           ref={ref}
           onClick={onClickBtn}
           onMouseMove={() => setIsHover(true)}
           onMouseLeave={() => setIsHover(false)}
-          side={side}
-          isDisabled={isDisabled}
-          active={isActive}
-          size={size}
+          css={getStyledButtonStyle(side, size, isDisabled, isActive)}
           {...props}
         >
           {children}
-        </StyledButton>
-        {hasPopup && isHover && <ButtonPopup>{popupText}</ButtonPopup>}
-      </ButtonContainer>
+        </button>
+        {hasPopup && isHover && <div css={buttonPopupStyle}>{popupText}</div>}
+      </div>
     );
   }
 );
