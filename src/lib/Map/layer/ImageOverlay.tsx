@@ -13,6 +13,7 @@ export interface ImageOverlayProps {
    * @description Set [[minX, minY], [maxX, maxY]]
    */
   bounds: Location[];
+  onLoad?: (isLoading: boolean) => void;
 }
 
 export interface ImageOverlayRef {
@@ -21,24 +22,20 @@ export interface ImageOverlayRef {
 }
 
 export const ImageOverlay = forwardRef<ImageOverlayRef, ImageOverlayProps>(
-  ({ imageUrl, altText = "unknown", zIndex = 0, bounds }, ref) => {
+  ({ imageUrl, altText = "unknown", zIndex = 0, bounds, onLoad }, ref) => {
     const map = useMap();
-    const imageRef = useRef(
-      new ImageLayer({
-        source: new ImageStatic({
-          url: imageUrl,
-          imageExtent: bounds.flat(),
-          projection: "EPSG:4326",
-        }),
-      })
-    );
+    const imageRef = useRef<ImageLayer<ImageStatic>>(new ImageLayer());
 
     const removeFrom = useCallback(() => {
-      map.removeLayer(imageRef.current);
+      if (imageRef.current) {
+        map.removeLayer(imageRef.current);
+      }
     }, [map]);
 
     const addTo = useCallback(() => {
-      map.addLayer(imageRef.current);
+      if (imageRef.current) {
+        map.addLayer(imageRef.current);
+      }
     }, [map]);
 
     useImperativeHandle(
@@ -53,16 +50,33 @@ export const ImageOverlay = forwardRef<ImageOverlayRef, ImageOverlayProps>(
     );
 
     useEffect(() => {
-      if (imageRef.current) {
-        imageRef.current.setSource(
-          new ImageStatic({
-            url: imageUrl,
-            imageExtent: bounds.flat(),
-            projection: "EPSG:4326",
-          })
-        );
+      function handleLoadStart() {
+        onLoad?.(true);
       }
-    }, [bounds, imageUrl]);
+      function handleLoadEnd() {
+        onLoad?.(false);
+      }
+      const imageStatic = new ImageStatic({
+        url: imageUrl,
+        imageExtent: bounds.flat(),
+        projection: "EPSG:4326",
+      });
+
+      imageStatic.on("imageloadstart", handleLoadStart);
+      imageStatic.on("imageloadend", handleLoadEnd);
+
+      if (imageRef.current) {
+        imageRef.current.setSource(imageStatic);
+      }
+
+      return () => {
+        if (imageRef.current) {
+          imageRef.current.setSource(null);
+        }
+        imageStatic.un("imageloadstart", handleLoadStart);
+        imageStatic.un("imageloadend", handleLoadEnd);
+      };
+    }, [bounds, imageUrl, onLoad]);
 
     useEffect(() => {
       if (imageRef.current) {
@@ -72,10 +86,14 @@ export const ImageOverlay = forwardRef<ImageOverlayRef, ImageOverlayProps>(
 
     useEffect(() => {
       const imageLayer = imageRef.current;
-      map.addLayer(imageLayer);
+      if (imageLayer) {
+        map.addLayer(imageLayer);
+      }
 
       return () => {
-        map.removeLayer(imageLayer);
+        if (imageLayer) {
+          map.removeLayer(imageLayer);
+        }
       };
     }, []);
     return <></>;
