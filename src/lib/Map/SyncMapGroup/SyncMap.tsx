@@ -56,6 +56,7 @@ export const SyncMap = ({
   onClick,
 }: SyncMapProps) => {
   const {
+    sharedView,
     adjustCenter,
     onWheelHandler,
     onZoomHandler,
@@ -63,7 +64,10 @@ export const SyncMap = ({
     controlledCenter,
     controlledZoomLevel,
     controlledRotation,
+    registerMap,
+    unregisterMap,
   } = useSyncMapContext();
+
   const id = useId();
   const mapId = `react-openlayers-map-${id}`;
   const osmRef = useRef<TileLayer<OSM>>(
@@ -81,18 +85,15 @@ export const SyncMap = ({
         zoom: false,
         rotate: true,
       }).extend([]),
-      view: new View({
-        zoom: controlledZoomLevel,
-      }),
+      view: isDecoupled
+        ? new View({
+            center: fromLonLat(controlledCenter),
+            zoom: controlledZoomLevel,
+            rotation: (controlledRotation * Math.PI) / 180,
+          })
+        : sharedView,
     })
   );
-
-  const onMouseUpOnMap = useCallback(() => {
-    if (!isDecoupled) {
-      const current = mapObj.current.getView().getCenter();
-      adjustCenter(toLonLat(current as Coordinate) as Location);
-    }
-  }, [adjustCenter, isDecoupled]);
 
   const clickEventHandler = useCallback(
     (event: MapBrowserEvent<any>) => {
@@ -103,24 +104,40 @@ export const SyncMap = ({
     [onClick]
   );
 
+  // 맵 등록/해제
   useEffect(() => {
-    mapObj.current.getView().setCenter(fromLonLat(controlledCenter));
-  }, [controlledCenter]);
+    registerMap(mapObj.current, isDecoupled);
+
+    return () => {
+      unregisterMap(mapObj.current);
+    };
+  }, [registerMap, unregisterMap, isDecoupled]);
+
+  // isDecoupled가 true인 경우에만 개별 상태 업데이트
+  useEffect(() => {
+    if (isDecoupled) {
+      mapObj.current.getView().setCenter(fromLonLat(controlledCenter));
+    }
+  }, [controlledCenter, isDecoupled]);
 
   useEffect(() => {
-    mapObj.current?.getView().setZoom(controlledZoomLevel);
-  }, [controlledZoomLevel]);
+    if (isDecoupled) {
+      mapObj.current?.getView().setZoom(controlledZoomLevel);
+    }
+  }, [controlledZoomLevel, isDecoupled]);
 
   useEffect(() => {
-    mapObj.current?.getView().setRotation((controlledRotation * Math.PI) / 180);
-  }, [controlledRotation]);
+    if (isDecoupled) {
+      mapObj.current
+        ?.getView()
+        .setRotation((controlledRotation * Math.PI) / 180);
+    }
+  }, [controlledRotation, isDecoupled]);
 
   useEffect(() => {
     const map = mapObj.current;
 
     function zoomHandler(e: MapBrowserEvent<any>) {
-      // const rotation = map.getView().getRotation();
-      // adjustRotate(rotation);
       onZoomHandler(e, map);
     }
 
@@ -156,10 +173,6 @@ export const SyncMap = ({
       <div
         id={mapId}
         onWheel={(e) => onWheelHandler(e, mapObj.current)}
-        onMouseUp={onMouseUpOnMap}
-        onTouchEnd={(e) => {
-          onMouseUpOnMap();
-        }}
         className="react-openlayers-map-container"
         style={{ width, height }}
       >
