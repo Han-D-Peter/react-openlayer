@@ -3,10 +3,7 @@ import { Map, MapEvent, View } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { toLonLat, fromLonLat } from "ol/proj";
 import {
-  Children,
-  ReactElement,
   createContext,
-  createElement,
   useCallback,
   useMemo,
   useState,
@@ -16,7 +13,6 @@ import {
   ReactNode,
 } from "react";
 import { Location } from "../MapContainer";
-import { SyncMap, SyncMapProps } from "./SyncMap";
 
 export interface SyncMapGroupProps {
   /**

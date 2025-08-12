@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback } from "react";
-import { useEffect, useRef } from "react";
+import React from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Coordinate } from "ol/coordinate";
 import Feature from "ol/Feature";
 import { ANNOTATION_COLOR } from "../../constants/color";
-import { useMap } from "../../hooks";
-import { Geometry, MultiPoint } from "ol/geom";
+import { useMap } from "../../hooks/incontext/useMap";
+import { MultiPoint } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
@@ -13,31 +13,39 @@ import { Circle, Fill, Stroke, Style } from "ol/style";
 import { makeText } from "../../utils/object";
 import { Annotation } from ".";
 import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
+import { Geometry } from "ol/geom";
 
 export interface CustomMultiPointProps extends Annotation {
   positions: Coordinate[];
 }
 
-export function CustomMultiPoint({
+export const CustomMultiPoint = ({
   positions,
   color = "BLUE",
   properties = {},
   onClick,
   onHover,
+  onLeave,
   zIndex = 0,
   children,
   opacity = 1,
   isDisabledSelection = false,
-}: CustomMultiPointProps) {
+}: CustomMultiPointProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<MultiPoint>>(
     new Feature(
       new MultiPoint(positions.map((position) => fromLonLat(position)))
     )
   );
-  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+
+  const annotationLayerRef = useRef<
+    VectorLayer<VectorSource<Feature<Geometry>>>
+  >(
     new VectorLayer({
-      source: new VectorSource({ wrapX: false }),
+      source: new VectorSource({
+        wrapX: false,
+        features: [annotationRef.current],
+      }),
     })
   );
 
@@ -78,8 +86,9 @@ export function CustomMultiPoint({
 
   useEffect(() => {
     const geometry = annotationRef.current.getGeometry() as MultiPoint;
-    const vectorSource =
-      annotationLayerRef.current.getSource() as VectorSource<Geometry>;
+    const vectorSource = annotationLayerRef.current.getSource() as VectorSource<
+      Feature<Geometry>
+    >;
 
     const points = geometry.getPoints().map((point, index) => {
       const text = index + 1; // 순번 설정
@@ -102,7 +111,10 @@ export function CustomMultiPoint({
           isMarker: false,
         }),
       });
-      style.getText().setText(text.toString());
+      const textStyle = style.getText();
+      if (textStyle) {
+        textStyle.setText(text.toString());
+      }
       const pointFeature = new Feature(point);
       pointFeature.setStyle(style);
       pointFeature.setProperties({
@@ -129,4 +141,4 @@ export function CustomMultiPoint({
     };
   }, [color, children, map, onHover, properties, onClick, opacity]);
   return <></>;
-}
+};

@@ -1,45 +1,23 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  BoundaryCircle,
-  CustomCircle,
-  CustomMarker,
-  CustomPolyLine,
-  CustomPolygon,
-  CustomRectangle,
-  ImageMarker,
-} from "./lib/Map/layer/annotation";
-import { InnerText } from "./lib/Map/Text";
+import { CustomMarker } from "./lib/Map/layer/annotation";
 import { FullScreenFeature } from "./lib/Map/control/FullScreenFeature";
 import { ControlSection } from "./lib/Map/control/layout/ControlSection";
 import { ZoomFeature } from "./lib/Map/control/ZoomFeature";
 import { CompassWheel } from "./lib/Map/control/CompassWheel";
 import {
-  CaptureMap,
-  GeoJsonLayer,
   ImageOverlay,
-  ImageOverlayProps,
   ImageOverlayRef,
-  LayerGroup,
   MapContainer,
   TileLayer,
-  fromLonLat,
   TileMatrix,
   SelectedFeatureStore,
 } from "./lib/Map";
 import { DrawingTools } from "./lib/Map/control/DrawingTools";
-import { getProfileFromFeature } from "./lib/Map/utils/utils";
-import { CustomMultiPoint } from "./lib/Map/layer/annotation/MultiPoint";
 import { icon } from "./lib";
-import {
-  positionsFromFeature,
-  positionsFromMultiPointFeatures,
-} from "./lib/utils/feature";
 
-import { Map, View } from "ol";
+import Map from "ol/Map";
 import { SyncMapGroup } from "../src/lib/Map/SyncMapGroup";
 import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
-import _ from "lodash";
-import TestField from "./TestField";
 
 import json from "./sample.json";
 import { FeatureCollection, FeaturesStore } from "./lib/Map/FeaturesStore";
@@ -63,12 +41,7 @@ icon.imageCircleMarker.YELLOW = "/images/imageCircleMarker/YELLOW.png";
 function App() {
   const [isShown, setIsShown] = useState(true);
   const [rotate, setRotate] = useState(0);
-  const [bounds, setBounds] = useState<[Location, Location]>([
-    [126.841019, 35.189171],
-    [126.841235, 35.189381],
-  ] as unknown as [Location, Location]);
-
-  const [mapSize, setMapSize] = useState({ width: "1000px", height: "100vh" });
+  const [mapSize] = useState({ width: "1000px", height: "100vh" });
 
   const [tileMatrix, setTileMatrix] = useState<TileMatrix>();
 

@@ -1,4 +1,4 @@
-import { MapBrowserEvent } from "ol";
+import MapBrowserEvent from "ol/MapBrowserEvent";
 
 import Feature, { FeatureLike } from "ol/Feature";
 import { Geometry } from "ol/geom";
@@ -9,9 +9,9 @@ import { useCallback, useEffect } from "react";
 import { useMap } from "./useMap";
 
 interface useInteractionEventArgs {
-  annotation: VectorLayer<VectorSource<Geometry>>;
-  onClick?: (feature: Feature) => void;
-  onHover?: (feature: Feature) => void;
+  annotation: VectorLayer<VectorSource<Feature<Geometry>>>;
+  onClick?: (feature: Feature<Geometry>) => void;
+  onHover?: (feature: Feature<Geometry>) => void;
   onLeave?: () => void;
   isDisabledSelection?: boolean;
 }
@@ -39,7 +39,7 @@ export function useInteractionEvent({
         // 이미 선택한 마커 또 선택하면 해제
 
         if (annotation?.getSource()?.getFeatures()[0] === feature) {
-          onClick && onClick(feature);
+          onClick && onClick(feature as Feature<Geometry>);
         }
       });
     },

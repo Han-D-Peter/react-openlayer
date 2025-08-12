@@ -32,7 +32,10 @@ export const makeSelectedFeature = (nomalizedCoordinates: Coordinate[]) => {
         }),
         zIndex: 1000,
       });
-      style.getText().setText(text.toString());
+      const textStyle = style.getText();
+      if (textStyle) {
+        textStyle.setText(text.toString());
+      }
       const pointFeature = new Feature(point);
       pointFeature.setStyle(style);
 

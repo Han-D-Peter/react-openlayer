@@ -1,20 +1,17 @@
 import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
-import { useEffect, useRef } from "react";
-import { Draw } from "ol/interaction";
-import { useFeatureStore, useMap } from "../../../hooks";
-import Style from "ol/style/Style";
+import Draw from "ol/interaction/Draw";
+import { useCallback, useEffect, useRef } from "react";
 import { DrawEvent } from "ol/interaction/Draw";
+import { TextIcon } from "../../../constants/icons/TextIcon";
+import { useMap } from "../../../hooks";
+import { useControlSection } from "../../layout";
+import { InnerButton } from "../InnerButton";
+import { FeatureFromGeojson, useFeaturesStore } from "../../../FeaturesStore";
+import Style from "ol/style/Style";
 import Fill from "ol/style/Fill";
 import Text from "ol/style/Text";
 import Stroke from "ol/style/Stroke";
-import { useControlSection } from "../../layout";
-import { RxText } from "react-icons/rx";
-import { InnerButton } from "../InnerButton";
-import {
-  FeatureFromGeojson,
-  useFeaturesStore,
-} from "src/lib/Map/FeaturesStore";
 import { positionsFromFeature } from "src/lib/utils";
 import { Coordinate } from "ol/coordinate";
 import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
@@ -44,7 +41,6 @@ export function TextDrawButton({
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
-  const { selectFeature } = useFeatureStore();
   const { addGeoJson } = useFeaturesStore();
 
   const drawRef = useRef(
@@ -101,7 +97,7 @@ export function TextDrawButton({
     map.addInteraction(drawRef.current);
   };
 
-  const drawing = React.useCallback(
+  const drawing = useCallback(
     (event: DrawEvent) => {
       const feature = event.feature;
       const newPosition = positionsFromFeature(feature, true) as Coordinate;
@@ -133,11 +129,10 @@ export function TextDrawButton({
       }
       if (onCanvas) {
         addGeoJson(newGeoJson);
-        selectFeature(newGeoJson);
       }
       setTimeout(() => map.setProperties({ isDrawing: false }), 100);
     },
-    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+    [selectButton, map, onEnd, onCanvas, addGeoJson]
   );
 
   useEffect(() => {
@@ -176,7 +171,7 @@ export function TextDrawButton({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <RxText size={24} color={isActive ? "white" : "black"} />
+        <TextIcon size={24} color={isActive ? "white" : "black"} />
       </InnerButton>
     </Button>
   );

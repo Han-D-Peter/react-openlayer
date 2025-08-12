@@ -2,7 +2,7 @@ import React, { useCallback, useId } from "react";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
 import { DrawEvent } from "ol/interaction/Draw";
-import { useFeatureStore, useMap } from "../../../hooks";
+import { useMap } from "../../../hooks";
 import { Button, ButtonProps } from "../Button";
 import { MultiPointIcon } from "../../../constants/icons/MultiPointIcon";
 import { useControlSection } from "../../layout";
@@ -48,7 +48,6 @@ export function MultiPointDrawButton({
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
   const { addGeoJson } = useFeaturesStore();
-  const { selectFeature } = useFeatureStore();
 
   const drawRef = useRef(
     new Draw({
@@ -101,12 +100,11 @@ export function MultiPointDrawButton({
       }
       if (onCanvas) {
         addGeoJson(newGeoJson);
-        selectFeature(newGeoJson);
       }
 
       setTimeout(() => map.setProperties({ isDrawing: false }), 100);
     },
-    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+    [selectButton, map, onEnd, onCanvas, addGeoJson]
   );
 
   useEffect(() => {

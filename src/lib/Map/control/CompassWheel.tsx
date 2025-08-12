@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { useEffect, useRef, useState } from "react";
+import React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMap } from "../hooks/incontext/useMap";
 import { Control } from "ol/control";
 import { useMapRotation } from "../hooks";

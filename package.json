@@ -20,7 +20,7 @@
     "@emotion/react": "^11.11.0",
     "@phosphor-icons/react": "^2.0.10",
     "lodash": "^4.17.21",
-    "ol": "^7.3.0",
+    "ol": "^10.6.0",
     "proj4": "^2.9.0",
     "react-icons": "^4.10.1",
     "react-openlayers7": "^0.3.99",

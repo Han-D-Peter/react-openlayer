@@ -1,49 +1,46 @@
-import { Feature } from "ol";
+import React, { useEffect, useRef } from "react";
+import Feature from "ol/Feature";
 import { Point } from "ol/geom";
-import VectorLayer from "ol/layer/Vector";
 import { fromLonLat } from "ol/proj";
+import { Text, Fill, Stroke, Icon } from "ol/style";
+import Style from "ol/style/Style";
+import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Fill, Icon, Stroke, Style, Text } from "ol/style";
-import { useEffect, useRef } from "react";
-import { ANNOTATION_COLOR } from "../../constants";
-import { useInteractionEvent, useMap } from "../../hooks";
 import { Location } from "../../MapContainer";
 import { icon } from "../../utils";
 import { CustomCircle } from "./Circle";
+import { Annotation } from ".";
+import { useMap } from "../../hooks/incontext/useMap";
+import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
+import { Geometry } from "ol/geom";
 
-interface BoundaryCircleProps {
-  /**
-   * @description by meter
-   */
-  circleRadius: number;
-  circleColor?: keyof typeof ANNOTATION_COLOR;
-  children: string;
-  color: keyof typeof ANNOTATION_COLOR;
+export interface BoundaryCircleProps extends Annotation {
   center: Location;
-  hasStroke?: boolean;
-  onClick?: () => void;
-  onHover?: () => void;
-  onLeave?: () => void;
+  radius: number;
 }
 
-export function BoundaryCircle({
-  circleRadius,
-  children,
-  color = "ROYAL_BLUE",
-  circleColor = "ROYAL_BLUE",
+export const BoundaryCircle = ({
   center,
-  hasStroke = true,
+  radius,
+  color = "BLUE",
+  properties = {},
   onClick,
   onHover,
   onLeave,
-}: BoundaryCircleProps) {
+  zIndex = 0,
+  children,
+  opacity = 1,
+  isDisabledSelection = false,
+}: BoundaryCircleProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Point>>(
     new Feature(new Point(fromLonLat(center)))
   );
-  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+
+  const annotationLayerRef = useRef<
+    VectorLayer<VectorSource<Feature<Geometry>>>
+  >(
     new VectorLayer({
-      zIndex: 12,
       source: new VectorSource({
         wrapX: false,
         features: [annotationRef.current],
@@ -54,7 +51,7 @@ export function BoundaryCircle({
   const annotationStyleRef = useRef(
     new Style({
       text: new Text({
-        text: children,
+        text: typeof children === "string" ? children : "",
         textAlign: "center",
         font: `500 16px roboto, sans-serif`,
         fill: new Fill({
@@ -80,12 +77,20 @@ export function BoundaryCircle({
     })
   );
 
-  function onClickHandler(feature: Feature) {
-    onClick && onClick();
+  function onClickHandler(feature: Feature<Geometry>) {
+    onClick &&
+      onClick({
+        annotation: feature,
+        properties: properties,
+      });
   }
 
-  function onHoverHandler() {
-    onHover && onHover();
+  function onHoverHandler(feature: Feature<Geometry>) {
+    onHover &&
+      onHover({
+        annotation: feature,
+        properties: properties,
+      });
   }
 
   function onLeaveHandler() {
@@ -135,18 +140,18 @@ export function BoundaryCircle({
       sourceInAnnotation?.clear();
       map.removeLayer(annotationLayerCurrent);
     };
-  }, [map, circleRadius, children, color, center, onClick, onHover, onLeave]);
+  }, [map, radius, children, color, center, onClick, onHover, onLeave]);
 
   return (
     <CustomCircle
-      hasStroke={hasStroke}
-      onHover={onHoverHandler}
+      hasStroke={true}
+      onHover={(event) => onHoverHandler(event.annotation as Feature<Geometry>)}
       onLeave={onLeaveHandler}
       zIndex={10}
       center={center}
-      radius={circleRadius * 1.25}
+      radius={radius * 1.25}
       color={color}
       properties={{ notSelectable: true }}
     ></CustomCircle>
   );
-}
+};

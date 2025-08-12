@@ -2,7 +2,7 @@ import React, { useCallback, useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
-import { useFeatureStore, useMap } from "../../../hooks";
+import { useMap } from "../../../hooks";
 import Style from "ol/style/Style";
 import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
@@ -52,7 +52,6 @@ export function PolylineDrawButton({
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
-  const { selectFeature } = useFeatureStore();
 
   const { addGeoJson } = useFeaturesStore();
 
@@ -151,11 +150,10 @@ export function PolylineDrawButton({
       }
       if (onCanvas) {
         addGeoJson(newGeoJson);
-        selectFeature(newGeoJson);
       }
       setTimeout(() => map.setProperties({ isDrawing: false }), 100);
     },
-    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+    [selectButton, map, onEnd, onCanvas, addGeoJson]
   );
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback } from "react";
-import { useEffect, useRef } from "react";
+import React from "react";
+import { useCallback, useEffect, useRef } from "react";
 import Feature from "ol/Feature";
 import { Point } from "ol/geom";
 import { fromLonLat } from "ol/proj";
@@ -14,6 +14,7 @@ import { Annotation } from ".";
 import { useMap } from "../../hooks/incontext/useMap";
 import { icon, makeText } from "../../utils/object";
 import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
+import { Geometry } from "ol/geom";
 
 export interface CustomMarkerProps extends Annotation {
   center: Coordinate;
@@ -26,17 +27,20 @@ export const CustomMarker = ({
   properties = {},
   onClick,
   onHover,
+  onLeave,
   zIndex = 0,
-  selected = false,
-  opacity = 1,
   children,
+  opacity = 1,
   isDisabledSelection = false,
+  selected = false,
 }: CustomMarkerProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Point>>(
     new Feature(new Point(fromLonLat(center)))
   );
-  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+  const annotationLayerRef = useRef<
+    VectorLayer<VectorSource<Feature<Geometry>>>
+  >(
     new VectorLayer({
       source: new VectorSource({
         wrapX: false,
@@ -143,8 +147,8 @@ export const CustomMarker = ({
   useEffect(() => {
     if (!children?.props?.color) return;
     const gottonText = annotationStyleRef.current.getText();
-    if (gottonText) {
-      gottonText.getFill().setColor(children.props.color);
+    if (gottonText && gottonText.getFill()) {
+      gottonText.getFill()?.setColor(children.props.color);
     }
 
     annotationRef.current.setStyle(annotationStyleRef.current);

@@ -1,4 +1,6 @@
-import { Map, MapBrowserEvent, View } from "ol";
+import Map from "ol/Map";
+import MapBrowserEvent from "ol/MapBrowserEvent";
+import View from "ol/View";
 import {
   ReactNode,
   useEffect,
@@ -11,7 +13,7 @@ import { defaults as defaultControls } from "ol/control";
 import TileLayer from "ol/layer/Tile";
 import { ImageStatic, OSM } from "ol/source";
 import { fromLonLat } from "ol/proj";
-import { Image as OlImage } from "ol/layer";
+import ImageLayer from "ol/layer/Image";
 
 interface ImageMapForPixelProps {
   /**
@@ -156,10 +158,9 @@ export function ImageMapForPixel({
       (imgSize.width / 10 ** rightbycount).toFixed(rightbycount)
     );
 
-    const imageLayer = new OlImage({
+    const imageLayer = new ImageLayer({
       source: new ImageStatic({
         url: imageSrc,
-        imageSize: [imgSize.width, imgSize.height],
         imageExtent: [0, 0, rightPosition, bottomPosition],
       }),
     });

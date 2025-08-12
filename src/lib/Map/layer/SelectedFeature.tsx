@@ -19,7 +19,7 @@ export interface SelectedFeatureProps {
 export function SelectedFeature({ featureGeoJson }: SelectedFeatureProps) {
   const map = useMap();
   const markerSourceRef = useRef(new VectorSource({ wrapX: false }));
-  const markerLayerRef = useRef<VectorLayer<VectorSource<Geometry>>>(
+  const markerLayerRef = useRef<VectorLayer<VectorSource<Feature<Geometry>>>>(
     new VectorLayer({
       zIndex: 50000,
       source: markerSourceRef.current,
@@ -66,7 +66,7 @@ export function SelectedFeature({ featureGeoJson }: SelectedFeatureProps) {
 
   useEffect(() => {
     const onChange = (e: BaseEvent) => {
-      const targetFeature = e.target as Feature;
+      const targetFeature = e.target as Feature<Geometry>;
 
       const targetGeometry = targetFeature.getGeometry() as Geometry;
       let nomalizedCoordinates;
@@ -131,7 +131,7 @@ export function SelectedFeature({ featureGeoJson }: SelectedFeatureProps) {
 
   useEffect(() => {
     const markerLayer = markerLayerRef.current;
-    const source = markerLayer.getSource() as VectorSource<Geometry>;
+    const source = markerLayer.getSource() as VectorSource<Feature<Geometry>>;
     source.clear();
     if (coordinates) {
       const features = makeSelectedFeature(coordinates);

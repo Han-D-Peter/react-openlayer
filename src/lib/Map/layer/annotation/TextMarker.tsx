@@ -13,6 +13,7 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import { Annotation } from ".";
 import { useInteractionEvent } from "../../hooks";
+import { Geometry } from "ol/geom";
 
 export interface TextMarkerProps extends Annotation {
   center: Coordinate;
@@ -24,17 +25,20 @@ export const TextMarker = ({
   properties = {},
   onClick,
   onHover,
-  children,
-  opacity,
+  onLeave,
   zIndex = 0,
+  children,
+  opacity = 1,
   isDisabledSelection = false,
 }: TextMarkerProps) => {
   const map = useMap();
   const annotationRef = useRef<Feature<Point>>(
-    new Feature({ geometry: new Point(fromLonLat(center)) })
+    new Feature(new Point(fromLonLat(center)))
   );
 
-  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+  const annotationLayerRef = useRef<
+    VectorLayer<VectorSource<Feature<Geometry>>>
+  >(
     new VectorLayer({
       source: new VectorSource({
         wrapX: false,

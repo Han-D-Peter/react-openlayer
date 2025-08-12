@@ -2,7 +2,7 @@ import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
-import { useFeatureStore, useMap } from "../../../hooks";
+import { useMap } from "../../../hooks";
 import Style from "ol/style/Style";
 import { DrawEvent, createBox } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
@@ -51,7 +51,7 @@ export function RectangleDrawButton({
   const id = useId();
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
-  const { selectFeature } = useFeatureStore();
+
   const isActive = buttonId === selectedButtonId;
   const { addGeoJson } = useFeaturesStore();
   const drawRef = useRef(
@@ -138,11 +138,10 @@ export function RectangleDrawButton({
       }
       if (onCanvas) {
         addGeoJson(newGeoJson);
-        selectFeature(newGeoJson);
       }
       setTimeout(() => map.setProperties({ isDrawing: false }), 100);
     },
-    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+    [selectButton, map, onEnd, onCanvas, addGeoJson]
   );
 
   useEffect(() => {

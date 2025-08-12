@@ -1,129 +1,49 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { MapBrowserEvent, Overlay } from "ol";
+import React from "react";
+import { useCallback, useEffect, useRef } from "react";
+import Feature from "ol/Feature";
 import { Coordinate } from "ol/coordinate";
-import Feature, { FeatureLike } from "ol/Feature";
 import { Point } from "ol/geom";
-import VectorLayer from "ol/layer/Vector";
 import { fromLonLat } from "ol/proj";
+import Icon from "ol/style/Icon";
+import { Text } from "ol/style";
+import Style from "ol/style/Style";
+import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { Icon, Style } from "ol/style";
-import { useEffect, useLayoutEffect, useRef, useId } from "react";
-import { useInteractionEvent, useMap } from "../../hooks";
-import { icon } from "../../utils";
+import { useMap } from "../../hooks/incontext/useMap";
+import { makeText } from "../../utils/object";
+import { Annotation } from ".";
+import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
+import { Geometry } from "ol/geom";
 
-interface ImageMarkerProps {
+export interface ImageMarkerProps extends Annotation {
   center: Coordinate;
-
-  /**
-   * @default false
-   * @description can control a image container whether open or close
-   */
-  isOpened?: boolean;
-  imageUrl: string;
-  imageTitle: string;
-  width?: string;
-  height?: string;
-
-  /**
-   * @description can adjust scale of Point Image. 1 => 100%
-   * @default 1
-   */
-  pointScale?: number;
-  color?: "red";
-  zIndex?: number;
-  onHover?: (isHover: boolean, annotation: FeatureLike) => void;
-  onClick?: (event: {
-    annotation: FeatureLike;
-    // properties: Record<string, any>;
-  }) => void;
-  onImageClick?: (imgUrl: string) => void;
-
-  grade?: 0 | 1 | 2 | 3;
-
+  imageSrc: string;
   selected?: boolean;
 }
 
-function makeImgContainer(
-  width: string,
-  height: string,
-  imageUrl: string,
-  imageTitle: string,
-  id: string
-) {
-  const container = document.createElement("div");
-  const imgTitleContainer = document.createElement("div");
-  container.appendChild(imgTitleContainer);
-
-  container.style.zIndex = "10";
-  container.id = id;
-  container.style.width = width;
-  container.style.height = height;
-  container.style.borderRadius = "10px";
-  container.style.border = "5px solid black";
-  container.style.backgroundImage = `url(${imageUrl})`;
-  container.style.backgroundRepeat = "no-repeat";
-  container.style.backgroundSize = `${width} ${height}`;
-  container.style.cursor = "pointer";
-  container.style.position = "absolute";
-  container.style.top = "-150px";
-  container.style.left = "-104px";
-
-  imgTitleContainer.style.fontSize = "10px";
-  imgTitleContainer.style.color = "white";
-  imgTitleContainer.style.padding = "5px 6px";
-  imgTitleContainer.style.background = "rgba(0, 0, 0, 0.7)";
-  imgTitleContainer.innerText = imageTitle;
-  imgTitleContainer.style.width = "fit-content";
-  imgTitleContainer.style.marginTop = "5px";
-  return container;
-}
-
-function gradeImage(grade: 0 | 1 | 2 | 3) {
-  switch (grade) {
-    case 0:
-      return icon.imageMarker.zero;
-    case 1:
-      return icon.imageMarker.one;
-    case 2:
-      return icon.imageMarker.two;
-    case 3:
-      return icon.imageMarker.three;
-    default:
-      break;
-  }
-}
-
-export function ImageMarker({
+export const ImageMarker = ({
   center,
-  imageUrl,
-  imageTitle,
-  width = "194px",
-  height = "111px",
-  color,
-  isOpened = false,
-  zIndex = 0,
+  imageSrc,
+  color = "BLUE",
+  properties = {},
   onClick,
   onHover,
-  onImageClick,
-  pointScale = 1,
-  grade = 0,
+  onLeave,
+  zIndex = 0,
+  children,
+  opacity = 1,
+  isDisabledSelection = false,
   selected = false,
-}: ImageMarkerProps) {
-  const overlayCenter = [center[0], center[1]];
+}: ImageMarkerProps) => {
   const map = useMap();
-  const id = useId();
   const annotationRef = useRef<Feature<Point>>(
     new Feature(new Point(fromLonLat(center)))
   );
-  const popupOverlayRef = useRef<Overlay>(
-    new Overlay({
-      position: fromLonLat(overlayCenter),
-      element: makeImgContainer(width, height, imageUrl, imageTitle, id),
-      autoPan: false,
-      positioning: "bottom-center",
-    })
-  );
-  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+
+  const annotationLayerRef = useRef<
+    VectorLayer<VectorSource<Feature<Geometry>>>
+  >(
     new VectorLayer({
       source: new VectorSource({
         wrapX: false,
@@ -132,98 +52,88 @@ export function ImageMarker({
     })
   );
 
-  const hover = () => {
-    map.addOverlay(popupOverlayRef.current);
-    onHover && onHover(true, annotationRef.current);
-  };
+  const annotationStyleRef = useRef(
+    new Style({
+      image: new Icon({
+        opacity,
+        src: imageSrc,
+        scale: 0.17,
+        anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+      }),
+      text:
+        children && !children.props.isPopup
+          ? makeText({
+              text: children.props.children || "",
+              size: children.props.size || 15,
+              color: children.props.color ? children.props.color : "black",
+              outline: children.props.outline,
+              isMarker: children.props.upperText,
+            })
+          : undefined,
+    })
+  );
 
-  const leave = () => {
-    map.removeOverlay(popupOverlayRef.current);
-    onHover && onHover(false, annotationRef.current);
-  };
-
-  const onClickHandler = (event: MapBrowserEvent<MouseEvent>) => {
-    const features = map.getFeaturesAtPixel(event.pixel);
-    if (features[0] && annotationRef.current === features[0]) {
-      onClick && onClick({ annotation: annotationRef.current });
-    }
-    // else {
-    //   const style = new Style({
-    //     image: new Icon({
-    //       src: gradeImage(grade), // 마커 이미지 경로
-    //       scale: 0.17 * pointScale,
-    //       anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-    //     }),
-    //   });
-
-    //   annotationRef.current.setStyle(style);
-    // }
-    // map.forEachFeatureAtPixel(event.pixel, (feature, layer) => {
-    //   if (feature && annotationRef.current === feature) {
-    //     onClick && onClick({ annotation: annotationRef.current });
-    //     // const preStyle = annotationRef.current.getStyle() as Style;
-    //     // const imageIcon = preStyle.getImage() as Icon;
-    //     // const iconSrc = imageIcon.getSrc();
-
-    //     // if (iconSrc === icon.imageMarker.selected) {
-    //     //   const style = new Style({
-    //     //     image: new Icon({
-    //     //       src: gradeImage(grade), // 마커 이미지 경로
-    //     //       scale: 0.17 * pointScale,
-    //     //       anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-    //     //     }),
-    //     //   });
-
-    //     //   annotationRef.current.setStyle(style);
-    //     //   return;
-    //     // }
-    //     // const style = new Style({
-    //     //   image: new Icon({
-    //     //     src: icon.imageMarker.selected, // 마커 이미지 경로
-    //     //     scale: 0.17 * pointScale,
-    //     //     anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-    //     //   }),
-    //     // });
-
-    //     // annotationRef.current.setStyle(style);
-    //   } else {
-    //   }
-    // });
-  };
-
-  const onHoverHandler = (feature: Feature) => {
-    if (feature) {
-      if (feature === annotationRef.current) {
-        hover();
+  const onHoverHandler = useCallback(
+    (feature: Feature<Geometry>) => {
+      if (feature) {
+        if (onHover) {
+          onHover({ annotation: annotationRef.current, properties });
+        }
       }
-    } else {
-      !isOpened && leave();
+
+      // 수정중일땐 팝업 관여하지 않음
+      if (map.getProperties().isModifying) return;
+
+      // Pop up text
+      if (feature && children?.props.isPopup) {
+        const hoveredFeature = feature;
+        const hoveredFeatureStyle = hoveredFeature.getStyle() as Style;
+        hoveredFeatureStyle.setText(
+          makeText({
+            text: children.props.children || "",
+            size: children.props.size || 15,
+            color: children.props.color ? children.props.color : "black",
+            outline: children.props.outline,
+            isMarker: false,
+          })
+        );
+
+        annotationRef.current.setStyle(hoveredFeatureStyle);
+      } else if (feature && children?.props.isPopup) {
+        const hoveredFeatureStyle = annotationRef.current.getStyle() as Style;
+
+        hoveredFeatureStyle.setText(new Text());
+        annotationRef.current.setStyle(hoveredFeatureStyle);
+      }
+    },
+    [children, map, onHover, properties]
+  );
+
+  const onClickHandler = () => {
+    if (onClick) {
+      onClick({
+        annotation: annotationRef.current,
+        properties,
+      });
     }
+    // 선택된 Feature에 대한 작업 수행
+    // 예: 스타일 변경, 정보 표시 등
   };
 
-  useEffect(() => {
-    const overlayElement = popupOverlayRef.current.getElement();
-    if (overlayElement) overlayElement.style.zIndex = zIndex.toLocaleString();
-  }, [zIndex]);
-
-  useEffect(() => {
-    isOpened ? hover() : leave();
-    const overlay = popupOverlayRef.current;
-    overlay.setElement(
-      makeImgContainer(width, height, imageUrl, imageTitle, id)
-    );
-  }, [isOpened, hover, leave, imageTitle, imageUrl, width, height, id]);
+  useInteractionEvent({
+    annotation: annotationLayerRef.current,
+    onClick: onClickHandler,
+    onHover: onHoverHandler,
+    onLeave,
+    isDisabledSelection,
+  });
 
   useEffect(() => {
     if (annotationRef.current) {
       const geometry = annotationRef.current.getGeometry() as Point;
       geometry.setCoordinates(fromLonLat(center));
     }
-    if (popupOverlayRef.current) {
-      const overlay = popupOverlayRef.current;
-      overlay.setPosition(fromLonLat(overlayCenter));
-    }
-  }, [overlayCenter, center]);
+  }, [center]);
 
   useEffect(() => {
     if (annotationLayerRef.current) {
@@ -231,67 +141,68 @@ export function ImageMarker({
     }
   }, [zIndex]);
 
-  useLayoutEffect(() => {
-    const style = new Style({
-      image: new Icon({
-        src: gradeImage(grade), // 마커 이미지 경로
-        scale: 0.17 * pointScale,
-        anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-      }),
-    });
+  useEffect(() => {
+    annotationStyleRef.current.setImage(
+      new Icon({
+        opacity,
+        src: imageSrc,
+        scale: 0.17,
+        anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+      })
+    );
 
-    annotationRef.current.setStyle(style);
-  }, [pointScale, grade]);
-
-  useInteractionEvent({
-    annotation: annotationLayerRef.current,
-    // onClick: onClickHandler,
-    onHover: onHoverHandler,
-  });
+    annotationRef.current.setStyle(annotationStyleRef.current);
+  }, [imageSrc, opacity]);
 
   useEffect(() => {
-    popupOverlayRef.current.getElement()!.onclick = () =>
-      onImageClick && onImageClick(imageUrl);
-    return () => {
-      popupOverlayRef.current.getElement()!.onclick = null;
-    };
-  }, [onImageClick, imageUrl]);
-
-  useEffect(() => {
-    if (selected) {
-      const style = new Style({
-        image: new Icon({
-          src: icon.imageMarker.selected,
-          scale: 0.17 * pointScale,
-          anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-        }),
-      });
-
-      annotationRef.current.setStyle(style);
-    } else {
-      const style = new Style({
-        image: new Icon({
-          src: gradeImage(grade), // 마커 이미지 경로
-          scale: 0.17 * pointScale,
-          anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
-        }),
-      });
-
-      annotationRef.current.setStyle(style);
+    if (!children?.props?.color) return;
+    const gottonText = annotationStyleRef.current.getText();
+    if (gottonText && gottonText.getFill()) {
+      gottonText.getFill()?.setColor(children.props.color);
     }
-  }, [selected, grade, pointScale]);
+
+    annotationRef.current.setStyle(annotationStyleRef.current);
+  }, [color, children]);
+
+  useEffect(() => {
+    if (annotationLayerRef.current && children && !children.props.isPopup) {
+      annotationStyleRef.current.setText(
+        makeText({
+          text: children?.props?.children || "",
+          size: children?.props?.size || 15,
+          color: children?.props?.color ? children.props.color : "black",
+          outline: children?.props?.outline,
+          isMarker: true,
+        })
+      );
+    }
+  }, [children]);
+
+  useEffect(() => {
+    if (!children) {
+      annotationStyleRef.current.setText(new Text());
+    }
+  }, [children]);
+
+  useEffect(() => {
+    annotationRef.current.setProperties({
+      ...properties,
+      shape: "ImageMarker",
+      isModifying: false,
+      source: annotationLayerRef.current.getSource(),
+      layer: annotationLayerRef.current,
+      hasPopup: children ? children?.props.isPopup : false,
+    });
+  }, [properties]);
 
   useEffect(() => {
     const annotationLayerCurrent = annotationLayerRef.current;
     map.addLayer(annotationLayerCurrent);
-    map.on("click", onClickHandler);
-
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      annotationLayerCurrent.getSource()?.clear();
       map.removeLayer(annotationLayerCurrent);
-      map.removeOverlay(popupOverlayRef.current);
-      map.un("click", onClickHandler);
     };
-  }, [map, onClickHandler]);
-
+  }, [map]);
   return <></>;
-}
+};

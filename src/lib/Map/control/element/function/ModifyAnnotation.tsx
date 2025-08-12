@@ -1,7 +1,8 @@
 import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useCallback, useEffect, useRef } from "react";
-import { Modify, Snap } from "ol/interaction";
+import Modify from "ol/interaction/Modify";
+import Snap from "ol/interaction/Snap";
 import { altShiftKeysOnly } from "ol/events/condition";
 import { Collection, Feature } from "ol";
 import { ModifyEvent } from "ol/interaction/Modify";

@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback } from "react";
+import React from "react";
+import { useCallback, useEffect, useRef } from "react";
 import Feature from "ol/Feature";
 import { Coordinate } from "ol/coordinate";
-import { useEffect, useRef } from "react";
 import { LineString } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import Style from "ol/style/Style";
@@ -16,6 +16,7 @@ import { ANNOTATION_COLOR } from "../../constants/color";
 import { Annotation } from ".";
 import { Text } from "ol/style";
 import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
+import { Geometry } from "ol/geom";
 
 export interface CustomPolyLineProps extends Annotation {
   positions: Coordinate[];
@@ -27,6 +28,7 @@ export const CustomPolyLine = ({
   properties = {},
   onClick,
   onHover,
+  onLeave,
   zIndex = 0,
   children,
   opacity = 1,
@@ -38,7 +40,10 @@ export const CustomPolyLine = ({
       new LineString(positions.map((position) => fromLonLat(position)))
     )
   );
-  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+
+  const annotationLayerRef = useRef<
+    VectorLayer<VectorSource<Feature<Geometry>>>
+  >(
     new VectorLayer({
       source: new VectorSource({
         wrapX: false,

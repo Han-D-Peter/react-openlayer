@@ -4,12 +4,10 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useState,
 } from "react";
 
-import json from "../../sample.json";
 import { MakeGeojsonShape } from "../utils/makeGeojsonShape";
 import { Coordinate, IssueGeoJsonLayer } from "./layer";
 

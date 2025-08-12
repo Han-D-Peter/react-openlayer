@@ -1,11 +1,10 @@
-import React from "react";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import { useMap } from "../../hooks";
 import { Fill, Stroke, Style, Text } from "ol/style";
-import { Snap } from "ol/interaction";
+import Snap from "ol/interaction/Snap";
 import { ANNOTATION_COLOR } from "../../constants";
 import { Coordinate } from "./GeoJsonLayer";
 import { FeatureCollection } from "../..";

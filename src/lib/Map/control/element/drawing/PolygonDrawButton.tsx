@@ -1,20 +1,17 @@
-import React, { useCallback, useId, useState } from "react";
+import React, { useId, useState } from "react";
 import { Button, ButtonProps } from "../Button";
-import { useEffect, useRef } from "react";
-import { Draw } from "ol/interaction";
-import { useFeatureStore, useMap } from "../../../hooks";
+import Draw from "ol/interaction/Draw";
+import { useCallback, useEffect, useRef } from "react";
 import Style from "ol/style/Style";
 import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
+import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
+import { useMap } from "../../../hooks";
 import { useControlSection } from "../../layout";
-import { BoundingBox } from "@phosphor-icons/react";
 import { InnerButton } from "../InnerButton";
-import { ANNOTATION_COLOR } from "src/lib/Map/constants";
-import {
-  FeatureFromGeojson,
-  useFeaturesStore,
-} from "src/lib/Map/FeaturesStore";
+import { ANNOTATION_COLOR } from "../../../constants";
+import { FeatureFromGeojson, useFeaturesStore } from "../../../FeaturesStore";
 import { positionsFromFeature } from "src/lib/utils";
 import { Coordinate } from "ol/coordinate";
 import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
@@ -54,7 +51,6 @@ export function PolygonDrawButton({
   const [count, setCount] = useState(0);
 
   const isActive = buttonId === selectedButtonId;
-  const { selectFeature } = useFeatureStore();
 
   const { addGeoJson } = useFeaturesStore();
   const drawRef = useRef(
@@ -112,7 +108,7 @@ export function PolygonDrawButton({
 
   const finishDrawingByRightClick = useCallback(
     (e: MouseEvent) => {
-      setCount((prev) => prev + 1);
+      setCount((prev: number) => prev + 1);
       if (e.button === 2) {
         e.preventDefault();
         if (count < 3) {
@@ -163,12 +159,11 @@ export function PolygonDrawButton({
       }
       if (onCanvas) {
         addGeoJson(newGeoJson);
-        selectFeature(newGeoJson);
       }
 
       setTimeout(() => map.setProperties({ isDrawing: false }), 100);
     },
-    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+    [selectButton, map, onEnd, onCanvas, addGeoJson]
   );
 
   useEffect(() => {
@@ -213,7 +208,7 @@ export function PolygonDrawButton({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <BoundingBox size={26} color={isActive ? "white" : "black"} />
+        <PolygonIcon size={26} color={isActive ? "white" : "black"} />
       </InnerButton>
     </Button>
   );

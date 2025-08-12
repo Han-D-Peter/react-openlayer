@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import proj4 from "proj4";
 import GeoJSON from "ol/format/GeoJSON";
 import VectorSource from "ol/source/Vector";
@@ -7,7 +6,7 @@ import VectorLayer from "ol/layer/Vector";
 import { useMap } from "../../hooks";
 import { register } from "ol/proj/proj4";
 import { Fill, Stroke, Style, Text } from "ol/style";
-import { Snap } from "ol/interaction";
+import Snap from "ol/interaction/Snap";
 import useDrawSource from "../../hooks/incontext/useDrawSource";
 
 proj4.defs(

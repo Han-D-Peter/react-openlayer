@@ -11,7 +11,7 @@ import { MoveAnnotation } from "./element/function/MoveAnnotation";
 import { DeleteAnnotation } from "./element/function/DeleteAnnotation";
 import { MultiPointDrawButton } from "./element/drawing/MultiPointDrawButton";
 import { Geometry } from "ol/geom";
-import { Feature } from "ol";
+import Feature from "ol/Feature";
 import { TranslateEvent } from "ol/interaction/Translate";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { useMap } from "../hooks";

@@ -1,7 +1,7 @@
 /* eslint-disable no-self-assign */
 import React, { forwardRef, useImperativeHandle } from "react";
 import { useEffect, useRef } from "react";
-import { Feature } from "ol";
+import Feature from "ol/Feature";
 import Circle from "ol/geom/Circle";
 import VectorLayer from "ol/layer/Vector";
 import Style from "ol/style/Style";
@@ -16,6 +16,7 @@ import { ANNOTATION_COLOR } from "../../constants/color";
 import { makeText } from "../../utils/object";
 import { Annotation } from ".";
 import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
+import { Geometry } from "ol/geom";
 
 interface CustomCircleProps extends Annotation {
   center: Location;
@@ -25,7 +26,7 @@ interface CustomCircleProps extends Annotation {
 }
 
 export const CustomCircle = forwardRef<
-  VectorLayer<VectorSource>,
+  VectorLayer<VectorSource<Feature<Geometry>>>,
   CustomCircleProps
 >(
   (
@@ -51,7 +52,9 @@ export const CustomCircle = forwardRef<
       new Feature(new Circle(fromLonLat(center), radius))
     );
 
-    const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+    const annotationLayerRef = useRef<
+      VectorLayer<VectorSource<Feature<Geometry>>>
+    >(
       new VectorLayer({
         source: new VectorSource({
           wrapX: false,

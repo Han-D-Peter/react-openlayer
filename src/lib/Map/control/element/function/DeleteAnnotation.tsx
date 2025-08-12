@@ -1,110 +1,102 @@
-import React, { useCallback, useId } from "react";
+import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
-import { useEffect, useRef } from "react";
-import { Select } from "ol/interaction";
+import { useCallback, useEffect, useRef } from "react";
+import Select from "ol/interaction/Select";
 import { SelectEvent } from "ol/interaction/Select";
-import { BiSolidEraser } from "react-icons/bi";
-import { useMap, useSelectAnnotation } from "../../../hooks";
-import { useFeatureStore } from "src/lib/Map/hooks/incontext/useFeatureStore";
+import { EraserIcon } from "../../../constants/icons/EraserIcon";
+import { useMap } from "../../../hooks";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
-import {
-  FeatureFromGeojson,
-  useFeaturesStore,
-} from "src/lib/Map/FeaturesStore";
+import { useFeaturesStore } from "src/lib/Map/FeaturesStore";
+import { FeatureFromGeojson } from "src/lib/Map/FeaturesStore";
 
 export interface DeleteAnnotationProps extends ButtonProps {
   onDeleteChange?: (e: FeatureFromGeojson | undefined) => void;
 }
 
-export function DeleteAnnotation({
+export const DeleteAnnotation = ({
   onDeleteChange,
-  disabled,
+  disabled = false,
   ...props
-}: DeleteAnnotationProps) {
-  const clickedAnnotation = useSelectAnnotation();
-  const { selectFeature } = useFeatureStore();
-  const { geoJson, removeGeoJson, getGeoJsonElement } = useFeaturesStore();
+}: DeleteAnnotationProps) => {
   const map = useMap();
-  const id = useId();
-  const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
+  const buttonId = useId();
   const isActive = buttonId === selectedButtonId;
-  const selectInteractionRef = useRef<Select | null>(null);
 
-  const removeSelectedFeatures = useCallback(
+  const { removeGeoJson } = useFeaturesStore();
+  const selectRef = useRef(
+    new Select({
+      style: null,
+    })
+  );
+
+  const onSelect = useCallback(
     (event: SelectEvent) => {
       const selectedFeatures = event.selected;
-      selectFeature(null);
+      if (selectedFeatures.length > 0) {
+        const feature = selectedFeatures[0];
+        const properties = feature.getProperties();
 
-      const target = selectedFeatures.find((selectedFeature) =>
-        selectedFeature.getGeometry()
-      );
+        if (properties.shape) {
+          // Feature를 삭제
+          const layer = properties.layer;
+          if (layer) {
+            const source = layer.getSource();
+            if (source) {
+              source.removeFeature(feature);
+            }
+          }
 
-      if (target) {
-        const targetId = target.getId();
+          // GeoJSON에서도 삭제
+          if (properties.id) {
+            removeGeoJson(properties.id);
+          }
 
-        removeGeoJson(String(targetId));
-        if (onDeleteChange) {
-          onDeleteChange(getGeoJsonElement(String(targetId)));
+          onDeleteChange && onDeleteChange(undefined);
         }
-
-        selectButton("");
       }
     },
-    [
-      getGeoJsonElement,
-      onDeleteChange,
-      removeGeoJson,
-      selectButton,
-      selectFeature,
-    ]
+    [removeGeoJson, onDeleteChange]
   );
 
   useEffect(() => {
-    if (isActive) {
-      if (!selectInteractionRef.current) {
-        selectInteractionRef.current = new Select();
-        selectInteractionRef.current.on("select", removeSelectedFeatures);
-        selectButton(buttonId);
-        map.addInteraction(selectInteractionRef.current);
-      }
-    } else {
-      if (selectInteractionRef.current) {
-        selectInteractionRef.current.un("select", removeSelectedFeatures);
-        map.removeInteraction(selectInteractionRef.current);
-        selectInteractionRef.current = null;
-      }
-    }
-  }, [map, isActive, removeSelectedFeatures]);
+    const selectInstance = selectRef.current;
+    selectInstance.on("select", onSelect);
+
+    return () => {
+      selectInstance.un("select", onSelect);
+    };
+  }, [onSelect]);
 
   useEffect(() => {
-    if (selectInteractionRef.current && clickedAnnotation) {
-      selectInteractionRef.current.getFeatures().clear();
-      selectInteractionRef.current.getFeatures().push(clickedAnnotation);
+    if (!isActive) {
+      map.removeInteraction(selectRef.current);
+    } else {
+      map.addInteraction(selectRef.current);
     }
-  }, [clickedAnnotation]);
+  }, [isActive, map]);
 
   return (
     <Button
       id={buttonId}
-      hasPopup
       isDisabled={disabled}
       disabled={disabled}
+      hasPopup
       popupText="Delete"
       onClick={() => {
-        if (!isActive) {
-          selectButton(buttonId);
-        } else {
+        if (isActive) {
           selectButton("");
+        } else {
+          selectButton(buttonId);
         }
       }}
       isActive={isActive}
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <BiSolidEraser size={26} color={isActive ? "white" : "black"} />
+        <EraserIcon size={26} color={isActive ? "white" : "black"} />
       </InnerButton>
     </Button>
   );
-}
+};

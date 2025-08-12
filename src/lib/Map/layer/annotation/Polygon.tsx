@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useCallback } from "react";
+import React from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Coordinate } from "ol/coordinate";
 import Feature from "ol/Feature";
-import { useEffect, useRef } from "react";
 import { Polygon } from "ol/geom";
 import { fromLonLat } from "ol/proj";
 import Style from "ol/style/Style";
@@ -16,6 +16,7 @@ import { makeText } from "../../utils/object";
 import { useMap } from "../../hooks/incontext/useMap";
 import { ANNOTATION_COLOR } from "../../constants/color";
 import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
+import { Geometry } from "ol/geom";
 
 export interface CustomPolygonProps extends Annotation {
   positions: Coordinate[][];
@@ -27,6 +28,7 @@ export const CustomPolygon = ({
   properties = {},
   onClick,
   onHover,
+  onLeave,
   zIndex = 0,
   children,
   opacity = 1,
@@ -35,10 +37,15 @@ export const CustomPolygon = ({
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
     new Feature(
-      new Polygon([positions[0].map((position) => fromLonLat(position))])
+      new Polygon(
+        positions.map((pos) => pos.map((position) => fromLonLat(position)))
+      )
     )
   );
-  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+
+  const annotationLayerRef = useRef<
+    VectorLayer<VectorSource<Feature<Geometry>>>
+  >(
     new VectorLayer({
       source: new VectorSource({
         wrapX: false,

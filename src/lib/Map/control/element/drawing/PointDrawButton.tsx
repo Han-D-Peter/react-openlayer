@@ -2,7 +2,7 @@ import React, { useCallback, useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
-import { useFeatureStore, useMap } from "../../../hooks";
+import { useMap } from "../../../hooks";
 import Style from "ol/style/Style";
 import { icon, makeText } from "../../../utils/object";
 import Icon from "ol/style/Icon";
@@ -49,7 +49,7 @@ export function PointDrawButton({
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
-  const { selectFeature } = useFeatureStore();
+
   const { addGeoJson } = useFeaturesStore();
 
   const drawRef = useRef(
@@ -138,11 +138,10 @@ export function PointDrawButton({
       }
       if (onCanvas) {
         addGeoJson(newGeoJson);
-        selectFeature(newGeoJson);
       }
       setTimeout(() => map.setProperties({ isDrawing: false }), 100);
     },
-    [selectButton, map, onEnd, onCanvas, addGeoJson, selectFeature]
+    [selectButton, map, onEnd, onCanvas, addGeoJson]
   );
 
   useEffect(() => {

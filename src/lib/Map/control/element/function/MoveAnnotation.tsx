@@ -1,123 +1,150 @@
 import React, { useId } from "react";
-import { useCallback, useEffect, useRef } from "react";
-import { Collection, Feature } from "ol";
-import { Translate } from "ol/interaction";
-import { TranslateEvent } from "ol/interaction/Translate";
 import { Button, ButtonProps } from "../Button";
-import { useFeatureStore, useMap, useSelectAnnotation } from "../../../hooks";
+import { useCallback, useEffect, useRef } from "react";
+import Translate from "ol/interaction/Translate";
+import { TranslateEvent } from "ol/interaction/Translate";
 import { MovementIcon } from "../../../constants/icons/MovementIcon";
+import { useMap } from "../../../hooks";
 import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
 import { Geometry } from "ol/geom";
 import { useFeaturesStore } from "src/lib/Map/FeaturesStore";
-import { positionsFromFeature } from "src/lib/utils";
 import { Coordinate } from "ol/coordinate";
-import { MakeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
+import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
+import Feature from "ol/Feature";
+import { Collection } from "ol";
+import { positionsFromFeature } from "src/lib/utils";
 
 export interface MoveAnnotationProps extends ButtonProps {
-  onMoveChange?: (e: TranslateEvent) => void;
   target: Feature<Geometry> | null;
+  onMoveChange?: (e: TranslateEvent) => void;
 }
 
-export function MoveAnnotation({
-  onMoveChange,
+export const MoveAnnotation = ({
   target,
-  disabled,
+  onMoveChange,
+  disabled = false,
   ...props
-}: MoveAnnotationProps) {
-  const translateInteractionRef = useRef<Translate | null>(null);
-  const clickedAnnotation = useSelectAnnotation();
-  const { selectedFeature, unSelectFeature } = useFeatureStore();
-
-  const { updateGeoJson, getGeoJsonElement } = useFeaturesStore();
+}: MoveAnnotationProps) => {
   const map = useMap();
-  const id = useId();
-  const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
+  const buttonId = useId();
   const isActive = buttonId === selectedButtonId;
 
-  const onMoveEnd = useCallback(
+  const { updateGeoJson } = useFeaturesStore();
+  const translateRef = useRef(
+    new Translate({
+      features: new Collection(),
+    })
+  );
+
+  const onTranslate = useCallback(
     (event: TranslateEvent) => {
       const targetFeature = event.features.getArray()[0];
-      const targetId = String(targetFeature.getId());
-      const newPosition = positionsFromFeature(targetFeature, true) as
-        | Coordinate
-        | Coordinate[];
-      const targetGeoJson = getGeoJsonElement(targetId)!;
+      if (targetFeature) {
+        const newPosition = positionsFromFeature(targetFeature, true) as
+          | Coordinate[]
+          | Coordinate[][];
 
-      const hasChanged =
-        JSON.stringify(targetGeoJson.geometry.coordinates) !==
-        JSON.stringify(newPosition);
+        const geometryType = targetFeature.getGeometry()?.getType();
 
-      const newGeometry =
-        targetGeoJson.geometry.type === "Point"
-          ? {
-              type: "Point",
-              coordinates: newPosition as Coordinate,
-            }
-          : {
-              type: targetGeoJson.geometry.type,
-              coordinates: newPosition as Coordinate[],
-            };
-      updateGeoJson(targetId, {
-        ...targetGeoJson,
-        geometry: newGeometry as MakeGeojsonShape,
-        properties: {
-          ...targetGeoJson.properties,
-          isSelected: false,
-        },
-      });
-      unSelectFeature();
-      hasChanged && selectButton("");
-      if (onMoveChange) {
-        onMoveChange(event);
+        let geometry;
+        if (geometryType === "Point") {
+          const pointPosition = Array.isArray(newPosition[0])
+            ? (newPosition as Coordinate[][])[0][0]
+            : (newPosition as Coordinate[])[0];
+          geometry = {
+            type: "Point" as const,
+            coordinates: pointPosition,
+          };
+        } else if (
+          geometryType === "MultiPoint" ||
+          geometryType === "LineString"
+        ) {
+          geometry = {
+            type: geometryType as "MultiPoint" | "LineString",
+            coordinates: newPosition as Coordinate[],
+          };
+        } else if (geometryType === "Polygon") {
+          geometry = {
+            type: "Polygon" as const,
+            coordinates: newPosition as Coordinate[][],
+          };
+        } else {
+          // 기본값으로 Point 사용
+          const pointPosition = Array.isArray(newPosition[0])
+            ? (newPosition as Coordinate[][])[0][0]
+            : (newPosition as Coordinate[])[0];
+          geometry = {
+            type: "Point" as const,
+            coordinates: pointPosition,
+          };
+        }
+
+        const newGeoJson = makeGeojsonShape(geometry, {
+          title: "unknown",
+          comment: "",
+          issueDegree: "심각도",
+          issue: "이슈 사항",
+          issueGrade: 1,
+          type: geometryType?.toLowerCase() || "point",
+          color: "blue",
+          opacity: 1,
+          fontSize: 12,
+          original_type: geometryType?.toLowerCase() || "point",
+          isSelected: true,
+        });
+
+        if (onMoveChange) {
+          onMoveChange(event);
+        }
+
+        // GeoJSON 업데이트
+        const properties = targetFeature.getProperties();
+        if (properties.id) {
+          updateGeoJson(properties.id, newGeoJson);
+        }
       }
-      const existMapProperties = map.getProperties();
-      map.setProperties({ ...existMapProperties, isModifying: false });
     },
-    [
-      getGeoJsonElement,
-      updateGeoJson,
-      unSelectFeature,
-      selectButton,
-      onMoveChange,
-      map,
-    ]
+    [updateGeoJson, onMoveChange]
   );
 
   useEffect(() => {
-    if (selectedFeature && clickedAnnotation && isActive) {
-      translateInteractionRef.current = new Translate({
-        features: new Collection([clickedAnnotation]),
-      });
-      translateInteractionRef.current.on("translateend", onMoveEnd);
-      selectButton(buttonId);
-      map.addInteraction(translateInteractionRef.current);
-    }
+    const translateInstance = translateRef.current;
+    translateInstance.on("translateend", onTranslate);
 
     return () => {
-      if (translateInteractionRef.current) {
-        translateInteractionRef.current.un("translateend", onMoveEnd);
-        map.removeInteraction(translateInteractionRef.current);
-        translateInteractionRef.current = null;
-      }
+      translateInstance.un("translateend", onTranslate);
     };
-  }, [
-    buttonId,
-    selectedFeature,
-    clickedAnnotation,
-    map,
-    onMoveEnd,
-    isActive,
-    selectButton,
-  ]);
+  }, [onTranslate]);
+
+  useEffect(() => {
+    if (target && isActive) {
+      const features = new Collection([target]);
+      translateRef.current = new Translate({
+        features: features,
+      });
+    } else {
+      translateRef.current = new Translate({
+        features: new Collection(),
+      });
+    }
+  }, [target, isActive]);
+
+  useEffect(() => {
+    if (!isActive) {
+      map.removeInteraction(translateRef.current);
+    } else {
+      map.addInteraction(translateRef.current);
+    }
+  }, [isActive, map]);
 
   return (
     <Button
       id={buttonId}
-      hasPopup
       isDisabled={disabled}
       disabled={disabled}
+      hasPopup
       popupText="Move"
       onClick={() => {
         if (isActive) {
@@ -134,4 +161,4 @@ export function MoveAnnotation({
       </InnerButton>
     </Button>
   );
-}
+};

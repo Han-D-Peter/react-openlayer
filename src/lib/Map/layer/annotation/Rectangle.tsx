@@ -16,6 +16,7 @@ import { ANNOTATION_COLOR } from "../../constants/color";
 import { Annotation } from ".";
 import { Text } from "ol/style";
 import { useInteractionEvent } from "../../hooks/incontext/useInteractionEvent";
+import { Geometry } from "ol/geom";
 
 export interface CustomRectangleProps extends Annotation {
   positions: Coordinate[][];
@@ -27,6 +28,7 @@ export const CustomRectangle = ({
   properties = {},
   onClick,
   onHover,
+  onLeave,
   zIndex = 0,
   children,
   opacity = 1,
@@ -35,11 +37,15 @@ export const CustomRectangle = ({
   const map = useMap();
   const annotationRef = useRef<Feature<Polygon>>(
     new Feature(
-      new Polygon([positions[0].map((position) => fromLonLat(position))])
+      new Polygon(
+        positions.map((pos) => pos.map((position) => fromLonLat(position)))
+      )
     )
   );
 
-  const annotationLayerRef = useRef<VectorLayer<VectorSource>>(
+  const annotationLayerRef = useRef<
+    VectorLayer<VectorSource<Feature<Geometry>>>
+  >(
     new VectorLayer({
       source: new VectorSource({
         wrapX: false,
