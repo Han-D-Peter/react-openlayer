@@ -163,7 +163,7 @@ export const MapContainer = memo(
           const view = mapObj.current.getView();
           view.setCenter(fromLonLat(center));
         }
-      }, [center]);
+      }, [center?.[0], center?.[1]]);
 
       useEffect(() => {
         if (mapObj.current && bounds) {
@@ -176,7 +176,12 @@ export const MapContainer = memo(
             }
           );
         }
-      }, [bounds]);
+      }, [
+        bounds?.[0]?.[0],
+        bounds?.[0]?.[1],
+        bounds?.[1]?.[0],
+        bounds?.[1]?.[1],
+      ]);
 
       useHoverCursor(mapObj.current);
 
