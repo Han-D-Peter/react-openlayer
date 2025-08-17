@@ -23,8 +23,7 @@ const config = {
                 file: pkg.module,
                 format: 'esm',
                 sourcemap: true,
-            }
-            ,
+            },
             {
                 name: pkg.name,
                 file: pkg.browser,
