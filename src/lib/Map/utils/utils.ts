@@ -20,9 +20,26 @@ export class TileUrl {
   }
 }
 
+const createProfile = <T extends Geometry>(feature: FeatureLike) => {
+  const geometry = feature.getGeometry() as T;
+  return {
+    positions: geometry.getCoordinates(),
+    properties: feature.getProperties(),
+  };
+};
+
+export const getProfileFromMultiPoint = (feature: FeatureLike) =>
+  createProfile<MultiPoint>(feature);
+export const getProfileFromPoint = (feature: FeatureLike) =>
+  createProfile<Point>(feature);
+export const getProfileFromPolyline = (feature: FeatureLike) =>
+  createProfile<LineString>(feature);
+export const getProfileFromPolygon = (feature: FeatureLike) =>
+  createProfile<Polygon>(feature);
+
 export const getProfileFromFeature = (feature: FeatureLike) => {
-  const geometry = feature.getGeometry() as Geometry;
-  const geometryType = geometry.getType();
+  const geometry = feature.getGeometry();
+  const geometryType = geometry?.getType();
   if (geometryType === "Point") {
     return getProfileFromPoint(feature);
   } else if (geometryType === "LineString") {
@@ -33,34 +50,4 @@ export const getProfileFromFeature = (feature: FeatureLike) => {
     return getProfileFromMultiPoint(feature);
   }
   return null;
-};
-
-export const getProfileFromMultiPoint = (feature: FeatureLike) => {
-  const geometry = feature.getGeometry() as MultiPoint;
-  return {
-    positions: geometry.getCoordinates(),
-    properties: geometry.getProperties(),
-  };
-};
-export const getProfileFromPoint = (feature: FeatureLike) => {
-  const geometry = feature.getGeometry() as Point;
-  return {
-    positions: geometry.getCoordinates(),
-    properties: geometry.getProperties(),
-  };
-};
-export const getProfileFromPolyline = (feature: FeatureLike) => {
-  const geometry = feature.getGeometry() as LineString;
-  return {
-    positions: geometry.getCoordinates(),
-    properties: geometry.getProperties(),
-  };
-};
-
-export const getProfileFromPolygon = (feature: FeatureLike) => {
-  const geometry = feature.getGeometry() as Polygon;
-  return {
-    positions: geometry.getCoordinates(),
-    properties: geometry.getProperties(),
-  };
 };
