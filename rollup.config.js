@@ -41,7 +41,7 @@ const config = {
             peerDepsExternal(),
             typescript({
                 tsconfig: './tsconfig.json',
-                useTsconfigDeclarationDir: true
+                useTsconfigDeclarationDir: false
             }),
             postcss({ 
                 extract: true,      
