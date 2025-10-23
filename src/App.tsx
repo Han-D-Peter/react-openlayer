@@ -21,6 +21,8 @@ import { SyncMap } from "../src/lib/Map/SyncMapGroup/SyncMap";
 
 import json from "./sample.json";
 import { FeatureCollection, FeaturesStore } from "./lib/Map/FeaturesStore";
+import "ol/ol.css";
+import "../src/lib/react-openlayer.css";
 
 icon.marker = "/images/marker-basic.png";
 icon.selected = "/images/marker-selected.png";

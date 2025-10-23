@@ -62,8 +62,8 @@ export const CustomMarker = ({
           : undefined,
       image: new Icon({
         src: icon.marker, // 마커 이미지 경로
-        scale: 0.07,
-        anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+        scale: 0.5,
+        anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
       }),
     })
   );
@@ -136,8 +136,8 @@ export const CustomMarker = ({
       new Icon({
         opacity,
         src: selected ? icon.selected : icon.marker, // 마커 이미지 경로
-        scale: 0.07,
-        anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+        scale: 0.5,
+        anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
       })
     );
 
