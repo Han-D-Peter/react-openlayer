@@ -15,7 +15,7 @@ import { OSM } from "ol/source";
 import { MapContext } from "./MapContext";
 import { useHoverCursor } from "./hooks/incontext/useHoverCursor";
 import { boundingExtent } from "ol/extent";
-import "ol/ol.css";
+// CSS import는 사용자가 직접 해야 합니다: import "ol/ol.css";
 import DoubleClickZoom from "ol/interaction/DoubleClickZoom";
 
 export type Lng = number;
