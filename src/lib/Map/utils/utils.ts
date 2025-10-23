@@ -1,5 +1,11 @@
 import { FeatureLike } from "ol/Feature";
-import { Geometry, LineString, MultiPoint, Point, Polygon } from "ol/geom";
+import {
+  LineString,
+  MultiPoint,
+  Point,
+  Polygon,
+  SimpleGeometry,
+} from "ol/geom";
 
 export class TileUrl {
   url: string;
@@ -20,8 +26,9 @@ export class TileUrl {
   }
 }
 
-const createProfile = <T extends Geometry>(feature: FeatureLike) => {
+const createProfile = <T extends SimpleGeometry>(feature: FeatureLike) => {
   const geometry = feature.getGeometry() as T;
+
   return {
     positions: geometry.getCoordinates(),
     properties: feature.getProperties(),
