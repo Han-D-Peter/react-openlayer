@@ -12,7 +12,9 @@ export function useSelectAnnotation() {
 
   const getAnnotationByClick = useCallback(
     (event: MapBrowserEvent<any>) => {
-      const clickedFeatures = map.getFeaturesAtPixel(event.pixel);
+      const clickedFeatures = map.getFeaturesAtPixel(event.pixel, {
+        hitTolerance: 10,
+      });
 
       if (clickedFeatures.length > 0) {
         // 클릭한 어노테이션 선택
