@@ -17,6 +17,8 @@ import { Coordinate } from "ol/coordinate";
 import { useSyncMapContext } from "../hooks/incontext/useSyncContext";
 import VectorSource from "ol/source/Vector";
 import { MapContext } from "../MapContext";
+import { DragRotateAndZoom } from "ol/interaction";
+import { defaults as defaultInteractions } from "ol/interaction/defaults.js";
 
 export interface SyncMapProps {
   /**
@@ -85,6 +87,7 @@ export const SyncMap = ({
         zoom: false,
         rotate: true,
       }).extend([]),
+      interactions: defaultInteractions().extend([new DragRotateAndZoom()]),
       view: isDecoupled
         ? new View({
             center: fromLonLat(controlledCenter),
