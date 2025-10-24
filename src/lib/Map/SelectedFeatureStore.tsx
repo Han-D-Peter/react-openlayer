@@ -68,7 +68,7 @@ export function SelectedFeatureStore({
 
       // 겹쳐있는 마커 위에서부터 선택되도록 리버스
       const reversedFeture: FeatureLike[] = map
-        .getFeaturesAtPixel(pixel)
+        .getFeaturesAtPixel(pixel, { hitTolerance: 10 })
         .reverse();
 
       for (const feature of reversedFeture) {
