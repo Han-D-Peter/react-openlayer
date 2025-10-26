@@ -8,7 +8,12 @@ import {
 } from "react";
 import Map from "ol/Map";
 import View from "ol/View";
-import { Control, Zoom, defaults as defaultControls } from "ol/control";
+import {
+  Control,
+  ScaleLine,
+  Zoom,
+  defaults as defaultControls,
+} from "ol/control";
 import { fromLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
@@ -125,7 +130,14 @@ export const MapContainer = memo(
           controls: defaultControls({
             zoom: isZoomAbled,
             rotate: isRotateAbled,
-          }).extend([]),
+          }).extend([
+            new ScaleLine({
+              units: "metric", // 미터 단위 사용
+              steps: 4, // 스케일 단계 수
+              text: true, // 텍스트 표시
+              minWidth: 64, // 최소 너비
+            }),
+          ]),
         })
       );
 

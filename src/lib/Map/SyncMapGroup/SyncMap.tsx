@@ -6,16 +6,14 @@ import {
   useLayoutEffect,
   useRef,
 } from "react";
-import { defaults as defaultControls } from "ol/control";
-import { Location } from "../MapContainer";
-import { Map, MapBrowserEvent, MapEvent, View } from "ol";
+import { defaults as defaultControls, ScaleLine } from "ol/control";
+import { Map, MapBrowserEvent, View } from "ol";
 import { fromLonLat, toLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { Coordinate } from "ol/coordinate";
 
 import { useSyncMapContext } from "../hooks/incontext/useSyncContext";
-import VectorSource from "ol/source/Vector";
 import { MapContext } from "../MapContext";
 import { DragRotateAndZoom } from "ol/interaction";
 import { defaults as defaultInteractions } from "ol/interaction/defaults.js";
@@ -59,10 +57,8 @@ export const SyncMap = ({
 }: SyncMapProps) => {
   const {
     sharedView,
-    adjustCenter,
     onWheelHandler,
     onZoomHandler,
-    adjustRotate,
     controlledCenter,
     controlledZoomLevel,
     controlledRotation,
@@ -86,7 +82,14 @@ export const SyncMap = ({
       controls: defaultControls({
         zoom: false,
         rotate: true,
-      }).extend([]),
+      }).extend([
+        new ScaleLine({
+          units: "metric", // 미터 단위 사용
+          steps: 4, // 스케일 단계 수
+          text: true, // 텍스트 표시
+          minWidth: 64, // 최소 너비
+        }),
+      ]),
       interactions: defaultInteractions().extend([new DragRotateAndZoom()]),
       view: isDecoupled
         ? new View({
