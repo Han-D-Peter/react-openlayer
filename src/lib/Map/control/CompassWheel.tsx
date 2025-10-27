@@ -20,11 +20,36 @@ export const CompassWheel = ({
   resetable = false,
   controller = false,
 }: CompassWheelProps) => {
-  const [rotationDegree, setRotate, resetRotation] = useMapRotation();
+  const [, setRotate, resetRotation] = useMapRotation();
   const [mouseDown, setMouseDown] = useState(false);
   const [rotation, setRotation] = useState(0);
   const ref = useRef<HTMLDivElement | null>(null);
   const map = useMap();
+
+  // 화면 회전 상태를 실시간으로 감지하고 CompassWheel에 반영
+  useEffect(() => {
+    if (!map) return;
+
+    const updateCompassRotation = () => {
+      const view = map.getView();
+      const currentRotation = view.getRotation();
+      const rotationInDegrees = (currentRotation * 180) / Math.PI;
+
+      // CompassWheel의 회전을 화면 회전과 같은 방향으로 설정
+      const compassRotation = rotationInDegrees;
+      setRotation(compassRotation);
+    };
+
+    // 초기 회전 값 설정
+    updateCompassRotation();
+
+    // 맵 회전 이벤트 리스너 등록
+    map.getView().on("change:rotation", updateCompassRotation);
+
+    return () => {
+      map.getView().un("change:rotation", updateCompassRotation);
+    };
+  }, [map]);
 
   const compassSize = (size: Size) => {
     if (size === "sm") {
@@ -50,14 +75,23 @@ export const CompassWheel = ({
 
   const handleMouseMove = useCallback(
     (e: { movementY: any }) => {
-      if (mouseDown) {
+      if (mouseDown && map) {
         const { movementY } = e;
         const abjustedMovementY = movementY * 0.7;
+
         setRotation((prevRotation) => {
           let newRotation = (prevRotation + abjustedMovementY) % 360;
           if (newRotation < 0) {
             newRotation += 360;
           }
+
+          // 화면 회전을 CompassWheel 회전과 같은 방향으로 적용
+          const screenRotation = newRotation;
+          const rotationInRadians = (screenRotation * Math.PI) / 180;
+
+          // 맵 뷰의 회전을 직접 업데이트
+          map.getView().setRotation(rotationInRadians);
+
           if (onWheel) {
             onWheel(newRotation);
           }
@@ -66,12 +100,17 @@ export const CompassWheel = ({
         });
       }
     },
-    [mouseDown]
+    [mouseDown, onWheel, setRotate, map]
   );
 
   const resetValue = () => {
     setRotation(0);
     resetRotation();
+
+    // 맵 뷰의 회전도 함께 리셋
+    if (map) {
+      map.getView().setRotation(0);
+    }
   };
 
   useEffect(() => {
@@ -99,7 +138,8 @@ export const CompassWheel = ({
         onMouseDown={handleMouseDown}
         style={{
           zIndex: 1,
-          transform: `rotate(${rotationDegree}deg)`,
+          transform: `rotate(${rotation}deg)`,
+          transformOrigin: "center center",
         }}
       >
         <div
@@ -153,13 +193,28 @@ export const CompassWheel = ({
             onSubmit={(e) => {
               e.preventDefault();
               setRotate(rotation);
+
+              // 맵 뷰의 회전도 함께 업데이트
+              if (map) {
+                const screenRotation = rotation;
+                const rotationInRadians = (screenRotation * Math.PI) / 180;
+                map.getView().setRotation(rotationInRadians);
+              }
             }}
           >
             <input
               value={rotation.toFixed(0)}
               onChange={(e) => {
-                setRotation(Number(e.target.value));
-                setRotate(Number(e.target.value));
+                const newRotation = Number(e.target.value);
+                setRotation(newRotation);
+                setRotate(newRotation);
+
+                // 맵 뷰의 회전도 함께 업데이트
+                if (map) {
+                  const screenRotation = newRotation;
+                  const rotationInRadians = (screenRotation * Math.PI) / 180;
+                  map.getView().setRotation(rotationInRadians);
+                }
               }}
               type="number"
               name="degree"

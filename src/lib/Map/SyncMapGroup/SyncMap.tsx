@@ -18,6 +18,7 @@ import { MapContext } from "../MapContext";
 import { DragRotateAndZoom } from "ol/interaction";
 import { defaults as defaultInteractions } from "ol/interaction/defaults.js";
 import { VectorSourceProvider } from "../hooks/incontext/useVectorSourceContext";
+import { CompassWheel } from "../control";
 
 export interface SyncMapProps {
   /**
@@ -47,6 +48,7 @@ export interface SyncMapProps {
     event: MapBrowserEvent<any>;
     lonlat: Coordinate;
   }) => void;
+  hasCompassWheel?: boolean;
 }
 
 export const SyncMap = ({
@@ -55,6 +57,7 @@ export const SyncMap = ({
   height = "500px",
   width = "500px",
   onClick,
+  hasCompassWheel = false,
 }: SyncMapProps) => {
   const {
     sharedView,
@@ -184,6 +187,7 @@ export const SyncMap = ({
           className="react-openlayers-map-container"
           style={{ width, height }}
         >
+          {hasCompassWheel && <CompassWheel />}
           {children}
         </div>
       </MapContext.Provider>

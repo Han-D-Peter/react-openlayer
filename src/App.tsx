@@ -46,6 +46,7 @@ function App() {
   const [isShown, setIsShown] = useState(true);
   const [rotate, setRotate] = useState(0);
   const [mapSize] = useState({ width: "1000px", height: "100vh" });
+  const [syncMapCount, setSyncMapCount] = useState(3);
 
   const [tileMatrix, setTileMatrix] = useState<TileMatrix>();
 
@@ -143,38 +144,79 @@ function App() {
           setRotate(Number(e.target.value));
         }}
       />
-      <SyncMapGroup rotate={rotate}>
-        <SyncMap>
-          <FeaturesStore
-            geoJson={jsonState}
-            projectionCode="WGS:84"
-            onChange={setJsonState}
+      <div style={{ marginTop: "20px" }}>
+        <div
+          style={{
+            marginBottom: "10px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <label
+            htmlFor="syncMapCount"
+            style={{ fontSize: "14px", fontWeight: "500" }}
           >
-            <SelectedFeatureStore isAbledSelection={true}>
-              <CompassWheel />
-              <ControlSection>
-                <ZoomFeature />
-                <FullScreenFeature />
-                <DrawingTools color="RED" onCanvas onDrawEnd={(e) => {}} />
-              </ControlSection>
-            </SelectedFeatureStore>
-          </FeaturesStore>
-        </SyncMap>
-        <SyncMap>
-          <FeaturesStore geoJson={jsonState} projectionCode="WGS:84">
-            <SelectedFeatureStore
-              isAbledSelection={true}
-            ></SelectedFeatureStore>
-          </FeaturesStore>
-        </SyncMap>
-        <SyncMap>
-          <FeaturesStore geoJson={jsonState} projectionCode="WGS:84">
-            <SelectedFeatureStore
-              isAbledSelection={true}
-            ></SelectedFeatureStore>
-          </FeaturesStore>
-        </SyncMap>
-      </SyncMapGroup>
+            SyncMap 개수:
+          </label>
+          <select
+            id="syncMapCount"
+            value={syncMapCount}
+            onChange={(e) => setSyncMapCount(Number(e.target.value))}
+            style={{
+              padding: "4px 8px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              fontSize: "14px",
+              backgroundColor: "white",
+            }}
+          >
+            <option value={1}>1개</option>
+            <option value={2}>2개</option>
+            <option value={3}>3개</option>
+            <option value={4}>4개</option>
+          </select>
+        </div>
+
+        <SyncMapGroup rotate={rotate}>
+          {Array.from({ length: syncMapCount }, (_, index) => {
+            return (
+              <SyncMap
+                key={`syncmap-${index}-${syncMapCount}`}
+                hasCompassWheel={index === 2}
+              >
+                <FeaturesStore
+                  geoJson={jsonState}
+                  projectionCode="WGS:84"
+                  onChange={setJsonState}
+                >
+                  <SelectedFeatureStore isAbledSelection={true}>
+                    <TileLayer
+                      maxZoom={23}
+                      crossOrigin={"anonymous"}
+                      tileMatrix={tileMatrix}
+                      url="https://tgxe79f6wl.execute-api.ap-northeast-2.amazonaws.com/dev/dev-drone-square-bucket/public/1070/manifold/orthomosaic_tiles/{z}/{x}/{y}.png"
+                    />
+                    {index === 0 && (
+                      <>
+                        <ControlSection>
+                          <ZoomFeature />
+                          <FullScreenFeature />
+                          <DrawingTools
+                            color="RED"
+                            onCanvas
+                            onDrawEnd={(e) => {}}
+                          />
+                        </ControlSection>
+                      </>
+                    )}
+                  </SelectedFeatureStore>
+                </FeaturesStore>
+              </SyncMap>
+            );
+          })}
+        </SyncMapGroup>
+      </div>
     </div>
   );
 }
