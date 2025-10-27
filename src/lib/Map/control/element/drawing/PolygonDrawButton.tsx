@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import React, { useCallback, useEffect, useId, useRef } from "react";
 import { Button, ButtonProps } from "../Button";
 import Draw from "ol/interaction/Draw";
@@ -254,7 +255,7 @@ export function PolygonDrawButton({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <PolygonIcon size={26} color={isActive ? "white" : "black"} />
+        <PolygonIcon size={26} color={isActive ? "white" : "#455A64"} />
       </InnerButton>
     </Button>
   );

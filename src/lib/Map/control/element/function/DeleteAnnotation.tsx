@@ -95,7 +95,7 @@ export const DeleteAnnotation = ({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <EraserIcon size={26} color={isActive ? "white" : "black"} />
+        <EraserIcon size={26} color={isActive ? "white" : "#455A64"} />
       </InnerButton>
     </Button>
   );

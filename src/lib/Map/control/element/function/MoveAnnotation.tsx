@@ -157,7 +157,7 @@ export const MoveAnnotation = ({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <MovementIcon size={26} color={isActive ? "white" : "black"} />
+        <MovementIcon size={26} color={isActive ? "white" : "#455A64"} />
       </InnerButton>
     </Button>
   );

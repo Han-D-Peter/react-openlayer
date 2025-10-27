@@ -180,7 +180,7 @@ export function RectangleDrawButton({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <RectangleIcon size={26} color={isActive ? "white" : "black"} />
+        <RectangleIcon size={26} color={isActive ? "white" : "#455A64"} />
       </InnerButton>
     </Button>
   );

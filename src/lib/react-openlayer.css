@@ -15,3 +15,8 @@
 body {
   font-family: sans-serif;
 }
+
+button {
+  padding-inline: 0;
+  padding-block: 0;
+}

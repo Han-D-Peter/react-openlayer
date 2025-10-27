@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import React from "react";
 import { css } from "@emotion/react";
 import { useEffect, useRef, useState } from "react";
@@ -87,9 +88,9 @@ export const FullScreenFeature = ({ onChange }: FullScreenFeatureProps) => {
       <Button ref={ref} onClick={toggleFullScreen}>
         <div css={innerButtonStyle}>
           {isFull ? (
-            <FullScreenExitIcon size={16} />
+            <FullScreenExitIcon size={24} />
           ) : (
-            <FullScreenIcon size={16} />
+            <FullScreenExitIcon size={24} />
           )}
         </div>
       </Button>

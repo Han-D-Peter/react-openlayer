@@ -28,7 +28,7 @@ export const CompassWheel = ({
 
   const compassSize = (size: Size) => {
     if (size === "sm") {
-      return 50;
+      return 72;
     }
     if (size === "md") {
       return 125;

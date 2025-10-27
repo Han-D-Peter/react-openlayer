@@ -10,19 +10,19 @@ export function RectangleIcon({ color = "black", size = 18 }: SVGProps) {
       }}
     >
       <svg
-        stroke="currentColor"
-        fill="none"
-        strokeWidth="2"
-        viewBox="0 0 24 24"
-        strokeLinecap="round"
-        strokeLinejoin="round"
         color={`${color}`}
         height={`${size}`}
         width={`${size}`}
+        stroke={`${color}`}
+        strokeWidth="0"
+        fill="none"
+        viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-        <path d="M3 5m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z"></path>
+        <path
+          d="M5.33333 4.5L18.6667 4.5C19.1269 4.5 19.5 4.8731 19.5 5.33333V18.6667C19.5 19.1269 19.1269 19.5 18.6667 19.5H5.33333C4.8731 19.5 4.5 19.1269 4.5 18.6667L4.5 5.33333C4.5 4.8731 4.8731 4.5 5.33333 4.5ZM6.16667 6.16667L6.16667 17.8333H17.8333V6.16667L6.16667 6.16667Z"
+          fill={`${color}`}
+        />
       </svg>
     </div>
   );

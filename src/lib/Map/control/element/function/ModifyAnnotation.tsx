@@ -15,6 +15,7 @@ import { useFeaturesStore } from "src/lib/Map/FeaturesStore";
 import { positionsFromFeature } from "src/lib/utils";
 import { Coordinate } from "ol/coordinate";
 import { MakeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
+import { ModifyIcon } from "src/lib/Map/constants/icons/ModifyIcon";
 
 export interface ModifyAnnotationProps extends ButtonProps {
   onModifyChange?: (e: ModifyEvent) => void;
@@ -248,7 +249,7 @@ export function ModifyAnnotation({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <BiSolidPencil size={24} color={isActive ? "white" : "black"} />
+        <ModifyIcon size={24} color={isActive ? "white" : "#455A64"} />
       </InnerButton>
     </Button>
   );

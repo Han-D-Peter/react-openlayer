@@ -180,7 +180,7 @@ export function PointDrawButton({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <PointIcon size={22} color={isActive ? "white" : "black"} />
+        <PointIcon size={22} color={isActive ? "white" : "#455A64"} />
       </InnerButton>
     </Button>
   );

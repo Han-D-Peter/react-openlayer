@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import React, { ButtonHTMLAttributes, MouseEvent, useState } from "react";
 import { css } from "@emotion/react";
 import { ReactNode, forwardRef } from "react";
@@ -40,11 +41,11 @@ const getborderRadiusBySide = (side: "top" | "bottom" | "middle" | "solo") => {
 };
 
 const buttonSize = {
-  xs: "30px",
-  sm: "35px",
-  md: "40px",
-  lg: "45px",
-  xlg: "50px",
+  xs: "32px",
+  sm: "36px",
+  md: "44px",
+  lg: "48px",
+  xlg: "52px",
 };
 
 const getStyledButtonStyle = (
@@ -58,12 +59,37 @@ const getStyledButtonStyle = (
   align-items: center;
   width: ${buttonSize[size]};
   height: ${buttonSize[size]};
-  background: white;
-  border: 0;
+  background: ${active ? "#007bff" : "#ffffff"};
+  border-top: ${side === "top" || side === "solo"
+    ? active
+      ? "2px solid #007bff"
+      : "1px solid #e0e0e0"
+    : "none"};
+  border-bottom: ${side === "bottom" || side === "solo"
+    ? active
+      ? "2px solid #007bff"
+      : "1px solid #e0e0e0"
+    : "none"};
+  border-left: none;
+  border-right: none;
+
   border-radius: ${getborderRadiusBySide(side)};
-  box-shadow: 0px 3px 4px 0px #959595;
+  box-shadow: ${active
+    ? "0 4px 8px rgba(0, 123, 255, 0.3)"
+    : "0 2px 4px rgba(0, 0, 0, 0.1)"};
   cursor: ${isDisabled ? "not-allowed" : "pointer"};
-  opacity: ${isDisabled ? 0.6 : 1};
+  opacity: ${isDisabled ? 0.5 : 1};
+  transition: all 0.2s ease-in-out;
+  position: relative;
+
+  &:hover {
+    background: ${active ? "#0056b3" : "#f8f9fa"};
+    outline: none;
+    border: none;
+    box-shadow: ${active
+      ? "0 6px 12px rgba(0, 123, 255, 0.4)"
+      : "0 4px 8px rgba(0, 0, 0, 0.15)"};
+  }
 `;
 
 const buttonContainerStyle = css`
@@ -71,22 +97,37 @@ const buttonContainerStyle = css`
 `;
 
 const buttonPopupStyle = css`
-  opacity: 0.7;
+  opacity: 0.9;
   font-size: 12px;
+  font-weight: 500;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 5px;
+  border-radius: 6px;
   position: absolute;
-  background-color: #3c3c3c;
-  height: 27px;
-  color: #d7d7d7;
+  background-color: #2c3e50;
+  height: 28px;
+  color: #ffffff;
   white-space: nowrap;
-  /* width: 100px; */
-  padding: 0 10px 0 10px;
-  top: 6px;
-  left: 50px;
-  /* box-shadow: 0px 3px 4px 0px #959595; */
+  padding: 0 12px;
+  top: 8px;
+  left: 52px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: all 0.2s ease-in-out;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid #2c3e50;
+  }
 `;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -99,7 +140,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       side = "middle",
       isDisabled = false,
       isActive = false,
-      size = "md",
+      size = "sm",
       ...props
     }: ButtonProps,
     ref

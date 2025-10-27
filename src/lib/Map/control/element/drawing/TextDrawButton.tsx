@@ -171,7 +171,7 @@ export function TextDrawButton({
       {...props}
     >
       <InnerButton isActive={isActive}>
-        <TextIcon size={24} color={isActive ? "white" : "black"} />
+        <TextIcon size={24} color={isActive ? "white" : "#455A64"} />
       </InnerButton>
     </Button>
   );

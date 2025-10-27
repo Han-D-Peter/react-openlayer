@@ -65,17 +65,17 @@ export function DrawingTools({
   const [isSelected, setIsSelected] = useState<string | null>(null);
   const map = useMap();
 
-  const switchControl = (key: string) => {
-    if (isSelected === key) {
-      setIsSelected(null);
-      map.setProperties({ isDrawing: false });
-    }
-    if (isSelected !== key) {
-      if (onDrawStart) onDrawStart();
+  // const switchControl = (key: string) => {
+  //   if (isSelected === key) {
+  //     setIsSelected(null);
+  //     map.setProperties({ isDrawing: false });
+  //   }
+  //   if (isSelected !== key) {
+  //     if (onDrawStart) onDrawStart();
 
-      setIsSelected(key);
-    }
-  };
+  //     setIsSelected(key);
+  //   }
+  // };
 
   const endDrawing = (event: FeatureFromGeojson) => {
     if (onDrawEnd) {
@@ -94,7 +94,7 @@ export function DrawingTools({
     <div
       style={arrange === "horizontal" ? { display: "flex", gap: "10px" } : {}}
     >
-      <ControlGroup>
+      <ControlGroup title="Draw">
         {multiMarker === true && (
           <MultiPointDrawButton
             // isActive={isSelected === "0"}
@@ -228,7 +228,7 @@ export function DrawingTools({
           />
         )}
       </ControlGroup>
-      <ControlGroup>
+      <ControlGroup title="Edit">
         {edit === true && (
           <ModifyAnnotation
             target={target}
