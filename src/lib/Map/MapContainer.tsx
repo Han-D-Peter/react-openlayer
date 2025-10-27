@@ -18,6 +18,7 @@ import { fromLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import { OSM } from "ol/source";
 import { MapContext } from "./MapContext";
+import { VectorSourceProvider } from "./hooks/incontext/useVectorSourceContext";
 import { useHoverCursor } from "./hooks/incontext/useHoverCursor";
 import { boundingExtent } from "ol/extent";
 // CSS import는 사용자가 직접 해야 합니다: import "ol/ol.css";
@@ -224,15 +225,17 @@ export const MapContainer = memo(
 
       // MapContext.Provider 에 객체 저장
       return (
-        <MapContext.Provider value={mapObj.current}>
-          <div
-            id={mapId}
-            className="react-openlayers-map-container"
-            style={{ width, height }}
-          >
-            {children}
-          </div>
-        </MapContext.Provider>
+        <VectorSourceProvider>
+          <MapContext.Provider value={mapObj.current}>
+            <div
+              id={mapId}
+              className="react-openlayers-map-container"
+              style={{ width, height }}
+            >
+              {children}
+            </div>
+          </MapContext.Provider>
+        </VectorSourceProvider>
       );
     }
   )

@@ -8,6 +8,8 @@ import { register } from "ol/proj/proj4";
 import { Fill, Stroke, Style, Text } from "ol/style";
 import Snap from "ol/interaction/Snap";
 import useDrawSource from "../../hooks/incontext/useDrawSource";
+import { useVectorSourceContext } from "../../hooks/incontext/useVectorSourceContext";
+import { useId } from "react";
 
 proj4.defs(
   "EPSG:5185",
@@ -73,6 +75,9 @@ export function GeoJsonLayer({
 }: GeoJsonLayerProps) {
   const map = useMap();
   const { drawVectorSource } = useDrawSource();
+  const { registerVectorSource, unregisterVectorSource } =
+    useVectorSourceContext();
+  const layerId = useId();
   const geoJsonLayer = useRef<VectorLayer<VectorSource> | null>(null);
 
   const fromProjection = projectionCode;
@@ -99,6 +104,9 @@ export function GeoJsonLayer({
     });
 
     drawVectorSource.addFeatures(features);
+
+    // 피처 추가 후 VectorSource 등록
+    registerVectorSource(layerId, drawVectorSource);
 
     const vectorLayer = new VectorLayer({
       zIndex,
@@ -143,10 +151,22 @@ export function GeoJsonLayer({
     map.addLayer(vectorLayer);
 
     return () => {
+      unregisterVectorSource(layerId);
       map.removeLayer(vectorLayer);
       features.forEach((feat) => drawVectorSource.removeFeature(feat));
       map.removeInteraction(snap);
     };
-  }, [map, geoJson, color, projectionCode]);
+  }, [
+    map,
+    geoJson,
+    color,
+    projectionCode,
+    layerId,
+    drawVectorSource,
+    registerVectorSource,
+    unregisterVectorSource,
+    fromProjection,
+    zIndex,
+  ]);
   return <></>;
 }

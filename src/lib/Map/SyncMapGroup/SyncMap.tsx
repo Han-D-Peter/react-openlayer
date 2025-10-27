@@ -17,6 +17,7 @@ import { useSyncMapContext } from "../hooks/incontext/useSyncContext";
 import { MapContext } from "../MapContext";
 import { DragRotateAndZoom } from "ol/interaction";
 import { defaults as defaultInteractions } from "ol/interaction/defaults.js";
+import { VectorSourceProvider } from "../hooks/incontext/useVectorSourceContext";
 
 export interface SyncMapProps {
   /**
@@ -175,15 +176,17 @@ export const SyncMap = ({
   }, [mapId]);
 
   return (
-    <MapContext.Provider value={mapObj.current}>
-      <div
-        id={mapId}
-        onWheel={(e) => onWheelHandler(e, mapObj.current)}
-        className="react-openlayers-map-container"
-        style={{ width, height }}
-      >
-        {children}
-      </div>
-    </MapContext.Provider>
+    <VectorSourceProvider>
+      <MapContext.Provider value={mapObj.current}>
+        <div
+          id={mapId}
+          onWheel={(e) => onWheelHandler(e, mapObj.current)}
+          className="react-openlayers-map-container"
+          style={{ width, height }}
+        >
+          {children}
+        </div>
+      </MapContext.Provider>
+    </VectorSourceProvider>
   );
 };

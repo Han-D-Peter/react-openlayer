@@ -11,6 +11,7 @@ import {
   TileLayer,
   TileMatrix,
   SelectedFeatureStore,
+  GeoJsonLayer,
 } from "./lib/Map";
 import { DrawingTools } from "./lib/Map/control/DrawingTools";
 import { icon } from "./lib";
@@ -85,9 +86,10 @@ function App() {
         width={mapSize.width}
         ref={ref}
       >
-        {/* <GeoJsonLayer geoJson={json} color="red" projectionCode="WGS:84" /> */}
+        <GeoJsonLayer geoJson={json} color="red" projectionCode="WGS:84" />
         <FeaturesStore
-          geoJson={jsonState}
+          // geoJson={jsonState}
+          geoJson={{ type: "FeatureCollection", features: [] }}
           projectionCode="WGS:84"
           onChange={setJsonState}
           // onChange={(value) => console.log("value", value)}
@@ -107,65 +109,7 @@ function App() {
                 [126.841584, 35.191516],
               ]}
             />
-            {/* <LayerGroup zIndex={0}>
-            <BoundaryCircle
-              center={[126.841284, 35.191516]}
-              circleRadius={200}
-              color="RED"
-              onClick={() => console.log("boundary")}
-              onHover={() => console.log("boundary hover")}
-              onLeave={() => console.log("boundary leave")}
-            >
-              상수도 보호구역
-            </BoundaryCircle>
-          </LayerGroup>
-          */}
 
-            {/* {isShown && (
-              <LayerGroup zIndex={2}>
-                <CustomPolygon
-                  onClick={(event) =>
-                    console.log(
-                      "event",
-                      getProfileFromFeature(event.annotation)
-                    )
-                  }
-                  positions={[
-                    [
-                      [126.840884, 35.190816],
-                      [126.840676, 35.190419],
-                      [126.840804, 35.190333],
-                      [126.841068, 35.190581],
-                      [126.840884, 35.190816],
-                    ],
-                  ]}
-                >
-                  <InnerText isPopup>hello2</InnerText>
-                </CustomPolygon>
-                <CustomPolyLine
-                  positions={[
-                    [126.840684, 35.190816],
-                    [126.840476, 35.190419],
-                    [126.840604, 35.190333],
-                    [126.840868, 35.190581],
-                  ]}
-                >
-                  <InnerText isPopup>hello2</InnerText>
-                </CustomPolyLine>
-                <CustomRectangle
-                  positions={[
-                    [
-                      [126.840684, 35.190219],
-                      [126.840476, 35.190219],
-                      [126.840476, 35.190133],
-                      [126.840684, 35.190133],
-                    ],
-                  ]}
-                >
-                  <InnerText isPopup>hello2</InnerText>
-                </CustomRectangle>
-              </LayerGroup>
-            )} */}
             <CustomMarker
               center={[126.529692, 35.935785]}
               color="SKYBLUE"

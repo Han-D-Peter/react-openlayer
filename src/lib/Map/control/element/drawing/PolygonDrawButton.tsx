@@ -1,11 +1,13 @@
-import React, { useId, useState } from "react";
+import React, { useCallback, useEffect, useId, useRef } from "react";
 import { Button, ButtonProps } from "../Button";
 import Draw from "ol/interaction/Draw";
-import { useCallback, useEffect, useRef } from "react";
+import Snap from "ol/interaction/Snap";
 import Style from "ol/style/Style";
 import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
+import { Coordinate } from "ol/coordinate";
+
 import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
 import { useMap } from "../../../hooks";
 import { useControlSection } from "../../layout";
@@ -13,8 +15,8 @@ import { InnerButton } from "../InnerButton";
 import { ANNOTATION_COLOR } from "../../../constants";
 import { FeatureFromGeojson, useFeaturesStore } from "../../../FeaturesStore";
 import { positionsFromFeature } from "src/lib/utils";
-import { Coordinate } from "ol/coordinate";
 import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
+import { useVectorSourceContext } from "../../../hooks/incontext/useVectorSourceContext";
 
 export interface PolygonDrawButtonProps extends ButtonProps {
   /**
@@ -48,52 +50,27 @@ export function PolygonDrawButton({
   const id = useId();
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
-  const [count, setCount] = useState(0);
+  const { getVectorSources, vectorSourcesCount } = useVectorSourceContext();
 
   const isActive = buttonId === selectedButtonId;
 
   const { addGeoJson } = useFeaturesStore();
-  const drawRef = useRef(
-    new Draw({
-      source: undefined,
-      type: "Polygon",
-      style: new Style({
-        zIndex: 1000,
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(1),
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill(1),
-        }),
-        // image: new Icon({
-        //   src: "/images/polygon.svg", // 마커 이미지 경로
-        //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        // }),
-      }),
-    })
-  );
+  const drawRef = useRef<Draw | null>(null);
+  const snapRef = useRef<Snap | null>(null);
 
-  useEffect(() => {
-    drawRef.current = new Draw({
-      source: undefined,
-      type: "Polygon",
-      style: new Style({
-        zIndex: 1000,
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(1),
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill(1),
-        }),
-        // image: new Icon({
-        //   src: "/images/polygon.svg", // 마커 이미지 경로
-        //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        // }),
-      }),
-    });
-  }, [onCanvas, color]);
+  // 그리기 종료 함수
+  const finishDrawing = useCallback(() => {
+    if (drawRef.current) {
+      map.removeInteraction(drawRef.current);
+    }
+    if (snapRef.current) {
+      map.removeInteraction(snapRef.current);
+    }
+    selectButton("");
+    map.setProperties({ isDrawing: false });
+    map.getViewport().style.cursor = "pointer";
+  }, [map, selectButton]);
+
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -102,27 +79,42 @@ export function PolygonDrawButton({
       onStart();
     }
     map.setProperties({ isDrawing: true });
-    drawRef.current.setActive(true);
+    if (drawRef.current) {
+      drawRef.current.setActive(true);
+    }
     map.getViewport().style.cursor = "crosshair";
   };
 
-  const finishDrawingByRightClick = useCallback(
+  // 이벤트 핸들러들
+  const handleRightClick = useCallback(
     (e: MouseEvent) => {
-      setCount((prev: number) => prev + 1);
-      if (e.button === 2) {
+      if (isActive && drawRef.current) {
         e.preventDefault();
-        if (count < 3) {
-          drawRef.current.abortDrawing();
-          setCount(0);
-          selectButton("");
-          drawRef.current.setActive(false);
-          return;
-        }
-        drawRef.current.finishDrawing();
-        map.getViewport().style.cursor = "pointer";
+        drawRef.current.abortDrawing();
+        finishDrawing();
       }
     },
-    [count, selectButton, map]
+    [isActive, finishDrawing]
+  );
+
+  const handleDoubleClick = useCallback(
+    (e: MouseEvent) => {
+      if (e.detail === 2 && isActive && drawRef.current) {
+        e.preventDefault();
+        drawRef.current.finishDrawing();
+        finishDrawing();
+      }
+    },
+    [isActive, finishDrawing]
+  );
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isActive) {
+        finishDrawing();
+      }
+    },
+    [isActive, finishDrawing]
   );
 
   const drawing = useCallback(
@@ -151,9 +143,6 @@ export function PolygonDrawButton({
         }
       );
 
-      selectButton("");
-      map.getViewport().style.cursor = "pointer";
-      drawRef.current.setActive(true);
       if (onEnd) {
         onEnd(newGeoJson);
       }
@@ -161,31 +150,90 @@ export function PolygonDrawButton({
         addGeoJson(newGeoJson);
       }
 
-      setTimeout(() => map.setProperties({ isDrawing: false }), 100);
+      // 그리기 완료 시 자동으로 종료
+      finishDrawing();
     },
-    [selectButton, map, onEnd, onCanvas, addGeoJson]
+    [onEnd, onCanvas, addGeoJson, finishDrawing]
   );
 
+  // 이벤트 리스너 등록
+  useEffect(() => {
+    const viewport = map.getViewport();
+
+    viewport.addEventListener("contextmenu", handleRightClick);
+    viewport.addEventListener("dblclick", handleDoubleClick);
+
+    return () => {
+      viewport.removeEventListener("contextmenu", handleRightClick);
+      viewport.removeEventListener("dblclick", handleDoubleClick);
+    };
+  }, [handleRightClick, handleDoubleClick, map]);
+
+  // Draw 이벤트 등록
   useEffect(() => {
     const drawingInstance = drawRef.current;
+    if (!drawingInstance) return;
 
     drawingInstance.on("drawend", drawing);
-    map.getViewport().addEventListener("mousedown", finishDrawingByRightClick);
+
     return () => {
       drawingInstance.un("drawend", drawing);
-      map
-        .getViewport()
-        .removeEventListener("mousedown", finishDrawingByRightClick);
     };
-  }, [drawing, finishDrawingByRightClick, map]);
+  }, [drawing]);
 
+  // ESC 키 이벤트 처리
   useEffect(() => {
-    if (!isActive) {
-      map.removeInteraction(drawRef.current);
-    } else {
-      map.addInteraction(drawRef.current);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  // 인터랙션 관리
+  useEffect(() => {
+    if (isActive) {
+      const vectorSources = getVectorSources();
+
+      if (vectorSources.length > 0) {
+        const traceSource = vectorSources[0];
+
+        // 기존 인터랙션 제거
+        if (drawRef.current) {
+          map.removeInteraction(drawRef.current);
+        }
+        if (snapRef.current) {
+          map.removeInteraction(snapRef.current);
+        }
+
+        // Draw 인터랙션 생성
+        drawRef.current = new Draw({
+          type: "Polygon",
+          source: undefined,
+          trace: true,
+          traceSource: traceSource,
+          style: new Style({
+            zIndex: 1000,
+            stroke: new Stroke({
+              color: ANNOTATION_COLOR[color].stroke(1),
+              width: 2,
+            }),
+            fill: new Fill({
+              color: ANNOTATION_COLOR[color].fill(1),
+            }),
+          }),
+        });
+
+        // Snap 인터랙션 생성
+        snapRef.current = new Snap({
+          source: traceSource,
+        });
+
+        // 인터랙션 추가
+        map.addInteraction(drawRef.current);
+        map.addInteraction(snapRef.current);
+      }
     }
-  }, [isActive, map]);
+  }, [isActive, vectorSourcesCount, map, color, getVectorSources]);
 
   return (
     <Button
@@ -196,9 +244,7 @@ export function PolygonDrawButton({
       popupText="Polygon"
       onClick={() => {
         if (isActive) {
-          selectButton("");
-          map.setProperties({ isDrawing: false });
-          map.getViewport().style.cursor = "pointer";
+          finishDrawing();
         } else {
           selectButton(buttonId);
           startDrawing();

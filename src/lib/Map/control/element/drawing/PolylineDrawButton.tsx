@@ -1,14 +1,16 @@
-import React, { useCallback, useId } from "react";
+import React, { useCallback, useEffect, useId, useRef } from "react";
 import { Button, ButtonProps } from "../Button";
-import { useEffect, useRef } from "react";
 import { Draw } from "ol/interaction";
-import { useMap } from "../../../hooks";
+import Snap from "ol/interaction/Snap";
 import Style from "ol/style/Style";
 import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
-import { useControlSection } from "../../layout";
+import { Coordinate } from "ol/coordinate";
 import { LineSegment } from "@phosphor-icons/react";
+
+import { useMap } from "../../../hooks";
+import { useControlSection } from "../../layout";
 import { InnerButton } from "../InnerButton";
 import { ANNOTATION_COLOR } from "src/lib/Map/constants";
 import {
@@ -16,8 +18,8 @@ import {
   useFeaturesStore,
 } from "src/lib/Map/FeaturesStore";
 import { positionsFromFeature } from "src/lib/utils";
-import { Coordinate } from "ol/coordinate";
 import { makeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
+import { useVectorSourceContext } from "../../../hooks/incontext/useVectorSourceContext";
 
 export interface PolylineDrawButtonProps extends ButtonProps {
   /**
@@ -52,48 +54,25 @@ export function PolylineDrawButton({
   const buttonId = `controlbutton-${id}`;
   const { selectButton, selectedButtonId } = useControlSection();
   const isActive = buttonId === selectedButtonId;
+  const { getVectorSources, vectorSourcesCount } = useVectorSourceContext();
 
   const { addGeoJson } = useFeaturesStore();
+  const drawRef = useRef<Draw | null>(null);
+  const snapRef = useRef<Snap | null>(null);
 
-  const drawRef = useRef(
-    new Draw({
-      source: undefined,
-      type: "LineString",
-      style: new Style({
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(1),
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill(1),
-        }),
-        // image: new Icon({
-        //   src: "/images/polyline.svg", // 마커 이미지 경로
-        //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        // }),
-      }),
-    })
-  );
+  // 그리기 종료 함수
+  const finishDrawing = useCallback(() => {
+    if (drawRef.current) {
+      map.removeInteraction(drawRef.current);
+    }
+    if (snapRef.current) {
+      map.removeInteraction(snapRef.current);
+    }
+    selectButton("");
+    map.setProperties({ isDrawing: false });
+    map.getViewport().style.cursor = "pointer";
+  }, [map, selectButton]);
 
-  useEffect(() => {
-    drawRef.current = new Draw({
-      source: undefined,
-      type: "LineString",
-      style: new Style({
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(1),
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill(1),
-        }),
-        // image: new Icon({
-        //   src: "/images/polyline.svg", // 마커 이미지 경로
-        //   anchor: [0.5, 1], // 마커 이미지의 앵커 위치
-        // }),
-      }),
-    });
-  }, [onCanvas, color]);
   const startDrawing = () => {
     if (onClick) {
       onClick();
@@ -104,16 +83,41 @@ export function PolylineDrawButton({
     }
     map.getViewport().style.cursor = "crosshair";
     map.setProperties({ isDrawing: true });
-    map.addInteraction(drawRef.current);
+    if (drawRef.current) {
+      map.addInteraction(drawRef.current);
+    }
   };
 
-  const finishDrawingByRightClick = useCallback(
+  // 이벤트 핸들러들
+  const handleRightClick = useCallback(
     (e: MouseEvent) => {
-      e.preventDefault();
-      drawRef.current.finishDrawing();
-      map.getViewport().style.cursor = "pointer";
+      if (isActive && drawRef.current) {
+        e.preventDefault();
+        drawRef.current.abortDrawing();
+        finishDrawing();
+      }
     },
-    [map]
+    [isActive, finishDrawing]
+  );
+
+  const handleDoubleClick = useCallback(
+    (e: MouseEvent) => {
+      if (e.detail === 2 && isActive && drawRef.current) {
+        e.preventDefault();
+        drawRef.current.finishDrawing();
+        finishDrawing();
+      }
+    },
+    [isActive, finishDrawing]
+  );
+
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape" && isActive) {
+        finishDrawing();
+      }
+    },
+    [isActive, finishDrawing]
   );
 
   const drawing = useCallback(
@@ -141,46 +145,104 @@ export function PolylineDrawButton({
         }
       );
 
-      selectButton("");
-      map.getViewport().style.cursor = "pointer";
-      map.removeInteraction(drawRef.current);
-
       if (onEnd) {
         onEnd(newGeoJson);
       }
       if (onCanvas) {
         addGeoJson(newGeoJson);
       }
-      setTimeout(() => map.setProperties({ isDrawing: false }), 100);
+
+      // 그리기 완료 시 자동으로 종료
+      finishDrawing();
     },
-    [selectButton, map, onEnd, onCanvas, addGeoJson]
+    [onEnd, onCanvas, addGeoJson, finishDrawing]
   );
 
   useEffect(() => {
     if (selectedButtonId !== buttonId) {
-      map.removeInteraction(drawRef.current);
+      if (drawRef.current) {
+        map.removeInteraction(drawRef.current);
+      }
     }
   }, [map, selectedButtonId, buttonId]);
 
+  // 이벤트 리스너 등록
+  useEffect(() => {
+    const viewport = map.getViewport();
+
+    viewport.addEventListener("contextmenu", handleRightClick);
+    viewport.addEventListener("dblclick", handleDoubleClick);
+
+    return () => {
+      viewport.removeEventListener("contextmenu", handleRightClick);
+      viewport.removeEventListener("dblclick", handleDoubleClick);
+    };
+  }, [handleRightClick, handleDoubleClick, map]);
+
+  // Draw 이벤트 등록
   useEffect(() => {
     const drawingInstance = drawRef.current;
+    if (!drawingInstance) return;
+
     drawingInstance.on("drawend", drawing);
-    map
-      .getViewport()
-      .addEventListener("contextmenu", finishDrawingByRightClick);
+
     return () => {
       drawingInstance.un("drawend", drawing);
-      map
-        .getViewport()
-        .removeEventListener("contextmenu", finishDrawingByRightClick);
     };
-  }, [drawing, finishDrawingByRightClick, map]);
+  }, [drawing]);
 
+  // ESC 키 이벤트 처리
   useEffect(() => {
-    if (!isActive) {
-      map.removeInteraction(drawRef.current);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
+  // 인터랙션 관리
+  useEffect(() => {
+    if (isActive) {
+      const vectorSources = getVectorSources();
+
+      if (vectorSources.length > 0) {
+        const traceSource = vectorSources[0];
+
+        // 기존 인터랙션 제거
+        if (drawRef.current) {
+          map.removeInteraction(drawRef.current);
+        }
+        if (snapRef.current) {
+          map.removeInteraction(snapRef.current);
+        }
+
+        // Draw 인터랙션 생성
+        drawRef.current = new Draw({
+          type: "LineString",
+          source: undefined,
+          trace: true,
+          traceSource: traceSource,
+          style: new Style({
+            stroke: new Stroke({
+              color: ANNOTATION_COLOR[color].stroke(1),
+              width: 2,
+            }),
+            fill: new Fill({
+              color: ANNOTATION_COLOR[color].fill(1),
+            }),
+          }),
+        });
+
+        // Snap 인터랙션 생성
+        snapRef.current = new Snap({
+          source: traceSource,
+        });
+
+        // 인터랙션 추가
+        map.addInteraction(drawRef.current);
+        map.addInteraction(snapRef.current);
+      }
     }
-  }, [isActive, map]);
+  }, [isActive, vectorSourcesCount, map, color, getVectorSources]);
 
   return (
     <Button
@@ -191,9 +253,7 @@ export function PolylineDrawButton({
       popupText="Polyline"
       onClick={() => {
         if (isActive) {
-          selectButton("");
-          map.setProperties({ isDrawing: false });
-          map.getViewport().style.cursor = "pointer";
+          finishDrawing();
         } else {
           selectButton(buttonId);
           startDrawing();
