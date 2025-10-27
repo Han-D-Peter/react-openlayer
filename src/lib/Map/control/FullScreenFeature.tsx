@@ -15,8 +15,6 @@ interface FullScreenFeatureProps {
 }
 
 const innerButtonStyle = css`
-  min-width: 30px;
-  min-height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;

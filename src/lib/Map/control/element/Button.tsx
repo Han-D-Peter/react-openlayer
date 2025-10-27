@@ -25,7 +25,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const getborderRadiusBySide = (side: "top" | "bottom" | "middle" | "solo") => {
   if (side === "top") {
-    return "5px 5px 0 0";
+    return "4px 4px 0 0";
   }
 
   if (side === "middle") {
@@ -33,10 +33,10 @@ const getborderRadiusBySide = (side: "top" | "bottom" | "middle" | "solo") => {
   }
 
   if (side === "bottom") {
-    return "0 0 5px 5px";
+    return "0 0 4px 4px";
   }
   if (side === "solo") {
-    return "5px 5px 5px 5px";
+    return "4px 4px 4px 4px";
   }
 };
 
@@ -62,16 +62,16 @@ const getStyledButtonStyle = (
   background: ${active ? "#007bff" : "#ffffff"};
   border-top: ${side === "top" || side === "solo"
     ? active
-      ? "2px solid #007bff"
+      ? "1px solid #007bff"
       : "1px solid #e0e0e0"
     : "none"};
   border-bottom: ${side === "bottom" || side === "solo"
     ? active
-      ? "2px solid #007bff"
+      ? "1px solid #007bff"
       : "1px solid #e0e0e0"
     : "none"};
-  border-left: none;
-  border-right: none;
+  border-left: 1px solid rgba(0, 0, 0, 0.12);
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
 
   border-radius: ${getborderRadiusBySide(side)};
   box-shadow: ${active
@@ -79,7 +79,6 @@ const getStyledButtonStyle = (
     : "0 2px 4px rgba(0, 0, 0, 0.1)"};
   cursor: ${isDisabled ? "not-allowed" : "pointer"};
   opacity: ${isDisabled ? 0.5 : 1};
-  transition: all 0.2s ease-in-out;
   position: relative;
 
   &:hover {
