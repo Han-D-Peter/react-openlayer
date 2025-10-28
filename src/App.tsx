@@ -88,10 +88,10 @@ function App() {
         width={mapSize.width}
         ref={ref}
       >
-        <GeoJsonLayer geoJson={json} color="red" projectionCode="WGS:84" />
+        {/* <GeoJsonLayer geoJson={json} color="red" projectionCode="WGS:84" /> */}
         <FeaturesStore
-          // geoJson={jsonState}
-          geoJson={{ type: "FeatureCollection", features: [] }}
+          geoJson={jsonState}
+          // geoJson={{ type: "FeatureCollection", features: [] }}
           projectionCode="WGS:84"
           onChange={setJsonState}
           // onChange={(value) => console.log("value", value)}

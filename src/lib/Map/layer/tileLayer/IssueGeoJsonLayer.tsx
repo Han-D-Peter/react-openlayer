@@ -72,6 +72,7 @@ export function IssueGeoJsonLayer({
         const type = properties["type"] as string;
         const title = properties["title"] as string;
         const isSelected = properties["isSelected"] as boolean;
+        const isTextShown = properties["isTextShown"] as boolean;
         const color = properties["color"]
           ? ((
               properties["color"] as string
@@ -91,24 +92,28 @@ export function IssueGeoJsonLayer({
                 ? "rgba(0, 0, 0, 0.6)"
                 : ANNOTATION_COLOR[color].fill(opacity),
             }),
-            text: new Text({
-              text: title,
-              font: "12px Calibri,sans-serif",
-              fill: new Fill({ color: "#000" }),
-              stroke: new Stroke({ color: "#fff", width: 3 }),
-            }),
+            text: isTextShown
+              ? new Text({
+                  text: title,
+                  font: "12px Calibri,sans-serif",
+                  fill: new Fill({ color: "#000" }),
+                  stroke: new Stroke({ color: "#fff", width: 3 }),
+                })
+              : undefined,
           });
         } else {
           return new Style({
             stroke: new Stroke({
               color: feature.getProperties()["color"],
             }),
-            text: new Text({
-              text: title,
-              font: "12px Calibri,sans-serif",
-              fill: new Fill({ color: "#000" }),
-              stroke: new Stroke({ color: "#fff", width: 3 }),
-            }),
+            text: isTextShown
+              ? new Text({
+                  text: title,
+                  font: "12px Calibri,sans-serif",
+                  fill: new Fill({ color: "#000" }),
+                  stroke: new Stroke({ color: "#fff", width: 3 }),
+                })
+              : undefined,
           });
         }
       },
