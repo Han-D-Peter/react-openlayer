@@ -88,7 +88,7 @@ export interface MapProps {
    * @default false
    * @description If you set this property to 'true', you can see selection of annotations.
    */
-
+  hasScaleLine?: boolean;
   children?: ReactNode;
 }
 
@@ -107,6 +107,7 @@ export const MapContainer = memo(
         height = "1000px",
         width = "1000px",
         isShownOsm = true,
+        hasScaleLine = true,
       },
       ref
     ) => {
@@ -131,14 +132,18 @@ export const MapContainer = memo(
           controls: defaultControls({
             zoom: isZoomAbled,
             rotate: isRotateAbled,
-          }).extend([
-            new ScaleLine({
-              units: "metric", // 미터 단위 사용
-              steps: 4, // 스케일 단계 수
-              text: true, // 텍스트 표시
-              minWidth: 64, // 최소 너비
-            }),
-          ]),
+          }).extend(
+            hasScaleLine
+              ? [
+                  new ScaleLine({
+                    units: "metric", // 미터 단위 사용
+                    steps: 4, // 스케일 단계 수
+                    text: true, // 텍스트 표시
+                    minWidth: 64, // 최소 너비
+                  }),
+                ]
+              : []
+          ),
         })
       );
 

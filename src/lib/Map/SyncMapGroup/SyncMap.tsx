@@ -48,6 +48,12 @@ export interface SyncMapProps {
     event: MapBrowserEvent<any>;
     lonlat: Coordinate;
   }) => void;
+
+  /**
+   * @default true
+   * @description Show metric scale line control on the map
+   */
+  hasScaleLine?: boolean;
   hasCompassWheel?: boolean;
 }
 
@@ -57,6 +63,7 @@ export const SyncMap = ({
   height = "500px",
   width = "500px",
   onClick,
+  hasScaleLine = true,
   hasCompassWheel = false,
 }: SyncMapProps) => {
   const {
@@ -86,14 +93,18 @@ export const SyncMap = ({
       controls: defaultControls({
         zoom: false,
         rotate: true,
-      }).extend([
-        new ScaleLine({
-          units: "metric", // 미터 단위 사용
-          steps: 4, // 스케일 단계 수
-          text: true, // 텍스트 표시
-          minWidth: 64, // 최소 너비
-        }),
-      ]),
+      }).extend(
+        hasScaleLine
+          ? [
+              new ScaleLine({
+                units: "metric", // 미터 단위 사용
+                steps: 4, // 스케일 단계 수
+                text: true, // 텍스트 표시
+                minWidth: 64, // 최소 너비
+              }),
+            ]
+          : []
+      ),
       interactions: defaultInteractions().extend([new DragRotateAndZoom()]),
       view: isDecoupled
         ? new View({
