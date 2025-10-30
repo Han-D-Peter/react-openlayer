@@ -3,11 +3,11 @@ import GeoJSON from "ol/format/GeoJSON";
 import VectorSource from "ol/source/Vector";
 import VectorLayer from "ol/layer/Vector";
 import { useMap } from "../../hooks";
-import { Fill, Stroke, Style, Text } from "ol/style";
+import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import Snap from "ol/interaction/Snap";
 import { ANNOTATION_COLOR } from "../../constants";
 import { Coordinate } from "./GeoJsonLayer";
-import { FeatureCollection } from "../..";
+import { FeatureCollection, icon } from "../..";
 
 export interface IssueGeoJsonLayerProps {
   geoJson: FeatureCollection;
@@ -73,6 +73,7 @@ export function IssueGeoJsonLayer({
         const title = properties["title"] as string;
         const isSelected = properties["isSelected"] as boolean;
         const isTextShown = properties["isTextShown"] as boolean;
+
         const color = properties["color"]
           ? ((
               properties["color"] as string
@@ -98,6 +99,23 @@ export function IssueGeoJsonLayer({
                   font: "12px Calibri,sans-serif",
                   fill: new Fill({ color: "#000" }),
                   stroke: new Stroke({ color: "#fff", width: 3 }),
+                })
+              : undefined,
+          });
+        } else if (type === "marker") {
+          return new Style({
+            image: new Icon({
+              src: icon.marker,
+              scale: 0.07,
+              anchor: [0.5, 1],
+            }),
+            text: isTextShown
+              ? new Text({
+                  text: title,
+                  font: "12px Calibri,sans-serif",
+                  fill: new Fill({ color: "#000" }),
+                  stroke: new Stroke({ color: "#fff", width: 3 }),
+                  offsetY: -40,
                 })
               : undefined,
           });
