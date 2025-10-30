@@ -106,8 +106,8 @@ export function IssueGeoJsonLayer({
           return new Style({
             image: new Icon({
               src: icon.marker,
-              scale: 0.07,
-              anchor: [0.5, 1],
+              scale: 0.5,
+              anchor: [0.5, 0.5],
             }),
             text: isTextShown
               ? new Text({
