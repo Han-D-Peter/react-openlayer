@@ -65,9 +65,9 @@ export function PointDrawButton({
           isMarker: true,
         }),
         image: new Icon({
-          scale: 0.07,
+          scale: 0.5,
           src: icon.marker, // 마커 이미지 경로
-          anchor: [0.5, 1], // 마커 이미지의 앵커 위치
+          anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
         }),
       }),
     })
@@ -86,7 +86,7 @@ export function PointDrawButton({
           isMarker: true,
         }),
         image: new Icon({
-          scale: 1,
+          scale: 0.5,
           src: icon.marker, // 마커 이미지 경로
           anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
         }),

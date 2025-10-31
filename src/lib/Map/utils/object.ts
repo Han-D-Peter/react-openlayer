@@ -40,7 +40,7 @@ export const makeText = ({
     fill: new Fill({
       color,
     }),
-    offsetY: isMarker ? -50 : 0,
+    offsetY: isMarker ? -20 : 0,
     overflow: true,
     stroke: outline
       ? new Stroke({
