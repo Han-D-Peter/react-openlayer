@@ -62,7 +62,7 @@ export const CustomMarker = ({
           : undefined,
       image: new Icon({
         src: icon.marker, // 마커 이미지 경로
-        scale: 0.5,
+        scale: 1,
         anchor: [0.5, 0.5], // 마커 이미지의 앵커 위치
       }),
     })

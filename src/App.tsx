@@ -26,7 +26,7 @@ import { FeatureCollection, FeaturesStore } from "./lib/Map/FeaturesStore";
 import "ol/ol.css";
 import "../src/lib/react-openlayer.css";
 
-icon.marker = "/images/marker-basic.png";
+icon.marker = "/images/marker-selected.png";
 icon.selected = "/images/marker-selected.png";
 icon.imageMarker.selected = "/images/imageMarker(selected).png";
 icon.imageMarker.zero = "/images/imageMarker(one).png";

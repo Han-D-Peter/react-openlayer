@@ -3,1056 +3,1155 @@
   "features": [
     {
       "type": "Feature",
-      "id": "6270",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.58592382960686, 36.86839806983626],
-          [126.58595758991984, 36.86840067050153]
-        ]
-      },
-      "properties": {
-        "title": "end",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "이슈 사항",
-        "issueGrade": 1,
-        "type": "line",
-        "color": "blue",
-        "opacity": 1,
-        "fontSize": 12,
-        "isShown": true,
-        "created": "2025/06/09 15:44:37",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6271",
+      "id": "2629",
       "geometry": {
         "type": "Point",
-        "coordinates": [126.58595758991984, 36.86840067050153]
+        "coordinates": [126.5868220712744, 36.87863149751941]
       },
       "properties": {
-        "title": "end_point",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "횡단면 보정",
-        "issueGrade": 1,
-        "type": "marker",
         "color": "blue",
-        "opacity": 1,
+        "created": "2025-08-31",
         "fontSize": 12,
-        "isShown": true,
-        "created": "2025/06/09 16:14:14",
-        "original_type": "marker",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6304",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [126.5622271, 36.9004707]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
         "issue": "균열",
-        "issueGrade": 0,
-        "type": "text",
-        "created": "2025/06/10 09:47:32",
-        "original_type": "text",
-        "isTextShown": true
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "marker"
       }
     },
     {
       "type": "Feature",
-      "id": "6306",
+      "id": "2628",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [126.58112505932677, 36.88061031352218]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "marker"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2627",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [126.5850339130004, 36.87547466813875]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "marker"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2601",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [126.56592215496737, 36.89972081388491]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "marker"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "434",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [126.5587593, 36.9022492],
-            [126.5590616, 36.9009933],
-            [126.5607825, 36.9017094],
-            [126.5604158, 36.9023879],
-            [126.5587593, 36.9022492]
+            [126.57741984624063, 36.877207517755394],
+            [126.57860899472607, 36.877207517755394],
+            [126.57860899472607, 36.87774142477943],
+            [126.57741984624063, 36.87774142477943],
+            [126.57741984624063, 36.877207517755394]
           ]
         ]
       },
       "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "polygon",
-        "created": "2025/06/10 09:48:42",
-        "original_type": "polygon",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6307",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.5614553, 36.8998327],
-          [126.5634111, 36.8983227],
-          [126.5653463, 36.8989068]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2025/06/10 09:49:08",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6305",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [126.566506, 36.898931]
-      },
-      "properties": {
-        "isShown": true,
-        "projectId": "1070",
-        "type": "marker",
         "color": "blue",
-        "title": "직접 생성aa",
-        "issue": "누수",
-        "opacity": 1,
-        "comment": "ssas",
+        "created": "2025-08-31",
         "fontSize": 12,
+        "issue": "균열",
         "issueDegree": "심각도",
-        "issueGrade": 5,
-        "created": "2025/06/10 09:48:38",
-        "original_type": "marker",
-        "isTextShown": true
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
       }
     },
     {
       "type": "Feature",
-      "id": "3360",
+      "id": "2597",
       "geometry": {
-        "type": "LineString",
+        "type": "Polygon",
         "coordinates": [
-          [126.5889995689641, 36.8653073275519],
-          [126.58896837672529, 36.86519032457785],
-          [126.58892550009267, 36.865013434442545],
-          [126.58888757285933, 36.864835815979504],
-          [126.58885433427866, 36.86465759061673],
-          [126.58882870230313, 36.86447857260197],
-          [126.58881423758645, 36.86429874896098],
-          [126.58881097620457, 36.864118569162756],
-          [126.58881428137221, 36.86393837115057],
-          [126.5888176315462, 36.863758173619175],
-          [126.5888209817004, 36.86357797608213],
-          [126.58882433183483, 36.863397778539436],
-          [126.5888276819495, 36.86321758099106],
-          [126.58883103204437, 36.86303738343706],
-          [126.58883438211944, 36.8628571858774],
-          [126.58883773217474, 36.862676988312046],
-          [126.58884108221024, 36.862496790741076],
-          [126.588844432226, 36.862316593164465],
-          [126.58884778222195, 36.86213639558217]
+          [
+            [126.57363509381464, 36.880555541116166],
+            [126.57583152349144, 36.880555541116166],
+            [126.57583152349144, 36.881550767922434],
+            [126.57363509381464, 36.881550767922434],
+            [126.57363509381464, 36.880555541116166]
+          ]
         ]
       },
       "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
         "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2024/12/20 14:22:31",
-        "original_type": "line",
-        "isTextShown": true
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
       }
     },
     {
       "type": "Feature",
-      "id": "6273",
+      "id": "2598",
       "geometry": {
-        "type": "Point",
-        "coordinates": [126.58592406977235, 36.86839808833704]
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57111921343886, 36.88944469459305],
+            [126.57044118645085, 36.88804263983637],
+            [126.57257270662384, 36.887747397677344],
+            [126.57198237492393, 36.88912786390135],
+            [126.57111921343886, 36.88944469459305]
+          ]
+        ]
       },
       "properties": {
-        "isShown": true,
-        "projectId": "1070",
-        "type": "marker",
         "color": "blue",
-        "title": "100-154 end-",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2596",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [126.57319877857144, 36.88478362004058],
+          [126.57354323845415, 36.88253025372268],
+          [126.57556139202288, 36.88218089155835]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "line"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2595",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [126.57320753072815, 36.88501514450272]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "marker"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2594",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [126.57427256244202, 36.88005887031716]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "marker"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2462",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [126.56883387555852, 36.892952795055706],
+          [126.56898840849907, 36.8931683039045]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "comment": "",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "기타등등",
+        "issueDegree": "심각도",
+        "issueGrade": 0,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "단면확인",
+        "type": "line"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2429",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [126.56299402451182, 36.90109808002177],
+          [126.57603799916612, 36.885076688343446],
+          [126.58503868142544, 36.86902686277557],
+          [126.58735130994778, 36.86219918810933]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "line"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "447",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58495889988646, 36.86772260766374],
+            [126.58554330436718, 36.86772260766374],
+            [126.58554330436718, 36.868469691014525],
+            [126.58495889988646, 36.868469691014525],
+            [126.58495889988646, 36.86772260766374]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "444",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [126.58572466512267, 36.87101097603593],
+          [126.58433198758476, 36.87041263743694],
+          [126.58491567839798, 36.86958823230721]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "line"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "450",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57681407142854, 36.8849341776761],
+            [126.57878348451018, 36.8850973475454],
+            [126.57902442658236, 36.88604354080404],
+            [126.57681407142854, 36.88604354080404],
+            [126.57681407142854, 36.8849341776761]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "443",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58311161224331, 36.87150785178237],
+            [126.58473297561335, 36.87150785178237],
+            [126.58473297561335, 36.87210939382153],
+            [126.58311161224331, 36.87210939382153],
+            [126.58311161224331, 36.87150785178237]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "446",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.5861939461135, 36.86905244807484],
+            [126.58700569829976, 36.86905244807484],
+            [126.58700569829976, 36.87017440707507],
+            [126.5861939461135, 36.87017440707507],
+            [126.5861939461135, 36.86905244807484]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2264",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58168892003916, 36.873607302801744],
+            [126.58337670006176, 36.873607302801744],
+            [126.58337670006176, 36.87454884074856],
+            [126.58168892003916, 36.87454884074856],
+            [126.58168892003916, 36.873607302801744]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "448",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58817620222156, 36.86747744480971],
+            [126.58979141020933, 36.86747744480971],
+            [126.58979141020933, 36.8683128298143],
+            [126.58817620222156, 36.8683128298143],
+            [126.58817620222156, 36.86747744480971]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "comment": "",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 2,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown1",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "449",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.5856334494943, 36.866805625317056],
+            [126.58686135904622, 36.866805625317056],
+            [126.58686135904622, 36.86745135449604],
+            [126.5856334494943, 36.86745135449604],
+            [126.5856334494943, 36.866805625317056]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "comment": "",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "220",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57750385611274, 36.881315814127575],
+            [126.57799126378215, 36.88075588407243],
+            [126.57884596644855, 36.8814215443375],
+            [126.57825567091767, 36.88205592252288],
+            [126.57813094914266, 36.883010051034475],
+            [126.57750385611274, 36.881315814127575]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "211",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57469961751208, 36.8830158907905, 43.37004852294922],
+            [126.5763860372749, 36.8830158907905, 77.7401123046875],
+            [126.5763860372749, 36.8837374571396, 77.91629028320312],
+            [126.57469961751208, 36.8837374571396, 51.21003341674805],
+            [126.57469961751208, 36.8830158907905, 43.37004852294922]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "comment": "",
+        "created": "2025-08-31",
+        "fontSize": 12,
         "issue": "간섭",
+        "issueDegree": "심각도",
+        "issueGrade": 3,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
         "opacity": 1,
-        "comment": "ㅓㅓ",
+        "title": "test",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "2200",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57933612850144, 36.87437064958206],
+            [126.58096096043123, 36.87437064958206],
+            [126.58096096043123, 36.875043573454434],
+            [126.57933612850144, 36.875043573454434],
+            [126.57933612850144, 36.87437064958206]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
         "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "232",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          126.58001008765793, 36.878188743958944, 39.570648193359375
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "dd",
+        "type": "marker"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "453",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57001221199918, 36.89232249831011],
+            [126.57179959409287, 36.89232249831011],
+            [126.57179959409287, 36.89311357827545],
+            [126.57001221199918, 36.89311357827545],
+            [126.57001221199918, 36.89232249831011]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "452",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58284839438184, 36.86837225252016],
+            [126.58390273018317, 36.86837225252016],
+            [126.58390273018317, 36.86892717255574],
+            [126.58284839438184, 36.86892717255574],
+            [126.58284839438184, 36.86837225252016]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "451",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58156619120025, 36.86991824693581],
+            [126.58396666687064, 36.86991824693581],
+            [126.58396666687064, 36.87081474283109],
+            [126.58156619120025, 36.87081474283109],
+            [126.58156619120025, 36.86991824693581]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "comment": "",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
         "issueDegree": "중요도",
-        "issueGrade": 4,
-        "created": "2025/06/09 16:56:37",
-        "original_type": "marker",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3606",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.57826840843401, 36.879700269716366],
-          [126.57748252421302, 36.879568286166204]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2024/12/26 13:36:34",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "4227",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.5903635127006, 36.8660250053949],
-          [126.59077255858078, 36.86453373422049],
-          [126.59292092993181, 36.86522558542224],
-          [126.59509860869062, 36.86437664538769]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "type": "line",
-        "fontSize": 12,
-        "opacity": 1,
-        "color": "red",
-        "issueGrade": 0,
-        "issueDegree": "심각도",
-        "comment": "",
-        "issue": "균열",
-        "projectId": "1070",
-        "created": "2025/01/15 09:29:06",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "5385",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.5818595, 36.8655072],
-          [126.5829027, 36.8655108]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "fontSize": 12,
-        "color": "blue",
-        "opacity": 1,
-        "title": "solid-perpendicular",
-        "type": "line",
-        "projectId": "1070",
-        "created": "2025/04/18 14:19:48",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6322",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.584003198893, 36.867060144990745],
-          [126.5840424543195, 36.867144552662936],
-          [126.58408342739057, 36.86722843054837],
-          [126.58412701735315, 36.86731145068765],
-          [126.58414538477103, 36.867344339793725]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "10-24",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "간섭",
         "issueGrade": 1,
-        "type": "line",
-        "color": "blue",
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
         "opacity": 1,
-        "fontSize": 12,
-        "created": "2025/06/10 11:07:08",
-        "original_type": "line",
-        "isTextShown": true
+        "title": "unknown",
+        "type": "rectangle"
       }
     },
     {
       "type": "Feature",
-      "id": "3364",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.58881423758645, 36.86429874896098],
-          [126.58881097620457, 36.864118569162756]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2024/12/20 15:00:16",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3365",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.58882870230313, 36.86447857260197],
-          [126.58881423758645, 36.86429874896098]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2024/12/20 15:00:49",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3366",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.58737699306614, 36.86958984951798],
-          [126.58746360003073, 36.869515058866625],
-          [126.58757486915877, 36.86935948366988],
-          [126.5876127328636, 36.86918285828446],
-          [126.58756993206899, 36.86900696218791],
-          [126.58745206478768, 36.86885479912132],
-          [126.5872745460258, 36.86874626889205],
-          [126.58706059167642, 36.86869556495709],
-          [126.58683778702583, 36.86870745403387],
-          [126.58662728229496, 36.868768499580554],
-          [126.58643394436837, 36.868859590316845],
-          [126.58625118742353, 36.868964051293005],
-          [126.58607094348635, 36.869071315077875],
-          [126.58589217507689, 36.86918016150224],
-          [126.58571490372347, 36.869290577461854],
-          [126.58553915077441, 36.86940254966353],
-          [126.58536493739547, 36.86951606462655],
-          [126.58519228456747, 36.86963110868447],
-          [126.58502121308345, 36.86974766798666],
-          [126.5848517435464, 36.869865728500045],
-          [126.58468389636688, 36.86998527601074],
-          [126.58451769176021, 36.870106296125726],
-          [126.58435314974432, 36.87022877427469],
-          [126.58419029013726, 36.870352695711674],
-          [126.58417435716616, 36.87036496643631]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2024/12/20 15:02:54",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3368",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.58737982437266, 36.869587710893526],
-          [126.58752138419332, 36.86944863946593]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2024/12/20 15:05:39",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6008",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [124.8716169, 32.5742821],
-          [124.8716169, 32.5742821]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "16000",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "이슈 사항",
-        "issueGrade": 1,
-        "type": "line",
-        "color": "blue",
-        "opacity": 1,
-        "fontSize": 12,
-        "created": "2025/05/26 16:21:16",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6040",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.5518382, 36.9050582],
-          [126.5520392, 36.904978],
-          [126.5522393, 36.9048965],
-          [126.5524386, 36.9048137],
-          [126.552637, 36.9047294],
-          [126.5528481, 36.904636],
-          [126.553031, 36.9045569],
-          [126.5532267, 36.9044687],
-          [126.5534214, 36.9043791],
-          [126.5536151, 36.9042881],
-          [126.5538079, 36.9041959],
-          [126.5539997, 36.9041023],
-          [126.5541898, 36.9040078],
-          [126.5543807, 36.9039119],
-          [126.554571, 36.9038164],
-          [126.5547767, 36.9037154]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2025/05/27 15:47:01",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6041",
+      "id": "445",
       "geometry": {
         "type": "Point",
-        "coordinates": [126.5547613, 36.9037209]
+        "coordinates": [126.58663485882086, 36.87073477367065]
       },
       "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "fontSize": 12,
         "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
         "opacity": 1,
-        "title": "16+000",
-        "type": "marker",
-        "projectId": "1070",
-        "created": "2025/05/27 15:47:44",
-        "original_type": "marker",
-        "isTextShown": true
+        "title": "unknown",
+        "type": "marker"
       }
     },
     {
       "type": "Feature",
-      "id": "4293",
+      "id": "442",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [126.57237345669104, 36.89016624400075],
-            [126.57219639724443, 36.889914306937115],
-            [126.5725977956216, 36.889944539730976],
-            [126.57237345669104, 36.89016624400075]
+            [126.58024833359646, 36.87152598198246],
+            [126.58145304895442, 36.87152598198246],
+            [126.58145304895442, 36.8721195295234],
+            [126.58024833359646, 36.8721195295234],
+            [126.58024833359646, 36.87152598198246]
           ]
         ]
       },
       "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "fontSize": 12,
         "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
         "opacity": 1,
-        "title": "폴리곤",
-        "type": "polygon",
-        "projectId": "1070",
-        "created": "2025/01/21 10:35:14",
-        "original_type": "polygon",
-        "isTextShown": true
+        "title": "unknown",
+        "type": "rectangle"
       }
     },
     {
       "type": "Feature",
-      "id": "5358",
+      "id": "441",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [126.5818534, 36.8650728],
-            [126.5828894, 36.8650728],
-            [126.5828894, 36.8657707],
-            [126.5818534, 36.8657707],
-            [126.5818534, 36.8650728]
+            [126.58268127073595, 36.872554792409716],
+            [126.58388500480103, 36.872554792409716],
+            [126.58388500480103, 36.87306878200785],
+            [126.58268127073595, 36.87306878200785],
+            [126.58268127073595, 36.872554792409716]
           ]
         ]
       },
       "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "fontSize": 12,
         "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
         "opacity": 1,
-        "title": "solid",
-        "type": "rectangle",
-        "projectId": "1070",
-        "created": "2025/04/18 09:27:06",
-        "original_type": "rectangle",
-        "isTextShown": true
+        "title": "unknown",
+        "type": "rectangle"
       }
     },
     {
       "type": "Feature",
-      "id": "4226",
+      "id": "440",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58013660002725, 36.8729041144212],
+            [126.58082131939706, 36.8729041144212],
+            [126.58082131939706, 36.873325668444394],
+            [126.58013660002725, 36.873325668444394],
+            [126.58013660002725, 36.8729041144212]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "437",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58097975358389, 36.875469912008285],
+            [126.58216484308535, 36.875469912008285],
+            [126.58216484308535, 36.876047262579235],
+            [126.58097975358389, 36.876047262579235],
+            [126.58097975358389, 36.875469912008285]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "436",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.5783676858999, 36.875866684862515],
+            [126.57946660004978, 36.875866684862515],
+            [126.57946660004978, 36.87632544421446],
+            [126.5783676858999, 36.87632544421446],
+            [126.5783676858999, 36.875866684862515]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "435",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.58003583909594, 36.876535997953596],
+            [126.58105584838195, 36.876535997953596],
+            [126.58105584838195, 36.876992148148034],
+            [126.58003583909594, 36.876992148148034],
+            [126.58003583909594, 36.876535997953596]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "433",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57797396445649, 36.87802027828434],
+            [126.57880761731444, 36.87802027828434],
+            [126.57880761731444, 36.87861787925674],
+            [126.57797396445649, 36.87861787925674],
+            [126.57797396445649, 36.87802027828434]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "432",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57624144737206, 36.87807716227587],
+            [126.57722581788688, 36.87807716227587],
+            [126.57722581788688, 36.878628977618234],
+            [126.57624144737206, 36.878628977618234],
+            [126.57624144737206, 36.87807716227587]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "431",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57916420393863, 36.879971259879255],
+            [126.57829265090909, 36.8789762850856],
+            [126.58021040278679, 36.87890078983831],
+            [126.57916420393863, 36.879971259879255]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "polygon"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "430",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [126.57576011893285, 36.879144439417885],
+            [126.5769152619097, 36.879144439417885],
+            [126.5769152619097, 36.87993720030953],
+            [126.57576011893285, 36.87993720030953],
+            [126.57576011893285, 36.879144439417885]
+          ]
+        ]
+      },
+      "properties": {
+        "color": "blue",
+        "created": "2025-08-31",
+        "fontSize": 12,
+        "issue": "균열",
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "221",
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [126.58641984250333, 36.86152866243751],
-          [126.59540753140948, 36.85966161615683]
+          [126.57313026027089, 36.887044057449685, 69.50169372558594],
+          [126.57616895910084, 36.88359905344626, 70.86964416503906],
+          [126.57717331174193, 36.88269999888119, 134.57762145996094]
         ]
       },
       "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2025/01/15 09:28:15",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6323",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.5839647, 36.8669755],
-          [126.5840032, 36.8670601]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2025/06/10 11:08:00",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "5383",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          126.57710606354291, 36.88761287728789, 80.85540482557056
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "marker",
-        "created": "2025/04/18 11:14:05",
-        "original_type": "marker",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3550",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.58341389127595, 36.866354900944685],
-          [126.58350138769121, 36.86618896145995]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "보정후280",
-        "comment": "",
-        "issueDegree": "심각도",
+        "color": "yellow",
+        "created": "2025-08-31",
+        "fontSize": 12,
         "issue": "이슈 사항",
+        "issueDegree": "심각도",
         "issueGrade": 1,
-        "type": "line",
-        "color": "blue",
-        "opacity": 1,
-        "fontSize": 12,
-        "created": "2024/12/24 10:46:28",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3411",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.58412517125835, 36.86528999320397],
-          [126.5841271956027, 36.86530250313002]
-        ]
-      },
-      "properties": {
+        "isSelected": false,
         "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "이슈 사항",
-        "issueGrade": 1,
-        "fontSize": 12,
-        "color": "yellow",
-        "opacity": 1,
-        "title": "line6",
-        "type": "line",
-        "projectId": "1070",
-        "created": "2024/12/23 10:02:26",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3047",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.57017173649342, 36.89449013166839],
-          [126.57030896618868, 36.894347551999836]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "41",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "곡선계산",
-        "issueGrade": 1,
-        "type": "line",
-        "color": "skyblue",
-        "opacity": 1,
-        "fontSize": 12,
-        "created": "2024/12/09 13:16:53",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3412",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.58433150862757, 36.86524242106407],
-          [126.58434247365088, 36.86525144995554]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "line5",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "부식",
-        "issueGrade": 1,
-        "type": "line",
-        "color": "yellow",
-        "opacity": 1,
-        "fontSize": 12,
-        "created": "2024/12/23 10:04:22",
-        "original_type": "line"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "3039",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.56864477502967, 36.8960541604553],
-          [126.56848118462081, 36.89593081457823]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "3pd0",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "곡선계산",
-        "issueGrade": 1,
-        "type": "line",
-        "color": "blue",
-        "opacity": 1,
-        "fontSize": 12,
-        "created": "2024/12/09 12:37:53",
-        "original_type": "line"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "4425",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [126.5679753272732, 36.89533434997787],
-            [126.56841767412207, 36.89452125707078],
-            [126.57002241748943, 36.89521608899257],
-            [126.56922962295731, 36.895615056637936],
-            [126.56921572398646, 36.89545327438928],
-            [126.5679753272732, 36.89533434997787]
-          ]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "fontSize": 12,
-        "color": "yellow",
-        "opacity": 1,
-        "title": "unKnown",
-        "type": "polygon",
-        "projectId": "1070",
-        "created": "2025/02/03 13:24:02",
-        "original_type": "polygon"
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "4295",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [126.5722681, 36.8896199],
-            [126.57174890000002, 36.88924819999998],
-            [126.57226213744788, 36.88928365750169],
-            [126.5722681, 36.8896199]
-          ]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "polygon",
-        "created": "2025/01/21 12:54:20",
-        "original_type": "polygon",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "4426",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.57879329677809, 36.878023771702786],
-          [126.5797127033284, 36.875188741286635],
-          [126.5822261351342, 36.8739692470227]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "fontSize": 12,
-        "color": "blue",
-        "opacity": 0.4,
-        "title": "unKnown",
-        "type": "line",
-        "projectId": "1070",
-        "created": "2025/02/03 13:35:20",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6148",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.5729285, 36.8901051],
-          [126.5728699, 36.8899289],
-          [126.5731053, 36.8900012],
-          [126.573061, 36.8899171]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "projectId": "1070",
-        "type": "line",
-        "color": "blue",
-        "title": "폴리라인",
-        "issue": "균열",
-        "opacity": 1,
-        "comment": "ddd",
-        "fontSize": 12,
-        "issueDegree": "심각도",
-        "issueGrade": 0,
-        "created": "2025/06/02 17:02:32",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "5691",
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [126.5718034, 36.8890447],
-          [126.5725951, 36.8872073]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "type": "line",
-        "created": "2025/05/09 16:54:42",
-        "original_type": "line",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6258",
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [126.567787, 36.8827919],
-            [126.5841066, 36.8827919],
-            [126.5841066, 36.887721],
-            [126.567787, 36.887721],
-            [126.567787, 36.8827919]
-          ]
-        ]
-      },
-      "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "fontSize": 18,
-        "color": "blue",
+        "isTextShown": true,
         "opacity": 0.6,
-        "title": "unKnown",
-        "type": "rectangle",
-        "projectId": "1070",
-        "created": "2025/06/09 13:28:23",
-        "original_type": "rectangle",
-        "isTextShown": true
+        "title": "Line !!!!!!!!!!!!!!",
+        "type": "line"
       }
     },
     {
       "type": "Feature",
-      "id": "6146",
+      "id": "216",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [126.5723515, 36.8902206],
-            [126.572633, 36.8902206],
-            [126.572633, 36.8904147],
-            [126.5723515, 36.8904147],
-            [126.5723515, 36.8902206]
+            [126.57084099079934, 36.890566400913414, 32.61686706542969],
+            [126.5738790623285, 36.890566400913414, 41.84819412231445],
+            [126.5738790623285, 36.89176742777245, 14.051770210266113],
+            [126.57084099079934, 36.89176742777245, 50.819252014160156],
+            [126.57084099079934, 36.890566400913414, 32.61686706542969]
           ]
         ]
       },
       "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
-        "fontSize": 12,
         "color": "blue",
-        "opacity": 1,
-        "title": "사각형",
-        "type": "rectangle",
-        "projectId": "1070",
-        "created": "2025/06/02 17:02:17",
-        "original_type": "rectangle",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6147",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [126.5727182, 36.8900658]
-      },
-      "properties": {
-        "isShown": true,
-        "comment": "",
-        "issueDegree": "심각도",
-        "issue": "균열",
-        "issueGrade": 0,
+        "created": "2025-08-31",
         "fontSize": 12,
-        "color": "blue",
-        "opacity": 1,
-        "title": "마커",
-        "type": "marker",
-        "projectId": "1070",
-        "created": "2025/06/02 17:02:22",
-        "original_type": "marker",
-        "isTextShown": true
-      }
-    },
-    {
-      "type": "Feature",
-      "id": "6218",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [126.5623765, 36.8763483]
-      },
-      "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
         "issue": "균열",
-        "issueGrade": 0,
-        "type": "marker",
-        "created": "2025/06/05 16:27:58",
-        "original_type": "marker",
-        "isTextShown": true
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 1,
+        "title": "unknown",
+        "type": "rectangle"
       }
     },
     {
       "type": "Feature",
-      "id": "6259",
+      "id": "212",
       "geometry": {
         "type": "Polygon",
         "coordinates": [
           [
-            [126.5598287, 36.891516],
-            [126.5800817, 36.891516],
-            [126.5800817, 36.8968703],
-            [126.5598287, 36.8968703],
-            [126.5598287, 36.891516]
+            [126.57355389050605, 36.88709365068334],
+            [126.57777932794784, 36.88663779292587],
+            [126.57642237640341, 36.88858782802009],
+            [126.57355389050605, 36.88858782802009],
+            [126.57355389050605, 36.88709365068334]
           ]
         ]
       },
       "properties": {
-        "isShown": true,
-        "title": "unKnown",
-        "comment": "",
-        "issueDegree": "심각도",
+        "color": "green",
+        "created": "2025-08-31",
+        "fontSize": 12,
         "issue": "균열",
-        "issueGrade": 0,
-        "type": "rectangle",
-        "created": "2025/06/09 13:28:30",
-        "original_type": "rectangle",
-        "isTextShown": true
+        "issueDegree": "심각도",
+        "issueGrade": 1,
+        "isSelected": false,
+        "isShown": true,
+        "isTextShown": true,
+        "opacity": 0.2,
+        "title": "Rectangle 2",
+        "type": "rectangle"
       }
     }
   ]
