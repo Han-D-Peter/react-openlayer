@@ -115,7 +115,7 @@ export function IssueGeoJsonLayer({
                   font: "12px Calibri,sans-serif",
                   fill: new Fill({ color: "#000" }),
                   stroke: new Stroke({ color: "#fff", width: 3 }),
-                  offsetY: -40,
+                  offsetY: -20,
                 })
               : undefined,
           });
