@@ -12,8 +12,14 @@ export function useSelectAnnotation() {
 
   const getAnnotationByClick = useCallback(
     (event: MapBrowserEvent<any>) => {
+      // 수정/그리기 중에는 지도 이동 및 다른 클릭 로직을 막아 선택만 처리
+      if (map.get("isModifying") || map.get("isDrawing")) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+
       const clickedFeatures = map.getFeaturesAtPixel(event.pixel, {
-        hitTolerance: 10,
+        hitTolerance: 12,
       });
 
       if (clickedFeatures.length > 0) {
