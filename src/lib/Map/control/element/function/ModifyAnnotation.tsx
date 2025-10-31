@@ -17,7 +17,7 @@ import { MakeGeojsonShape } from "src/lib/utils/makeGeojsonShape";
 import { ModifyIcon } from "src/lib/Map/constants/icons/ModifyIcon";
 import { MapBrowserEvent } from "ol";
 import Select from "ol/interaction/Select";
-import { singleClick } from "ol/events/condition";
+import { mouseActionButton } from "ol/events/condition";
 import { useVectorSourceContext } from "../../../hooks/incontext/useVectorSourceContext";
 
 export interface ModifyAnnotationProps extends ButtonProps {
@@ -258,7 +258,7 @@ export function ModifyAnnotation({
     // 우선 Select 인터랙션으로 피처를 안정적으로 획득
     if (!selectInteractionRef.current) {
       selectInteractionRef.current = new Select({
-        condition: singleClick,
+        condition: (e) => e.type === "pointerdown" && mouseActionButton(e),
         hitTolerance: 10,
         layers: () => true,
       });

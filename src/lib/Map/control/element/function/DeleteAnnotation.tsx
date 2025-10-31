@@ -2,7 +2,7 @@ import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useCallback, useEffect, useRef } from "react";
 import Select from "ol/interaction/Select";
-import { singleClick } from "ol/events/condition";
+import { mouseActionButton } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { EraserIcon } from "../../../constants/icons/EraserIcon";
 import { useMap } from "../../../hooks";
@@ -31,7 +31,7 @@ export const DeleteAnnotation = ({
     new Select({
       style: null,
       hitTolerance: 8,
-      condition: singleClick,
+      condition: (e) => e.type === "pointerdown" && mouseActionButton(e),
       // 모든 벡터 레이어에서 선택 허용 (필요 시 좁힐 수 있음)
       layers: () => true,
     })

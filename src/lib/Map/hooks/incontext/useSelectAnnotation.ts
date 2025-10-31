@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useMap } from "./useMap";
 import { MapBrowserEvent } from "ol";
+import { mouseActionButton } from "ol/events/condition";
 import Feature, { FeatureLike } from "ol/Feature";
 import { Geometry } from "ol/geom";
 
@@ -17,6 +18,8 @@ export function useSelectAnnotation() {
         event.preventDefault();
         event.stopPropagation();
       }
+      // 좌클릭만 허용 (singleclick 기준)
+      if (!mouseActionButton(event)) return;
 
       const clickedFeatures = map.getFeaturesAtPixel(event.pixel, {
         hitTolerance: 12,
