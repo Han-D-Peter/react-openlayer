@@ -135,11 +135,12 @@ export function SelectedFeatureStore({
           featureProjection: map.getView().getProjection(),
         });
 
-        const feature = new Feature({
-          geometry: olGeometry,
-          ...selected.properties,
-        });
-        fitFeatureToView(map, feature as Feature<Geometry>);
+        // 선택되면 확대
+        // const feature = new Feature({
+        //   geometry: olGeometry,
+        //   ...selected.properties,
+        // });
+        // fitFeatureToView(map, feature as Feature<Geometry>);
       }
       return selectFeature(selected);
     }

@@ -2,6 +2,7 @@ import React, { useId } from "react";
 import { Button, ButtonProps } from "../Button";
 import { useCallback, useEffect, useRef } from "react";
 import Select from "ol/interaction/Select";
+import { singleClick } from "ol/events/condition";
 import { SelectEvent } from "ol/interaction/Select";
 import { EraserIcon } from "../../../constants/icons/EraserIcon";
 import { useMap } from "../../../hooks";
@@ -21,43 +22,55 @@ export const DeleteAnnotation = ({
 }: DeleteAnnotationProps) => {
   const map = useMap();
   const { selectButton, selectedButtonId } = useControlSection();
-  const buttonId = useId();
+  const id = useId();
+  const buttonId = `controlbutton-${id}`;
   const isActive = buttonId === selectedButtonId;
 
-  const { removeGeoJson } = useFeaturesStore();
+  const { removeGeoJson, getGeoJsonElement } = useFeaturesStore();
   const selectRef = useRef(
     new Select({
       style: null,
+      hitTolerance: 8,
+      condition: singleClick,
+      // 모든 벡터 레이어에서 선택 허용 (필요 시 좁힐 수 있음)
+      layers: () => true,
     })
   );
 
   const onSelect = useCallback(
     (event: SelectEvent) => {
       const selectedFeatures = event.selected;
+
       if (selectedFeatures.length > 0) {
         const feature = selectedFeatures[0];
         const properties = feature.getProperties();
 
-        if (properties.shape) {
+        if (properties.type) {
           // Feature를 삭제
           const layer = properties.layer;
+
           if (layer) {
             const source = layer.getSource();
             if (source) {
               source.removeFeature(feature);
             }
           }
-
+          const featureId = feature.getId() as string;
           // GeoJSON에서도 삭제
-          if (properties.id) {
-            removeGeoJson(properties.id);
-          }
 
-          onDeleteChange && onDeleteChange(undefined);
+          if (featureId) {
+            removeGeoJson(featureId);
+            onDeleteChange && onDeleteChange(getGeoJsonElement(featureId));
+            // 삭제 후 버튼 해제 및 인터랙션 정리
+            selectButton("");
+            try {
+              map.removeInteraction(selectRef.current);
+            } catch (_) {}
+          }
         }
       }
     },
-    [removeGeoJson, onDeleteChange]
+    [removeGeoJson, onDeleteChange, getGeoJsonElement, selectButton, map]
   );
 
   useEffect(() => {
@@ -70,10 +83,14 @@ export const DeleteAnnotation = ({
   }, [onSelect]);
 
   useEffect(() => {
-    if (!isActive) {
-      map.removeInteraction(selectRef.current);
-    } else {
+    if (isActive) {
       map.addInteraction(selectRef.current);
+    } else {
+      map.removeInteraction(selectRef.current);
+      // 비활성화 시 선택 상태 초기화
+      try {
+        selectRef.current.getFeatures().clear();
+      } catch (_) {}
     }
   }, [isActive, map]);
 

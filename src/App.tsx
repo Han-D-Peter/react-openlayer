@@ -127,8 +127,12 @@ function App() {
                 arrange="horizontal"
                 color="RED"
                 onCanvas
-                onModify={() => {}}
-                onDrawEnd={(e) => {}}
+                onModify={(e) => {
+                  console.log("modify", e);
+                }}
+                onDelete={(e) => {
+                  console.log("draw end", e);
+                }}
               />
             </ControlSection>
           </SelectedFeatureStore>
@@ -205,7 +209,12 @@ function App() {
                           <DrawingTools
                             color="RED"
                             onCanvas
-                            onDrawEnd={(e) => {}}
+                            onDelete={(e) => {
+                              console.log("delete", e);
+                            }}
+                            onDrawEnd={(e) => {
+                              console.log("draw end", e);
+                            }}
                           />
                         </ControlSection>
                       </>
