@@ -7,6 +7,9 @@ import Style from "ol/style/Style";
 import { DrawEvent } from "ol/interaction/Draw";
 import Stroke from "ol/style/Stroke";
 import Fill from "ol/style/Fill";
+import VectorSource from "ol/source/Vector";
+import VectorLayer from "ol/layer/Vector";
+import DoubleClickZoom from "ol/interaction/DoubleClickZoom";
 import { Coordinate } from "ol/coordinate";
 
 import { PolygonIcon } from "../../../constants/icons/PolygonIcon";
@@ -58,6 +61,8 @@ export function PolygonDrawButton({
   const { addGeoJson } = useFeaturesStore();
   const drawRef = useRef<Draw | null>(null);
   const snapRef = useRef<Snap | null>(null);
+  const sketchSourceRef = useRef<VectorSource | null>(null);
+  const sketchLayerRef = useRef<VectorLayer<VectorSource> | null>(null);
 
   // 그리기 종료 함수
   const finishDrawing = useCallback(() => {
@@ -67,6 +72,19 @@ export function PolygonDrawButton({
     if (snapRef.current) {
       map.removeInteraction(snapRef.current);
     }
+    // 스케치 레이어/소스 정리
+    if (sketchLayerRef.current) {
+      map.removeLayer(sketchLayerRef.current);
+      sketchLayerRef.current = null;
+    }
+    if (sketchSourceRef.current) {
+      sketchSourceRef.current.clear();
+      sketchSourceRef.current = null;
+    }
+    // 더블클릭 줌 복구
+    map.getInteractions().forEach((i) => {
+      if (i instanceof DoubleClickZoom) i.setActive(true);
+    });
     selectButton("");
     map.setProperties({ isDrawing: false });
     map.getViewport().style.cursor = "pointer";
@@ -80,10 +98,23 @@ export function PolygonDrawButton({
       onStart();
     }
     map.setProperties({ isDrawing: true });
-    if (drawRef.current) {
-      drawRef.current.setActive(true);
-    }
     map.getViewport().style.cursor = "crosshair";
+    // 더블클릭 줌 비활성화
+    map.getInteractions().forEach((i) => {
+      if (i instanceof DoubleClickZoom) i.setActive(false);
+    });
+
+    // 스케치 소스/레이어 준비 및 추가
+    if (!sketchSourceRef.current) {
+      sketchSourceRef.current = new VectorSource();
+    }
+    if (!sketchLayerRef.current) {
+      sketchLayerRef.current = new VectorLayer({
+        source: sketchSourceRef.current,
+      });
+      map.addLayer(sketchLayerRef.current);
+    }
+    // 인터랙션은 isActive 이펙트에서 추가됨
   };
 
   // 이벤트 핸들러들
@@ -195,23 +226,29 @@ export function PolygonDrawButton({
     if (isActive) {
       const vectorSources = getVectorSources();
 
+      // 기존 인터랙션 제거
+      if (drawRef.current) {
+        map.removeInteraction(drawRef.current);
+      }
+      if (snapRef.current) {
+        map.removeInteraction(snapRef.current);
+        snapRef.current = null;
+      }
+
+      // 스케치 소스 보장
+      if (!sketchSourceRef.current) {
+        sketchSourceRef.current = new VectorSource();
+      }
+
       if (vectorSources.length > 0) {
         const traceSource = vectorSources[0];
 
-        // 기존 인터랙션 제거
-        if (drawRef.current) {
-          map.removeInteraction(drawRef.current);
-        }
-        if (snapRef.current) {
-          map.removeInteraction(snapRef.current);
-        }
-
-        // Draw 인터랙션 생성
+        // Draw 인터랙션 생성 (스케치 소스 사용 + 트레이스 설정)
         drawRef.current = new Draw({
           type: "Polygon",
-          source: undefined,
-          trace: true,
-          traceSource: traceSource,
+          source: sketchSourceRef.current!,
+          trace: true as any,
+          traceSource: traceSource as any,
           style: new Style({
             zIndex: 1000,
             stroke: new Stroke({
@@ -219,7 +256,7 @@ export function PolygonDrawButton({
               width: 2,
             }),
             fill: new Fill({
-              color: ANNOTATION_COLOR[color].fill(1),
+              color: ANNOTATION_COLOR[color].fill(0.2),
             }),
           }),
         });
@@ -229,10 +266,48 @@ export function PolygonDrawButton({
           source: traceSource,
         });
 
-        // 인터랙션 추가
         map.addInteraction(drawRef.current);
         map.addInteraction(snapRef.current);
+      } else {
+        // 트레이스 소스가 없어도 기본 드로잉 가능하도록 구성
+        drawRef.current = new Draw({
+          type: "Polygon",
+          source: sketchSourceRef.current!,
+          style: new Style({
+            zIndex: 1000,
+            stroke: new Stroke({
+              color: ANNOTATION_COLOR[color].stroke(1),
+              width: 2,
+            }),
+            fill: new Fill({
+              color: ANNOTATION_COLOR[color].fill(0.2),
+            }),
+          }),
+        });
+        map.addInteraction(drawRef.current);
       }
+    } else {
+      // 비활성화 시 정리
+      if (drawRef.current) {
+        map.removeInteraction(drawRef.current);
+        drawRef.current = null;
+      }
+      if (snapRef.current) {
+        map.removeInteraction(snapRef.current);
+        snapRef.current = null;
+      }
+      if (sketchLayerRef.current) {
+        map.removeLayer(sketchLayerRef.current);
+        sketchLayerRef.current = null;
+      }
+      if (sketchSourceRef.current) {
+        sketchSourceRef.current.clear();
+        sketchSourceRef.current = null;
+      }
+      map.getViewport().style.cursor = "pointer";
+      map.getInteractions().forEach((i) => {
+        if (i instanceof DoubleClickZoom) i.setActive(true);
+      });
     }
   }, [isActive, vectorSourcesCount, map, color, getVectorSources]);
 

@@ -54,41 +54,33 @@ export function RectangleDrawButton({
 
   const isActive = buttonId === selectedButtonId;
   const { addGeoJson } = useFeaturesStore();
-  const drawRef = useRef(
-    new Draw({
-      source: undefined,
-      type: "Circle",
-      geometryFunction: createBox(),
-      style: new Style({
-        zIndex: 1000,
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(1),
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill(1),
+  const createDraw = useCallback(
+    () =>
+      new Draw({
+        source: undefined,
+        type: "Circle",
+        geometryFunction: createBox(),
+        style: new Style({
+          zIndex: 1000,
+          stroke: new Stroke({
+            color: ANNOTATION_COLOR[color].stroke(1),
+            width: 2,
+          }),
+          fill: new Fill({
+            color: ANNOTATION_COLOR[color].fill(1),
+          }),
         }),
       }),
-    })
+    [color]
   );
 
+  const drawRef = useRef(createDraw());
+  const isCancellingRef = useRef(false);
+
   useEffect(() => {
-    drawRef.current = new Draw({
-      source: undefined,
-      type: "Circle",
-      geometryFunction: createBox(),
-      style: new Style({
-        zIndex: 1000,
-        stroke: new Stroke({
-          color: ANNOTATION_COLOR[color].stroke(1),
-          width: 2,
-        }),
-        fill: new Fill({
-          color: ANNOTATION_COLOR[color].fill(1),
-        }),
-      }),
-    });
-  }, [onCanvas, color]);
+    // 색상 등 변경 시 새 Draw 인스턴스로 교체
+    drawRef.current = createDraw();
+  }, [onCanvas, color, createDraw]);
 
   const startDrawing = () => {
     if (onClick) {
@@ -98,6 +90,7 @@ export function RectangleDrawButton({
     if (onStart) {
       onStart();
     }
+    isCancellingRef.current = false;
     map.getViewport().style.cursor = "crosshair";
     map.setProperties({ isDrawing: true });
     map.addInteraction(drawRef.current);
@@ -105,6 +98,15 @@ export function RectangleDrawButton({
 
   const drawing = useCallback(
     (event: DrawEvent) => {
+      if (isCancellingRef.current) {
+        // 사용자가 우클릭으로 취소한 경우 결과를 저장하지 않고 종료 처리만 수행
+        isCancellingRef.current = false;
+        selectButton("");
+        map.getViewport().style.cursor = "pointer";
+        map.removeInteraction(drawRef.current);
+        setTimeout(() => map.setProperties({ isDrawing: false }), 100);
+        return;
+      }
       const feature = event.feature;
 
       const newPosition = positionsFromFeature(feature, true) as Coordinate[][];
@@ -152,6 +154,38 @@ export function RectangleDrawButton({
       drawingInstance.un("drawend", drawing);
     };
   }, [drawing]);
+
+  // 우클릭(컨텍스트 메뉴)로 그리기 취소
+  useEffect(() => {
+    const viewport = map.getViewport();
+    const onContextMenu = (e: MouseEvent) => {
+      if (!isActive) return;
+      e.preventDefault();
+      e.stopPropagation();
+      isCancellingRef.current = true;
+      // 즉시 UI/상태 해제 처리 (버튼 선택 해제, 커서 복원, isDrawing 해제)
+      selectButton("");
+      map.getViewport().style.cursor = "pointer";
+      setTimeout(() => map.setProperties({ isDrawing: false }), 0);
+
+      // OpenLayers 드로잉 중단 및 인터랙션 제거
+      if (drawRef.current) {
+        try {
+          // @ts-ignore - abortDrawing 존재
+          drawRef.current.abortDrawing();
+        } catch (_) {
+          // 일부 버전 호환: 인터랙션 제거로 대체
+        }
+        map.removeInteraction(drawRef.current);
+        // 재시작 가능하도록 새 Draw 인스턴스 준비
+        drawRef.current = createDraw();
+      }
+    };
+    viewport.addEventListener("contextmenu", onContextMenu);
+    return () => {
+      viewport.removeEventListener("contextmenu", onContextMenu);
+    };
+  }, [isActive, map, selectButton, createDraw]);
 
   useEffect(() => {
     if (!isActive) {
