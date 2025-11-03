@@ -81,7 +81,7 @@ export function PolygonDrawButton({
       sketchSourceRef.current.clear();
       sketchSourceRef.current = null;
     }
-    // 더블클릭 줌 복구
+    // 더블클릭 줌 복구 (그리기 완료/취소 시)
     map.getInteractions().forEach((i) => {
       if (i instanceof DoubleClickZoom) i.setActive(true);
     });
@@ -99,7 +99,7 @@ export function PolygonDrawButton({
     }
     map.setProperties({ isDrawing: true });
     map.getViewport().style.cursor = "crosshair";
-    // 더블클릭 줌 비활성화
+    // 더블클릭 줌 비활성화 (더블클릭으로 완성 가능하도록)
     map.getInteractions().forEach((i) => {
       if (i instanceof DoubleClickZoom) i.setActive(false);
     });
@@ -131,8 +131,9 @@ export function PolygonDrawButton({
 
   const handleDoubleClick = useCallback(
     (e: MouseEvent) => {
-      if (e.detail === 2 && isActive && drawRef.current) {
+      if (isActive && drawRef.current) {
         e.preventDefault();
+        e.stopPropagation();
         drawRef.current.finishDrawing();
         finishDrawing();
       }
@@ -193,25 +194,16 @@ export function PolygonDrawButton({
     const viewport = map.getViewport();
 
     viewport.addEventListener("contextmenu", handleRightClick);
-    viewport.addEventListener("dblclick", handleDoubleClick);
+    // DoubleClickZoom이 비활성화되어 있으므로 더블클릭으로 완성 가능
+    viewport.addEventListener("dblclick", handleDoubleClick, { capture: true });
 
     return () => {
       viewport.removeEventListener("contextmenu", handleRightClick);
-      viewport.removeEventListener("dblclick", handleDoubleClick);
+      viewport.removeEventListener("dblclick", handleDoubleClick, {
+        capture: true,
+      });
     };
   }, [handleRightClick, handleDoubleClick, map]);
-
-  // Draw 이벤트 등록
-  useEffect(() => {
-    const drawingInstance = drawRef.current;
-    if (!drawingInstance) return;
-
-    drawingInstance.on("drawend", drawing);
-
-    return () => {
-      drawingInstance.un("drawend", drawing);
-    };
-  }, [drawing]);
 
   // ESC 키 이벤트 처리
   useEffect(() => {
@@ -226,8 +218,16 @@ export function PolygonDrawButton({
     if (isActive) {
       const vectorSources = getVectorSources();
 
-      // 기존 인터랙션 제거
+      // 그리기 중에는 더블클릭 줌 비활성화 (더블클릭으로 완성 가능하도록)
+      map.getInteractions().forEach((i) => {
+        if (i instanceof DoubleClickZoom) {
+          i.setActive(false);
+        }
+      });
+
+      // 기존 인터랙션 제거 및 이벤트 리스너 해제
       if (drawRef.current) {
+        drawRef.current.un("drawend", drawing);
         map.removeInteraction(drawRef.current);
       }
       if (snapRef.current) {
@@ -261,6 +261,9 @@ export function PolygonDrawButton({
           }),
         });
 
+        // Draw 이벤트 리스너 등록
+        drawRef.current.on("drawend", drawing);
+
         // Snap 인터랙션 생성
         snapRef.current = new Snap({
           source: traceSource,
@@ -284,11 +287,16 @@ export function PolygonDrawButton({
             }),
           }),
         });
+
+        // Draw 이벤트 리스너 등록
+        drawRef.current.on("drawend", drawing);
+
         map.addInteraction(drawRef.current);
       }
     } else {
       // 비활성화 시 정리
       if (drawRef.current) {
+        drawRef.current.un("drawend", drawing);
         map.removeInteraction(drawRef.current);
         drawRef.current = null;
       }
@@ -304,12 +312,13 @@ export function PolygonDrawButton({
         sketchSourceRef.current.clear();
         sketchSourceRef.current = null;
       }
-      map.getViewport().style.cursor = "pointer";
+      // 더블클릭 줌 복구 (버튼 비활성화 시)
       map.getInteractions().forEach((i) => {
         if (i instanceof DoubleClickZoom) i.setActive(true);
       });
+      map.getViewport().style.cursor = "pointer";
     }
-  }, [isActive, vectorSourcesCount, map, color, getVectorSources]);
+  }, [isActive, vectorSourcesCount, map, color, getVectorSources, drawing]);
 
   return (
     <Button

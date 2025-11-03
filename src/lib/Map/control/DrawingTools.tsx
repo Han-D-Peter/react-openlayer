@@ -78,6 +78,7 @@ export function DrawingTools({
   // };
 
   const endDrawing = (event: FeatureFromGeojson) => {
+    console.log("event", event);
     if (onDrawEnd) {
       onDrawEnd(event);
     }

@@ -87,6 +87,8 @@ export function PolylineDrawButton({
     map.getInteractions().forEach((i) => {
       if (i instanceof DoubleClickZoom) i.setActive(true);
     });
+    // 첫 점 좌표 초기화
+    firstPointCoordRef.current = null;
     selectButton("");
     map.setProperties({ isDrawing: false });
     map.getViewport().style.cursor = "pointer";
@@ -102,6 +104,8 @@ export function PolylineDrawButton({
     }
     map.getViewport().style.cursor = "crosshair";
     map.setProperties({ isDrawing: true });
+    // 첫 점 좌표 초기화
+    firstPointCoordRef.current = null;
     // 더블클릭 줌 비활성화 (드로잉 종료 제스처와 충돌 방지)
     map.getInteractions().forEach((i) => {
       if (i instanceof DoubleClickZoom) i.setActive(false);
@@ -147,10 +151,30 @@ export function PolylineDrawButton({
     [isActive, finishDrawing]
   );
 
-  // 첫 점 클릭 시 마무리
+  // 첫 점 클릭 시 마무리 (최소 2개 이상의 점이 있을 때만)
   const handleLeftClickFinishOnFirst = useCallback(
     (e: MouseEvent) => {
-      if (!isActive || !drawRef.current || !firstPointCoordRef.current) return;
+      if (
+        !isActive ||
+        !drawRef.current ||
+        !firstPointCoordRef.current ||
+        !sketchSourceRef.current
+      )
+        return;
+
+      // 스케치 소스의 현재 피처 확인
+      const features = sketchSourceRef.current.getFeatures();
+      if (features.length === 0) return;
+
+      const sketchFeature = features[0];
+      const geom = sketchFeature.getGeometry();
+      if (!geom) return;
+
+      // LineString 타입 확인 및 좌표 가져오기
+      const coords = (geom as any).getCoordinates?.();
+      // 최소 2개 이상의 점이 있어야 첫 점 클릭 완료 체크
+      if (!Array.isArray(coords) || coords.length < 2) return;
+
       // 현재 클릭 위치 픽셀과 첫 점 픽셀 거리 비교
       const clickPixel = map.getEventPixel(e as any);
       const firstPixel = map.getPixelFromCoordinate(firstPointCoordRef.current);
@@ -237,30 +261,17 @@ export function PolylineDrawButton({
     };
   }, [handleRightClick, handleDoubleClick, handleLeftClickFinishOnFirst, map]);
 
-  // Draw 이벤트 등록
-  useEffect(() => {
-    const drawingInstance = drawRef.current;
-    if (!drawingInstance) return;
-
-    const onStart = (ev: DrawEvent) => {
-      // 첫 클릭 좌표 저장
-      const geom = ev.feature.getGeometry() as any;
-      if (geom && typeof geom.getCoordinates === "function") {
-        const coords = geom.getCoordinates();
-        if (Array.isArray(coords) && coords.length > 0) {
-          firstPointCoordRef.current = coords[0];
-        }
+  // drawstart 이벤트 핸들러
+  const handleDrawStart = useCallback((ev: DrawEvent) => {
+    // 첫 클릭 좌표 저장
+    const geom = ev.feature.getGeometry() as any;
+    if (geom && typeof geom.getCoordinates === "function") {
+      const coords = geom.getCoordinates();
+      if (Array.isArray(coords) && coords.length > 0) {
+        firstPointCoordRef.current = coords[0];
       }
-    };
-
-    drawingInstance.on("drawstart", onStart as any);
-    drawingInstance.on("drawend", drawing);
-
-    return () => {
-      drawingInstance.un("drawstart", onStart as any);
-      drawingInstance.un("drawend", drawing);
-    };
-  }, [drawing]);
+    }
+  }, []);
 
   // ESC 키 이벤트 처리
   useEffect(() => {
@@ -275,8 +286,10 @@ export function PolylineDrawButton({
     if (isActive) {
       const vectorSources = getVectorSources();
 
-      // 기존 인터랙션 제거
+      // 기존 인터랙션 제거 및 이벤트 리스너 해제
       if (drawRef.current) {
+        drawRef.current.un("drawstart", handleDrawStart as any);
+        drawRef.current.un("drawend", drawing);
         map.removeInteraction(drawRef.current);
       }
       if (snapRef.current) {
@@ -309,6 +322,10 @@ export function PolylineDrawButton({
           }),
         });
 
+        // Draw 이벤트 리스너 등록
+        drawRef.current.on("drawstart", handleDrawStart as any);
+        drawRef.current.on("drawend", drawing);
+
         // Snap 인터랙션 생성
         snapRef.current = new Snap({
           source: traceSource,
@@ -332,11 +349,17 @@ export function PolylineDrawButton({
           }),
         });
 
+        // Draw 이벤트 리스너 등록
+        drawRef.current.on("drawstart", handleDrawStart as any);
+        drawRef.current.on("drawend", drawing);
+
         map.addInteraction(drawRef.current);
       }
     } else {
       // 비활성화 시 정리
       if (drawRef.current) {
+        drawRef.current.un("drawstart", handleDrawStart as any);
+        drawRef.current.un("drawend", drawing);
         map.removeInteraction(drawRef.current);
         drawRef.current = null;
       }
@@ -357,7 +380,15 @@ export function PolylineDrawButton({
         if (i instanceof DoubleClickZoom) i.setActive(true);
       });
     }
-  }, [isActive, vectorSourcesCount, map, color, getVectorSources]);
+  }, [
+    isActive,
+    vectorSourcesCount,
+    map,
+    color,
+    getVectorSources,
+    drawing,
+    handleDrawStart,
+  ]);
 
   return (
     <Button
